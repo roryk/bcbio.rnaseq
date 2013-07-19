@@ -1,0 +1,15 @@
+# edgeR analysis
+# Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
+# analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
+
+library(edgeR)
+library(HTSFilter)
+count_file = count_file
+edgeR.dgelist = DGEList(counts = count.matrix, group = factor(class))
+edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
+edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
+edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
+edgeR.test = exactTest(edgeR.dgelist)
+edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$filteredData
+edgeR.pvalues = edgeR.test$table$PValue
+edgeR.adjpvalues = p.adjust(edgeR.pvalues, method = "BH")

@@ -1,0 +1,14 @@
+# vst+limma
+# Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
+# analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
+
+library(DESeq)
+library(limma)
+DESeq.cds = newCountDataSet(countData = count.matrix, conditions = factor(class))
+DESeq.cds = estimateSizeFactors(DESeq.cds)
+DESeq.cds = estimateDispersions(DESeq.cds, method = "blind", fitType = "local")
+DESeq.vst = getVarianceStabilizedData(DESeq.cds)
+DESeq.vst.fitlimma = lmFit(DESeq.vst, design = model.matrix(~factor(class)))
+DESeq.vst.fitbayes = eBayes(DESeq.vst.fitlimma)
+DESeq.vst.pvalues = DESeq.vst.fitbayes$p.value[, 2]
+DESeq.vst.adjpvalues = p.adjust(DESeq.vst.pvalues, method = "BH")
