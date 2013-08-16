@@ -1,4 +1,4 @@
-(ns bcbio.rnaseq
+(ns bcbio.rnaseq.core
   (:use [clostache.parser :only [render]]
         [clojure.java.shell :only [sh]]
         [incanter.io :only [read-dataset]]
@@ -6,15 +6,15 @@
   (:require [clj-yaml.core :as yaml]
             [me.raynes.fs :as fs]))
 
-(spit "/Users/rory/cache/bcbio.rnaseq/resources/edgeR.R"
- (render (slurp "/Users/rory/cache/bcbio.rnaseq/resources/edgeR.template")
-  {:count_file "test_count"
-   :control_name "control_count"
-   :experiment_name "experiment"
-   :group "group"
-   :out_file "out_file"}))
+;; ;; (spit "/users/rory/cache/bcbio.rnaseq/resources/edger.r"
+;; ;;  (render (slurp "/users/rory/cache/bcbio.rnaseq/resources/edger.template")
+;; ;;   {:count_file "test_count"
+;; ;;    :control_name "control_count"
+;; ;;    :experiment_name "experiment"
+;; ;;    :group "group"
+;; ;;    :out_file "out_file"}))
 
-(sh "Rscript" "/Users/rory/cache/bcbio.rnaseq/resources/edgeR.template")
+;; (sh "rscript" "/users/rory/cache/bcbio.rnaseq/resources/edger.template")
 
 (def config-file "/Users/rory/cache/bcbio.rnaseq/resources/bcbio_sample.yaml")
 (def config (yaml/parse-string (slurp config-file)))
@@ -22,7 +22,8 @@
 (defn get-config [config-file]
   (yaml/parse-string (slurp config-file)))
 
-(defn- get-descriptions [config]
+(defn get-descriptions [config]
+  "get descriptions of samples from a parsed YAML sample file"
   (map :description (:details config)))
 
 (defn get-metadata [config]
@@ -54,34 +55,35 @@
   (fs/split-ext (fs/base-name filename)))
 
 (defn base-stem [filename]
+  "get the stem of the base of the filename. (base-stem '/your/path/file.txt) => file"
   (first (base-filename filename)))
 
 (defn combine-count-files [count-files]
+  "combines a list of htseq-count files into a single file"
   (col-names
    (reduce merge-htseq-counts (load-htseq (first count-files))
            (rest count-files))
    (cons "id" (map base-stem count-files))))
 
-(declare that-function-to-write)
-
 (defn write-combined-count-file [count-files]
   (let [out-file (str (fs/parent (first count-files)) "/combined.counts")]
-    (that-function-to-write (combine-count-files count-files) out-file)
-    (out-file)))
+    (save (combine-count-files count-files) out-file :delim "\t")
+    out-file))
 
 (defn seq-to-R-list [xs]
-  " this needs to take a vec and turn it into c(v[0], v[1], v[2], etc)"
+  "(seq-to-R-list [1, 2, 3]) => 'c(1, 2, 3)'"
   (str "c(" (clojure.string/join "," xs) ")"))
 
 
 (defn dirname [path]
-  (str (parent (expand-home test-path)) "/"))
+  (str (fs/parent (fs/expand-home path)) "/"))
 
 (defn change-extension [path extension]
   (str (dirname path) (name path) extension))
 
+
 (defn temporary-R-file [path]
-  (temp-file (name path) ".R"))
+  (fs/temp-file (name path) ".R"))
 
 (defn write-template
   "writes an R file out from a template and returns the template name"
