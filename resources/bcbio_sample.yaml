@@ -1,0 +1,163 @@
+---
+# Example file for specifying run information to bcbio_nextgen.py
+# In a fully Galaxy automated setup this information can be retrieved
+# from the Galaxy server based on user inputs. This allows you to
+# run the automated pipeline separately or from other external programs
+
+# If your folder naming is not standard Illumina style
+# (110729_SN728_0036_A81UJUABXX) you should specify the date and a unique name
+# to use for naming the output files.
+fc_date: '110812'
+fc_name: unique_name
+# Directory to upload final results to. It also supports galaxy and S3 upload.
+upload:
+  dir: final
+details:
+  # For each flowcell, you specify either the lane if the files follow standard
+  # naming conventions (1_110729_A81UJUABXX) or the names of the files if they
+  # are differently named. Can specify either one file for single end or two for
+  # paired.
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006475_TRA00010399_ATCACG_L006_R1.fastq]
+    description: 'WT_Con_rep1'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: control
+      replicate: 1
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006475_TRA00010402_TGACCA_L006_R1.fastq]
+    description: 'WT_Chol_rep1'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: cholesterol
+      replicate: 1
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006475_TRA00010405_CAGATC_L006_R1.fastq]
+    description: 'KO_Con_rep1'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: control
+      replicate: 1
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006475_TRA00010408_TAGCTT_L006_R1.fastq]
+    description: 'KO_Chol_rep1'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: cholesterol
+      replicate: 1
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006476_TRA00010400_CGATGT_L007_R1.fastq]
+    description: 'WT_Con_rep2'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: control
+      replicate: 2
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006476_TRA00010403_ACAGTG_L007_R1.fastq]
+    description: 'WT_Chol_rep2'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: cholesterol
+      replicate: 2
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006476_TRA00010406_ACTTGA_L007_R1.fastq]
+    description: 'KO_Con_rep2'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: control
+      replicate: 2
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006476_TRA00010409_GGCTAC_L007_R1.fastq]
+    description: 'KO_Chol_rep2'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: cholesterol
+      replicate: 2
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006477_TRA00010401_TTAGGC_L008_R1.fastq]
+    description: 'WT_Con_rep3'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: control
+      replicate: 3
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006477_TRA00010404_GCCAAT_L008_R1.fastq]
+    description: 'WT_Chol_rep3'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: WT
+      condition: cholesterol
+      replicate: 3
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006477_TRA00010407_GATCAG_L008_R1.fastq]
+    description: 'KO_Con_rep3'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: control
+      replicate: 3
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]
+  - files: [/n/home05/kirchner/hsph/projects/widenmaier_rnaseq/data/LIB006477_TRA00010410_CTTGTA_L008_R1.fastq]
+    description: 'KO_Chol_rep3'
+    genome_build: GRCm38
+    analysis: RNA-seq
+    metadata:
+      cell_line: KO
+      condition: cholesterol
+      replicate: 3
+    algorithm:
+         quality_format: Standard
+         trim_reads: read_through
+         adapters: [truseq, polya]

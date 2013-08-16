@@ -4,7 +4,8 @@
 
 library(edgeR)
 library(HTSFilter)
-count_file = count_file
+count_file = {{count_file}}
+class = {{class}}
 edgeR.dgelist = DGEList(counts = count.matrix, group = factor(class))
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
