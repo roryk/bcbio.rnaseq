@@ -2,10 +2,12 @@
   (:use midje.sweet
         bcbio.rnaseq.core
         incanter.core)
-  (:require [me.raynes.fs :as fs]))
+  (:require [me.raynes.fs :as fs]
+            [clojure.java.io :as io]))
 
-(def test-config-file (.getFile (clojure.java.io/resource "bcbio_sample.yaml")))
+(def test-config-file (get-resource "bcbio_sample.yaml"))
 (def test-config (get-config test-config-file))
+(def test-combined-count-file (get-resource "htseq-count/combined.counts"))
 
 (facts "about `configuration file parsing`"
   (fact "each sample has descriptions of the data in it"
@@ -32,7 +34,25 @@
        (type (load-htseq (write-combined-count-file
                           (htseq-files test-config-file)))) => incanter.core.Dataset))
 
+(def edger-template-file (get-resource "edgeR.template"))
+(facts "facts about templating"
+       (fact "get-analysis-fn returns a function to run an analysis"
+             (fs/base-name ((get-analysis-fn config)
+                        edger-template-file)) => "edgeR.R"))
+  ;; (fact
+  ;;  "write-template writes out a given template file"
+  ;;  (fs/base-name
+  ;;   (write-template edger-template-file test-combined-count-file
+  ;;                   (seq-to-R-list (get-condition test-config)))) => "edgeR.R")
+  ;; (fact
+  ;;  "run-template writes a given template file and runs it"
+  ;;  (run-template edger-template-file test-combined-count-file
+  ;;                (seq-to-R-list (get-condition test-config))) => "edgeR.R"))
 
 
-;; (facts "about template interaction"
-;;   (fact "write-template fills in a template file for R analysis."))
+
+
+
+
+
+
