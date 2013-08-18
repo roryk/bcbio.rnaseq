@@ -4,13 +4,25 @@
 
 library(edgeR)
 library(HTSFilter)
-count_file = {{count_file}}
-class = {{class}}
-edgeR.dgelist = DGEList(counts = count.matrix, group = factor(class))
+count_file = {{{count-file}}}
+out_file = {{{out-file}}}
+class = {{{class}}}
+counts = read.table(count_file, header=TRUE, row.names="id")
+edgeR.dgelist = DGEList(counts = counts, group = factor(class))
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
 edgeR.test = exactTest(edgeR.dgelist)
 edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$filteredData
-edgeR.pvalues = edgeR.test$table$PValue
-edgeR.adjpvalues = p.adjust(edgeR.pvalues, method = "BH")
+
+# this is to get the data into a common format
+# id, logCPM, logFC, pval, pdj
+comparison = paste(edgeR.test$comparison[1], "_vs_", edgeR.test$comparison[2], sep="")
+out_file = paste(comparison, "_edgeR.out", sep="")
+out_table = edgeR.test$table
+out_table$id = rownames(out_table)
+out_table$padj = p.adjust(out_table$PValue, method = "BH") 
+out_table = out_table[, c("id", "logCPM", "logFC", "PValue", "padj")]
+colnames(out_table) = c("id", "logCPM", "logFC", "pval", "padj")
+write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
+            sep="\t")
