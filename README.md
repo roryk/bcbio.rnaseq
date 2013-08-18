@@ -1,13 +1,11 @@
 # bcbio.rnaseq
 
-The project uses [Midje](https://github.com/marick/Midje/).
+## Overview
+There are a bajillion different ways to call differential events from RNA-seq
+data at the gene, isoform and splicing-event level, with more coming out
+every day. It would be great if when a new caller comes out, there was
+a way to automatically place it in the context of the other callers. This
+project aims to do that.
 
-## How to run the tests
-
-`lein midje` will run all tests.
-
-`lein midje namespace.*` will run only tests beginning with "namespace.".
-
-`lein midje :autotest` will run all the tests indefinitely. It sets up a
-watcher on the code files. If they change, only the relevant tests will be
-run again.
+## Why Clojure?
+It was time to learn a new language and Clojure is really fun.
