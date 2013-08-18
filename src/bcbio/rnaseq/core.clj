@@ -10,7 +10,7 @@
 
 
 (def config-file "/Users/rory/cache/bcbio.rnaseq/resources/bcbio_sample.yaml")
-(def config (yaml/parse-string (slurp config-file)))
+(def config (get-config config-file))
 
 (defn dirname [path]
   (str (fs/parent (fs/expand-home path)) "/"))
@@ -124,7 +124,7 @@
                    (:out-file analysis-config))))
 
 (defn analysis-out-file [template-file analysis-config]
-  (str (base-filename template-file) "_"
+  (str (base-stem template-file) "_"
        (:condition-name analysis-config) ".tsv"))
 
 (defn get-analysis-fn [config]
