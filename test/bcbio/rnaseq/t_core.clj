@@ -39,15 +39,6 @@
        (fact "get-analysis-fn returns a function to run an analysis"
              (fs/base-name ((get-analysis-fn config)
                         edger-template-file)) => "edgeR.R"))
-  ;; (fact
-  ;;  "write-template writes out a given template file"
-  ;;  (fs/base-name
-  ;;   (write-template edger-template-file test-combined-count-file
-  ;;                   (seq-to-R-list (get-condition test-config)))) => "edgeR.R")
-  ;; (fact
-  ;;  "run-template writes a given template file and runs it"
-  ;;  (run-template edger-template-file test-combined-count-file
-  ;;                (seq-to-R-list (get-condition test-config))) => "edgeR.R"))
 
 
 
