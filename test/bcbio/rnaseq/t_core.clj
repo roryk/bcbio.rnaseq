@@ -37,10 +37,10 @@
 (def edger-template-file (get-resource "edgeR.template"))
 (facts "facts about templating"
        (fact "get-analysis-fn returns a function to run an analysis"
-             (fs/base-name ((get-analysis-fn config)
+             (fs/base-name ((get-analysis-fn test-config)
                         edger-template-file)) => "edgeR.R")
        (fact "we can do all the analyses at once"
-             (map (get-analysis-fn config) templates) => (map
+             (map (get-analysis-fn test-config) templates) => (map
                                                            #(change-extension % ".R")
                                                            templates)))
 
