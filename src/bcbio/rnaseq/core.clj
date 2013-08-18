@@ -9,8 +9,8 @@
             [clojure.java.io :as io]))
 
 
-(def config-file "/Users/rory/cache/bcbio.rnaseq/resources/bcbio_sample.yaml")
-(def config (get-config config-file))
+;; (def config-file "/Users/rory/cache/bcbio.rnaseq/resources/bcbio_sample.yaml")
+;;(def config (get-config config-file))
 
 (defn dirname [path]
   (str (fs/parent (fs/expand-home path)) "/"))
@@ -57,8 +57,6 @@
   (let [config (get-config config-file)
         base-dir (fs/parent config-file)]
     (construct-htseq-filenames base-dir config)))
-
-(def count-files (htseq-files config-file))
 
 (defn extract-count-column [htseq-file]
   (to-dataset (sel (load-htseq htseq-file) :cols 1)))
