@@ -2,35 +2,50 @@
   (:use [clostache.parser :only [render]]
         [clojure.java.shell :only [sh]]
         [incanter.io :only [read-dataset]]
-        [incanter.core])
+        [incanter.core]
+        [clojure.math.combinatorics :only [combinations]])
   (:require [clj-yaml.core :as yaml]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs]
+            [clojure.java.io :as io]))
 
-;; ;; (spit "/users/rory/cache/bcbio.rnaseq/resources/edger.r"
-;; ;;  (render (slurp "/users/rory/cache/bcbio.rnaseq/resources/edger.template")
-;; ;;   {:count_file "test_count"
-;; ;;    :control_name "control_count"
-;; ;;    :experiment_name "experiment"
-;; ;;    :group "group"
-;; ;;    :out_file "out_file"}))
-
-;; (sh "rscript" "/users/rory/cache/bcbio.rnaseq/resources/edger.template")
 
 (def config-file "/Users/rory/cache/bcbio.rnaseq/resources/bcbio_sample.yaml")
 (def config (yaml/parse-string (slurp config-file)))
 
-(defn get-config [config-file]
-  (yaml/parse-string (slurp config-file)))
+(defn dirname [path]
+  (str (fs/parent (fs/expand-home path)) "/"))
 
-(defn get-descriptions [config]
-  "get descriptions of samples from a parsed YAML sample file"
-  (map :description (:details config)))
+(defn get-resource [filename]
+  (.getFile (io/resource filename)))
 
 (defn get-metadata [config]
   (map :metadata (:details config)))
 
 (defn get-condition [config]
   (map :condition (get-metadata config)))
+
+(def resource-dir (dirname (get-resource "edgeR.template")))
+(def templates (fs/glob (str resource-dir "*.template")))
+
+(defn generic-analysis-config [config]
+  "create an analysis config from a parsed bcbio-nextgen sample file"
+  (let [conditions (get-condition config)]
+    {:count-file (:count-file config)
+     :comparison (distinct conditions)
+     :conditions conditions
+     :condition-name (clojure.string/join "_vs_" (distinct conditions))}))
+
+
+(defn get-config [config-file]
+  (assoc (yaml/parse-string (slurp config-file)) :count-file
+         (str (dirname config-file) "htseq-count/combined.counts")))
+
+(defn get-descriptions [config]
+  "get descriptions of samples from a parsed YAML sample file"
+  (map :description (:details config)))
+
+
+
 
 (defn- construct-htseq-filenames [base-dir config]
   (map #(str base-dir "/htseq-count/" % ".counts") (get-descriptions config)))
@@ -70,16 +85,18 @@
     (save (combine-count-files count-files) out-file :delim "\t")
     out-file))
 
+(defn escape-quote [string]
+  (str "\"" string "\""))
+
 (defn seq-to-R-list [xs]
   "(seq-to-R-list [1, 2, 3]) => 'c(1, 2, 3)'"
-  (str "c(" (clojure.string/join "," xs) ")"))
+  (str "c(" (clojure.string/join "," (map escape-quote xs)) ")"))
 
 
-(defn dirname [path]
-  (str (fs/parent (fs/expand-home path)) "/"))
+
 
 (defn change-extension [path extension]
-  (str (dirname path) (name path) extension))
+  (str (dirname path) (base-stem path) extension))
 
 
 (defn temporary-R-file [path]
@@ -87,11 +104,34 @@
 
 (defn write-template
   "writes an R file out from a template and returns the template name"
-  [template count_file class]
-  (do
+  [template count-file class out-file]
     (spit (change-extension template ".R")
-          (render (slurp template) {:count_file count_file :class class}))
-    (change-extension template ".R")))
+          (render (slurp template) {:count-file (escape-quote count-file)
+                                    :class class
+                                    :out-file (escape-quote out-file)}))
+    (change-extension template ".R"))
 
-(defn run-template [template count_file class]
-  (sh "Rscript" (write-template template count_file class)))
+(defn generate-output-filename [f1 f2 analysis]
+  (str f1 "_vs_" f2 "_" analysis ".tsv"))
+
+(defn run-template
+  ([template count-file class out-file]
+     (sh "Rscript" (write-template template count-file class out-file))
+     (change-extension template ".R"))
+  ([template analysis-config]
+     (run-template template (:count-file analysis-config)
+                   (seq-to-R-list (:conditions analysis-config))
+                   (:out-file analysis-config))))
+
+(defn analysis-out-file [template-file analysis-config]
+  (str (base-filename template-file) "_"
+       (:condition-name analysis-config) ".tsv"))
+
+(defn get-analysis-fn [config]
+  "get a function that will run an analysis on a template file"
+  (let [analysis-config (generic-analysis-config config)]
+    (fn [template-file]
+      (run-template template-file
+                    (assoc analysis-config :out-file (analysis-out-file
+                                                      template-file
+                                                      analysis-config))))))
