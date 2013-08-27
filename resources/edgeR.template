@@ -8,7 +8,7 @@ count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
 counts = read.table(count_file, header=TRUE, row.names="id")
-edgeR.dgelist = DGEList(counts = counts, group = factor(class))
+edgeR.dgelist = DGEList(counts = counts, group = class)
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
@@ -17,7 +17,8 @@ edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$
 
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj
-comparison = paste(edgeR.test$comparison[1], "_vs_", edgeR.test$comparison[2], sep="")
+comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
+#edgeR.test$comparison[1], "_vs_", edgeR.test$comparison[2], sep="")
 out_file = paste(comparison, "_edgeR.out", sep="")
 out_table = edgeR.test$table
 out_table$id = rownames(out_table)
