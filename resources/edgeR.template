@@ -19,7 +19,7 @@ edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$
 # id, logCPM, logFC, pval, pdj
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
 #edgeR.test$comparison[1], "_vs_", edgeR.test$comparison[2], sep="")
-out_file = paste(comparison, "_edgeR.out", sep="")
+#out_file = paste(comparison, "_edgeR.out", sep="")
 out_table = edgeR.test$table
 out_table$id = rownames(out_table)
 out_table$padj = p.adjust(out_table$PValue, method = "BH") 
