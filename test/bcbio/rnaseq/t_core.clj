@@ -35,14 +35,15 @@
                           (htseq-files test-config-file)))) => incanter.core.Dataset))
 
 (def edger-template-file (get-resource "edgeR.template"))
+(def deseq-template-file (get-resource "deseq.template"))
 (facts "facts about templating"
        (fact "get-analysis-fn returns a function to run an analysis"
-             (fs/base-name ((get-analysis-fn test-config)
-                        edger-template-file)) => "edgeR.R")
+             (:out-file ((get-analysis-fn test-config)
+                        edger-template-file)) => "edgeR_control_vs_cholesterol.tsv")
        (fact "we can do all the analyses at once"
-             (map (get-analysis-fn test-config) templates) => (map
-                                                           #(change-extension % ".R")
-                                                           templates)))
+             (into #{} (map :out-file (map (get-analysis-fn test-config) templates))) =>
+             #{"edgeR_control_vs_cholesterol.tsv",
+               "deseq_control_vs_cholesterol.tsv"}))
 
 
 

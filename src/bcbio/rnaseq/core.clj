@@ -90,7 +90,11 @@
   "(seq-to-R-list [1, 2, 3]) => 'c(1, 2, 3)'"
   (str "c(" (clojure.string/join "," (map escape-quote xs)) ")"))
 
-
+(defn seq-to-factor [xs]
+  "(seq-to-factor [1, 2, 3]) => 'c(1, 2, 3)'"
+  (str "factor(c(" (clojure.string/join "," (map escape-quote xs))
+       "), levels=c(" (clojure.string/join "," (map escape-quote
+                                                    (vec (apply sorted-set xs)))) "))"))
 
 
 (defn change-extension [path extension]
@@ -103,23 +107,24 @@
 (defn write-template
   "writes an R file out from a template and returns the template name"
   [template count-file class out-file]
-    (spit (change-extension template ".R")
+  (let [tempfile (fs/temp-name (fs/base-name template) ".R")]
+    (spit tempfile
           (render (slurp template) {:count-file (escape-quote count-file)
                                     :class class
                                     :out-file (escape-quote out-file)}))
-    (change-extension template ".R"))
+    tempfile))
 
 (defn generate-output-filename [f1 f2 analysis]
   (str f1 "_vs_" f2 "_" analysis ".tsv"))
 
 (defn run-template
   ([template count-file class out-file]
-     (sh "Rscript" (write-template template count-file class out-file))
-     (change-extension template ".R"))
+     (sh "Rscript" (write-template template count-file class out-file)))
   ([template analysis-config]
      (run-template template (:count-file analysis-config)
-                   (seq-to-R-list (:conditions analysis-config))
-                   (:out-file analysis-config))))
+                   (seq-to-factor (:conditions analysis-config))
+                   (:out-file analysis-config))
+     analysis-config))
 
 (defn analysis-out-file [template-file analysis-config]
   (str (base-stem template-file) "_"
