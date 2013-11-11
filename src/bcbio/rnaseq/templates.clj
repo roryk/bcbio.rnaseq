@@ -1,13 +1,10 @@
 (ns bcbio.rnaseq.templates
   (:use [clostache.parser :only [render]]
-        [midje.sweet]
         [bcbio.rnaseq.config :only [get-analysis-config parse-bcbio-config]]
         [bcbio.rnaseq.util]
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]
             [clojure.java.io :as io]))
-
-(defmacro dbg[x] `(let [x# ~x] (println "dbg:" '~x "=" x#) x#))
 
 (def resource-dir (dirname (get-resource "edgeR.template")))
 (def templates (fs/glob (str resource-dir "*.template")))
@@ -49,13 +46,3 @@
                                                       template-file
                                                       analysis-config))))))
 
-;; tests
-(def test-config-file (get-resource "bcbio_sample.yaml"))
-(def test-out-dir "de-analysis")
-(def test-config (parse-bcbio-config test-config-file test-out-dir))
-(def edger-template-file (get-resource "edgeR.template"))
-(fact "get-analysis-fn returns a function to run an analysis"
-      (:out-file ((get-analysis-fn test-config)
-                  edger-template-file)) =>
-                  (str (io/file test-out-dir "edgeR_control_vs_cholesterol.tsv")))
-;                  (io/delete-file "edgeR_control_vs_cholesterol.tsv"))

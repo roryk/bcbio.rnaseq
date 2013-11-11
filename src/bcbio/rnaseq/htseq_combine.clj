@@ -2,13 +2,13 @@
   (:use [incanter.io :only [read-dataset]]
         [incanter.core :only [to-dataset sel conj-cols col-names save]]
         [bcbio.rnaseq.util]
-        [midje.sweet])
+        [clojure.tools.cli :only [cli]])
   (:require [clojure.java.io :as io]))
 
 (defn- get-count-files [count-dir]
   (get-files-with-extension count-dir ".counts"))
 
-(defn- load-counts [count-file]
+(defn load-counts [count-file]
   "load a tab delimited count-file with the first column as the identifier"
   (read-dataset count-file :delim \tab))
 
@@ -34,18 +34,16 @@
      (write-combined-count-file count-dir
                                 (io/file count-dir "combined.counts"))))
 
-
-;; tests
-
-(def test-count-file (get-resource "htseq-count/KO_Chol_rep1.counts"))
-(def count-dir (get-resource "htseq-count"))
-
-(fact
- "load-htseq loads a htseq-count file into an incanter.core.Dataset"
- (type (load-counts test-count-file)) => incanter.core.Dataset)
-
-(fact
- "write-combined-count-file is functional"
- (let [out-file (io/file count-dir "combined.counts")]
-   (write-combined-count-file count-dir) => out-file))
-;   (io/delete-file out-file)))
+(defn cl-entry [& args]
+  (let [[opts [count-dir] banner]
+        (cli args
+             ["-h" "--help" "Show help" :flag true :default false]
+             ["-o" "--out-file" "Output file name"])]
+    (when (or (:help opts) (some nil? [count-dir]))
+      (println "Required arguments:")
+      (println "    <count-dir> directory of .counts files to combine")
+      (println banner)
+      (System/exit 0))
+    (if (:out-file opts)
+      (write-combined-count-file count-dir (:out-file opts))
+      (write-combined-count-file count-dir))))

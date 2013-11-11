@@ -10,4 +10,7 @@
                  [org.clojure/math.combinatorics "0.0.4"]
                  [org.clojure/tools.cli "0.2.4"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
-  :jvm-opts ["-Xmx2g"])
+  :jvm-opts ["-Xmx2g"]
+  :aot [bcbio.rnaseq.core]
+  :main bcbio.rnaseq.core
+  :keep-non-project-classes true)
