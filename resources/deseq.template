@@ -5,9 +5,11 @@
 library(DESeq)
 library(limma)
 library(HTSFilter)
+library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
+normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
 counts = read.table(count_file, header=TRUE, row.names="id")
 DESeq.cds = newCountDataSet(countData = counts, conditions = class)
 DESeq.cds = estimateSizeFactors(DESeq.cds)
@@ -20,3 +22,5 @@ out_table = data.frame(id=res$id, expr=res$baseMean, logFC=res$log2FoldChange,
           pval=res$pval, padj=res$padj)
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
+write.table(counts(DESeq.cds, normalized=TRUE), normalized_file, quote=FALSE,
+            row.names=FALSE, sep="\t")

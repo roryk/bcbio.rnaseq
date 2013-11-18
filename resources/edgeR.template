@@ -4,10 +4,12 @@
 
 library(edgeR)
 library(HTSFilter)
+library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
 counts = read.table(count_file, header=TRUE, row.names="id")
+normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
 edgeR.dgelist = DGEList(counts = counts, group = class)
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
@@ -18,8 +20,6 @@ edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
-#edgeR.test$comparison[1], "_vs_", edgeR.test$comparison[2], sep="")
-#out_file = paste(comparison, "_edgeR.out", sep="")
 out_table = edgeR.test$table
 out_table$id = rownames(out_table)
 out_table$padj = p.adjust(out_table$PValue, method = "BH") 
@@ -27,3 +27,5 @@ out_table = out_table[, c("id", "logCPM", "logFC", "PValue", "padj")]
 colnames(out_table) = c("id", "logCPM", "logFC", "pval", "padj")
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
+write.table(cpm(edgeR.dgelist, normalized.lib.sizes=FALSE), file=normalized_file,
+            quote=FALSE, row.names=FALSE, sep="\t")
