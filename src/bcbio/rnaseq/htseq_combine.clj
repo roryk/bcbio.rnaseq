@@ -28,11 +28,15 @@
 (defn write-combined-count-file
   "combines *.counts files from a directory into a single file"
   ([count-dir out-file]
-     (save (combine-count-files count-dir) out-file :delim "\t")
-     out-file)
+     (if (.exists (io/as-file out-file))
+       out-file)
+     (do
+       (io/make-parents (io/as-file out-file))
+       (save (combine-count-files count-dir) out-file :delim "\t")
+       out-file))
   ([count-dir]
      (write-combined-count-file count-dir
-                                (io/file count-dir "combined.counts"))))
+                                (str (io/file count-dir "combined.counts")))))
 
 (defn cl-entry [& args]
   (let [[opts [count-dir] banner]

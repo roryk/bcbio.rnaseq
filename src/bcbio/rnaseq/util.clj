@@ -15,8 +15,22 @@
   "get the stem of the base of the filename. (base-stem '/your/path/file.txt) => file"
   (first (base-filename filename)))
 
-(defn get-files-with-extension [dir ext]
-  (filter #(.endsWith (.getName %) ext) (file-seq (io/file dir))))
+
+(defn get-files-in-directory [directory]
+  (->> directory
+       clojure.java.io/file
+       .listFiles
+       (filter #(.isFile %))
+       (map #(str %))))
+
+(defn has-file-extension? [file-name extension]
+  (.endsWith file-name extension))
+
+(defn filter-on-extension [files extension]
+  (filter #(has-file-extension? % extension) files))
+
+(defn get-files-with-extension [directory extension]
+  (filter-on-extension (get-files-in-directory directory) extension))
 
 (defn dirname [path]
   (str (fs/parent (fs/expand-home path)) "/"))

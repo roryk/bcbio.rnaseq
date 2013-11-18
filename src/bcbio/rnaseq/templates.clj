@@ -9,40 +9,52 @@
 (def resource-dir (dirname (get-resource "edgeR.template")))
 (def templates (fs/glob (str resource-dir "*.template")))
 
-(defn write-template
-  "writes an R file out from a template"
-  [template count-file class out-file]
-  (let [base-rfile (fs/base-name (change-extension template ".R"))
-        rfile (str (io/file (dirname out-file) base-rfile))]
-    (spit rfile
-          (render (slurp template) {:count-file (escape-quote count-file)
-                                    :class class
-                                    :out-file (escape-quote out-file)}))
-    rfile))
+(defn- analysis-out-stem [template-file analysis-config]
+  (str (io/file (:de-out-dir analysis-config)
+                (str (base-stem template-file) "_"
+                     (:condition-name analysis-config)))))
 
-(defn run-template
-  ([template count-file class out-file]
-     (let [template-file (write-template template count-file class out-file)]
-       (sh "Rscript" template-file)
-       template-file))
-  ([template analysis-config]
-     (run-template template (:count-file analysis-config)
-                   (seq-to-factor (:conditions analysis-config))
-                   (:out-file analysis-config))
-     analysis-config))
+(defn analysis-with-suffix [template-file analysis-config suffix]
+  (str (analysis-out-stem template-file analysis-config) suffix))
 
 (defn analysis-out-file [template-file analysis-config]
   (let [out-dir (:de-out-dir analysis-config)
-        out-base (str (base-stem template-file) "_"
-                      (:condition-name analysis-config) ".tsv")]
-    (str (io/file out-dir out-base))))
+        out-stem (analysis-out-stem template-file analysis-config)]
+    (str (io/file out-dir out-stem ".tsv"))))
+
+(defn normalized-count-file [template-file analysis-config]
+  (let [out-dir (:de-out-dir analysis-config)
+        out-stem (analysis-out-stem template-file analysis-config)]
+    (str (io/file out-dir out-stem ".counts"))))
+
+(defn write-template [template config]
+  "writes an R file out from a template"
+  (let [count-file (:count-file config)
+        comparison (seq-to-factor (:conditions config))
+        out-file (:out-file config)
+        rfile (:r-file config)]
+    (spit rfile
+          (render (slurp template) {:count-file (escape-quote count-file)
+                                    :class comparison
+                                    :out-file (escape-quote out-file)}))
+    config))
+
+
+(defn add-out-files-to-config [template analysis-config]
+  (assoc analysis-config
+    :out-file (analysis-with-suffix template analysis-config ".tsv")
+    :normalized-file (analysis-with-suffix template analysis-config ".counts")
+    :r-file (analysis-with-suffix template analysis-config ".R")))
+
+
+(defn run-template [template analysis-config]
+  (let [config (add-out-files-to-config template analysis-config)]
+    (write-template template config)
+    (sh "Rscript" (:r-file config))
+    config))
 
 (defn get-analysis-fn [config]
   "get a function that will run an analysis on a template file"
   (let [analysis-config (get-analysis-config config)]
     (fn [template-file]
-      (run-template template-file
-                    (assoc analysis-config :out-file (analysis-out-file
-                                                      template-file
-                                                      analysis-config))))))
-
+      (run-template template-file analysis-config))))

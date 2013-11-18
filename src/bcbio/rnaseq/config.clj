@@ -10,7 +10,7 @@
   ([config-file out-dir]
      (safe-makedir out-dir)
      (assoc (load-yaml config-file)
-       :count-file (str (dirname config-file) "htseq-count/combined.counts")
+       :count-file (str (io/file out-dir "combined.counts"))
        :de-out-dir out-dir))
   ([config-file]
      (parse-bcbio-config config-file "de-analysis")))

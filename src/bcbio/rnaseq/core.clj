@@ -6,10 +6,12 @@
   (:require [bcbio.rnaseq.htseq-combine :as combine-counts])
   (:gen-class :main true))
 
-(defn run-analyses [bcbio-config-file]
+(defn run-analyses [bcbio-config-file count-dir]
   (let [bcbio-config (parse-bcbio-config bcbio-config-file)
-        analyze (get-analysis-fn bcbio-config)]
-    (map :out-file (map analyze templates))))
+        analyze (get-analysis-fn bcbio-config)
+        combined-file (:count-file bcbio-config)]
+    (combine-counts/write-combined-count-file count-dir combined-file)
+    (map analyze templates)))
 
 (defn -main [cur-type & args]
   (apply (case (keyword cur-type)
