@@ -1,4 +1,4 @@
-# vst+limma
+# deseq analysis
 # Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
 # analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
 
@@ -19,7 +19,7 @@ res = nbinomTest(DESeq.cds, levels(class)[1], levels(class)[2])
 
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
 out_table = data.frame(id=res$id, expr=res$baseMean, logFC=res$log2FoldChange,
-          pval=res$pval, padj=res$padj)
+          pval=res$pval, padj=res$padj, algorithm="deseq")
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
 write.table(counts(DESeq.cds, normalized=TRUE), normalized_file, quote=FALSE,
