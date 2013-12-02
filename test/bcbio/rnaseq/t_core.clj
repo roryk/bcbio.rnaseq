@@ -26,22 +26,24 @@
 (def test-config (parse-bcbio-config test-config-file test-out-dir))
 (def edger-template-file (get-resource "edgeR.template"))
 (defn file-exists? [f] (.exists (io/file f)))
-(facts
- "facts about running template files"
- (fact
-  "writing a combined count file is functional"
-  (write-combined-count-file count-dir test-count-file) => test-count-file)
- (fact
-  "running a single template works"
-  (let
-      [out-file (:out-file (run-template edger-template-file (get-analysis-config test-config)))]
-    (file-exists? out-file) => true)))
+;; (facts
+;;  "facts about running template files"
+;;  (fact
+;;   "writing a combined count file is functional"
+;;   (write-combined-count-file count-dir test-count-file) => test-count-file)
+;;  (fact
+;;   "running a single template works"
+;;   (let
+;;       [out-file (:out-file (run-template edger-template-file (get-analysis-config test-config)))]
+;;     (file-exists? out-file) => true)))
 
+(def seqc-dir (get-resource "seqc-counts"))
+(def test-config-file (get-resource "standardization.yaml"))
 (facts
  "facts about high level functions"
  (fact
   "run-analysis outputs several .tsv files"
-  (let [out-maps (run-analyses test-config-file count-dir)
+  (let [out-maps (run-analyses test-config-file seqc-dir)
         out-files (map :out-file out-maps)
         normalized-files (map :normalized-file out-maps)
         r-files (map :r-file out-maps)]

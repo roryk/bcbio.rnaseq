@@ -21,6 +21,10 @@
 (defn- get-condition [config]
   (map :condition (get-metadata config)))
 
+(defn- get-description [config]
+  (map :description (:details config)))
+
+
 
 (defn get-analysis-config [config]
   "create an analysis config from a parsed bcbio-nextgen sample file"
