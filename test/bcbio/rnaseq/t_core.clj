@@ -37,8 +37,8 @@
 ;;       [out-file (:out-file (run-template edger-template-file (get-analysis-config test-config)))]
 ;;     (file-exists? out-file) => true)))
 
-(def seqc-dir (get-resource "seqc-counts"))
-(def test-config-file (get-resource "standardization.yaml"))
+(def seqc-dir (get-resource "seqc/seqc-counts"))
+(def test-config-file (get-resource "seqc/bcbio_sample_config.yaml"))
 (facts
  "facts about high level functions"
  (fact
