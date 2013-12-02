@@ -15,7 +15,7 @@ edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
 edgeR.test = exactTest(edgeR.dgelist)
-edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$filteredData
+#edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$filteredData
 
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj
@@ -25,10 +25,9 @@ out_table$id = rownames(out_table)
 out_table$padj = p.adjust(out_table$PValue, method = "BH")
 out_table$algorithm = "edgeR"
 out_table$expr = 2^out_table$logCPM
-transform(out_table, expr = 2^logCPM)
 out_table = out_table[, c("id", "expr", "logFC", "PValue", "padj", "algorithm")]
 colnames(out_table) = c("id", "expr", "logFC", "pval", "padj", "algorithm")
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
-write.table(cpm(edgeR.dgelist, normalized.lib.sizes=FALSE), file=normalized_file,
-            quote=FALSE, row.names=FALSE, sep="\t")
+write.table(edgeR.dgelist$pseudo.counts, file=normalized_file,
+            quote=FALSE, sep="\t")
