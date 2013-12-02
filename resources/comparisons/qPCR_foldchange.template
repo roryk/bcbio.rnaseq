@@ -1,0 +1,18 @@
+analysis_dir = {{analysis-dir}}
+qpcr_file = {{qpcr-file}}
+#foldchange = read.table("foldchange_qpcr.tidy", header=TRUE, sep="\t")
+foldchange = read.table(qpcr_file, header=TRUE, sep="\t")
+in_files = list.files(analysis_dir, "*.tsv", full.names=TRUE)
+ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
+df = do.call(rbind, ldf)
+
+df = df[, c("id", "logFC", "algorithm")]
+colnames(df) = c("id", "logFC", "method")
+qpcr_foldchange = foldchange[, c("id", "logFC")]
+df = merge(df, qpcr_foldchange, by="id")
+colnames(df) = c("id", "seq_logFC", "method", "qPCR_logFC")
+ggplot(df, aes(seq_logFC, qPCR_logFC)) + geom_point() + facet_grid(. ~ method) +
+    xlab(expression(paste(log["2"],  " fold change via RNA-seq"))) +
+    ylab(expression(paste(log["2"], " fold change via qPCR")))
+         
+
