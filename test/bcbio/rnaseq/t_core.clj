@@ -5,7 +5,8 @@
    [bcbio.rnaseq.htseq-combine :only [load-counts write-combined-count-file]]
    [bcbio.rnaseq.templates :only [get-analysis-fn run-template]]
    [bcbio.rnaseq.config :only [parse-bcbio-config get-analysis-config]]
-   [bcbio.rnaseq.core :only [run-analyses]])
+   [bcbio.rnaseq.core :only [run-analyses run-comparisons]]
+   [bcbio.rnaseq.compare :only [make-fc-plot]])
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
@@ -48,3 +49,8 @@
         normalized-files (map :normalized-file out-maps)
         r-files (map :r-file out-maps)]
     (every? file-exists? (concat out-files normalized-files r-files)) => true)))
+
+(fact
+ "run-comparisons outputs a .pdf file"
+ (let [analysis-dir (get-resource "test-analysis")]
+   (file-exists? (make-fc-plot analysis-dir)) => true))

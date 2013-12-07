@@ -2,6 +2,9 @@
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
+(defn swap-directory [file dir]
+  (str (io/file dir (fs/base-name file))))
+
 (defn escape-quote [string]
   (str "\"" string "\""))
 

@@ -2,7 +2,8 @@
   (:use [bcbio.rnaseq.config :only [parse-bcbio-config]]
         [bcbio.rnaseq.templates :only [get-analysis-fn templates]]
         [bcbio.rnaseq.util]
-        [clojure.tools.cli :only [cli]])
+        [clojure.tools.cli :only [cli]]
+        [bcbio.rnaseq.compare :only [make-fc-plot]])
   (:require [bcbio.rnaseq.htseq-combine :as combine-counts]
             [clojure.java.io :as io])
   (:gen-class :main true))
@@ -19,8 +20,12 @@
     (combine-counts/write-combined-count-file count-files combined-file)
     (map analyze templates)))
 
+(defn run-comparisons [bcbio-config-file count-dir]
+  (let [analysis-configs (run-analyses bcbio-config-file count-dir)]
+    (map make-fc-plot analysis-configs)))
 
 (defn -main [cur-type & args]
   (apply (case (keyword cur-type)
-           :combine-counts combine-counts/cl-entry)
+           :combine-counts combine-counts/cl-entry
+           :run-comparisons run-comparisons)
          args))
