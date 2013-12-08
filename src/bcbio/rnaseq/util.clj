@@ -3,6 +3,7 @@
             [me.raynes.fs :as fs]))
 
 (defn swap-directory [file dir]
+  "/path/to/file -> /dir/file"
   (str (io/file dir (fs/base-name file))))
 
 (defn escape-quote [string]
