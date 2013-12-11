@@ -1,6 +1,7 @@
 (ns bcbio.rnaseq.templates
   (:use [clostache.parser :only [render]]
-        [bcbio.rnaseq.config :only [get-analysis-config parse-bcbio-config]]
+        [bcbio.rnaseq.config :only [get-analysis-config parse-bcbio-config
+                                    program-path get-config]]
         [bcbio.rnaseq.util]
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]
@@ -58,3 +59,8 @@
   (let [analysis-config (get-analysis-config config)]
     (fn [template-file]
       (run-template template-file analysis-config))))
+
+;; (defn cuffdiff-runner [comparison project-dir]
+;;   (let [cuffdiff (program-path :cuffdiff)]
+;;     (group-details comparison)))
+;; ;    (group-by #(get-in % [:metadata comparison]) (:details (get-config)))))
