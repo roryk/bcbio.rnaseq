@@ -1,7 +1,6 @@
 (ns bcbio.rnaseq.templates
   (:use [clostache.parser :only [render]]
-        [bcbio.rnaseq.config :only [get-analysis-config parse-bcbio-config
-                                    program-path get-config]]
+        [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]
@@ -9,6 +8,7 @@
 
 (def resource-dir (dirname (get-resource "edgeR.template")))
 (def templates (fs/glob (str resource-dir "*.template")))
+
 
 (defn- analysis-out-stem [template-file analysis-config]
   (str (io/file (:de-out-dir analysis-config)
@@ -50,15 +50,23 @@
 
 (defn run-template [template analysis-config]
   (let [config (add-out-files-to-config template analysis-config)]
+    (safe-makedir (:de-out-dir analysis-config))
     (write-template template config)
     (sh "Rscript" (:r-file config))
     config))
 
-(defn get-analysis-fn [config]
+(defn get-analysis-config [key]
+  "create an analysis config from a parsed bcbio-nextgen sample file"
+  {:de-out-dir (dirname (combined-count-file))
+   :count-file (combined-count-file)
+   :comparison (distinct (metadata-key key))
+   :conditions (metadata-key key)
+   :condition-name (comparison-name key)})
+
+(defn get-analysis-fn [key]
   "get a function that will run an analysis on a template file"
-  (let [analysis-config (get-analysis-config config)]
     (fn [template-file]
-      (run-template template-file analysis-config))))
+      (run-template template-file (get-analysis-config key))))
 
 ;; (defn cuffdiff-runner [comparison project-dir]
 ;;   (let [cuffdiff (program-path :cuffdiff)]

@@ -55,3 +55,7 @@
   (when-not (directory-exists? dir)
     (.mkdir (io/file dir))))
 
+(defn file-exists? [fname]
+  (.exists (io/as-file fname)))
+
+

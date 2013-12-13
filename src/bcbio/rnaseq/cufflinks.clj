@@ -9,6 +9,7 @@
 
 (defn- align-files []
   (map #(str (fs/file (upload-dir) (str % "-ready.bam"))) (sample-names)))
+
 (defn group-samples [key]
   (let
       [m (zipmap (align-files) (metadata-key :condition))]
@@ -51,20 +52,19 @@
 (defn bamfile-arg [key]
   (string/join " " (map #(string/join "," %) (vals (bam-by-key key)))))
 
-(defn bamfile-arg [key]
-  (map #(string/join "," %) (vals (bam-by-key key))))
 
-(defn run-cuffdiff [gtf-file key cores mask-file library-type]
+(defn run-cuffdiff [cores key]
   "Run a Cuffdiff commandline"
-  (let [cuffdiff (program-path :cuffdiff)]
+  (let [cuffdiff (program-path :cuffdiff)
+        library-arg (str "fr-" (library-type))
+        output-dir (str (fs/file (upload-dir) "cufflinks" (labels-arg key "_vs_")))]
+    (fs/mkdirs output-dir)
     (apply sh (flatten [cuffdiff
-                      "--output-dir" (str (fs/file (upload-dir)
-                                          "cufflinks" (labels-arg key "_vs_")))
+                      "--output-dir" output-dir
                       "--labels" (labels-arg key ",")
                       "--num-threads" (str cores)
-                      "--mask-file" mask-file
                       "--dispersion-method" (correction (bamfiles key))
                       "--library-norm-method" "quartile"
-                      "--library-type" (str "fr-" library-type)
-                      gtf-file
+                      "--library-type" library-arg
+                      (gtf-file)
                       (bamfile-arg key)]))))
