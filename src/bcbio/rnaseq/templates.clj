@@ -57,7 +57,7 @@
 
 (defn get-analysis-config [key]
   "create an analysis config from a parsed bcbio-nextgen sample file"
-  {:de-out-dir (dirname (combined-count-file))
+  {:de-out-dir (analysis-dir)
    :count-file (combined-count-file)
    :comparison (distinct (metadata-key key))
    :conditions (metadata-key key)

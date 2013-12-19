@@ -24,7 +24,6 @@
   "running a group of analyses produces output files"
   (every? file-exists? (map :out-file (run-analyses :panel))) => true))
 
-
 ;; (facts
 ;;  "facts about running template files"
 ;;  (fact
