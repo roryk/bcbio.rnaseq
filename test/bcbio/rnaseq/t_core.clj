@@ -17,12 +17,12 @@
  (fact
   "running a single template file is functional"
   (let [template (first templates)
-        analysis-config (get-analysis-config :condition)]
+        analysis-config (get-analysis-config :panel)]
     (write-combined-count-file (count-files) (combined-count-file))
     (file-exists? (:out-file (run-template template analysis-config))) => true))
  (fact
   "running a group of analyses produces output files"
-  (run-analyses :condition) => true))
+  (every? file-exists? (map :out-file (run-analyses :panel))) => true))
 
 
 ;; (facts

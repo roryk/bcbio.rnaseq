@@ -6,7 +6,8 @@
 
 (def default-bcbio-system (get-resource "bcbio_system.yaml"))
 (def default-bcbio-sample (get-resource "bcbio_sample.yaml"))
-(def default-bcbio-project "/v-data/bcbio-nextgen/tests/test_automated_output/upload/project_2013-12-12/project-summary.yaml")
+;;(def default-bcbio-project (get-resource "project-summary.yaml"))
+(def default-bcbio-project (get-resource "seqc/bcbio_upload/final/131111_standardization/project-summary.yaml"))
 
 (def cfg-state (atom {}))
 (def get-config #(deref cfg-state))
