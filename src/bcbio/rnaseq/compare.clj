@@ -12,10 +12,11 @@
 (defn make-fc-plot [analysis-dir]
   (let [template-file (get-resource "comparisons/qPCR_foldchange.template")
         out-file (swap-directory "fc-plot.pdf" analysis-dir)
+        qpcr-file (get-resource "seqc/qpcr/foldchange_qpcr.tidy")
         template-config {:out-file (escape-quote out-file)
-                         :qpcr-file (get-resource "seqc/qPCR/foldchange_qpcr.tidy")
-                         :analysis-dir analysis-dir}]
-    (sh "Rscript" (write-template template-file analysis-dir template-config))
+                         :qpcr-file (escape-quote qpcr-file)
+                         :analysis-dir (escape-quote analysis-dir)}]
+    (apply sh ["Rscript" write-template template-file analysis-dir template-config])
     out-file))
 
 

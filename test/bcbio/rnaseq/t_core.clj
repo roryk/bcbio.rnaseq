@@ -6,7 +6,8 @@
    [bcbio.rnaseq.templates :only [templates get-analysis-config run-template]]
    [bcbio.rnaseq.config]
    [bcbio.rnaseq.core :only [run-analyses run-comparisons]]
-   [bcbio.rnaseq.compare :only [make-fc-plot]])
+   [bcbio.rnaseq.compare :only [make-fc-plot]]
+   [bcbio.rnaseq.cufflinks :only [run-cuffdiff]])
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
@@ -22,7 +23,16 @@
     (file-exists? (:out-file (run-template template analysis-config))) => true))
  (fact
   "running a group of analyses produces output files"
-  (every? file-exists? (map :out-file (run-analyses :panel))) => true))
+  (every? file-exists? (map :out-file (run-analyses :panel))) => true)
+ (fact
+  "making the comparison plot automatically works"
+  (file-exists? (make-fc-plot (analysis-dir))) => true))
+
+(facts
+ "facts about cufflinks"
+ (fact
+  "running Cuffdiff works"
+  (run-cuffdiff 1 :panel) => nil))
 
 ;; (facts
 ;;  "facts about running template files"

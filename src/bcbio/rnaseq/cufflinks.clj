@@ -1,6 +1,7 @@
 (ns bcbio.rnaseq.cufflinks
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
+        [bcbio.run.itx :only [run-cmd check-run]]
         [clojure.java.shell :only [sh]])
   (:require [bcbio.run.itx :as itx]
             [me.raynes.fs :as fs]
@@ -8,15 +9,15 @@
 
 
 (defn- align-files []
-  (map #(str (fs/file (upload-dir) (str % "-ready.bam"))) (sample-names)))
+  (map #(str (fs/file (upload-dir) % (str % "-ready.bam"))) (sample-names)))
 
 (defn group-samples [key]
   (let
-      [m (zipmap (align-files) (metadata-key :condition))]
+      [m (zipmap (align-files) (metadata-key key))]
     (group-by val m)))
 
 (defn- group-details [key]
-  (group-by #(get-in % [:metadata key]) (:details (get-config))))
+  (group-by #(get-in % [:metadata key]) (:samples (get-config))))
 
 (defn- group-details-to-samples [m]
   (map :description (val m)))
@@ -52,19 +53,30 @@
 (defn bamfile-arg [key]
   (string/join " " (map #(string/join "," %) (vals (bam-by-key key)))))
 
-
 (defn run-cuffdiff [cores key]
   "Run a Cuffdiff commandline"
   (let [cuffdiff (program-path :cuffdiff)
         library-arg (str "fr-" (library-type))
-        output-dir (str (fs/file (upload-dir) "cufflinks" (labels-arg key "_vs_")))]
+        output-dir (str (fs/file (analysis-dir) "cufflinks" (labels-arg key "_vs_")))]
     (fs/mkdirs output-dir)
-    (apply sh (flatten [cuffdiff
-                      "--output-dir" output-dir
-                      "--labels" (labels-arg key ",")
-                      "--num-threads" (str cores)
-                      "--dispersion-method" (correction (bamfiles key))
-                      "--library-norm-method" "quartile"
-                      "--library-type" library-arg
-                      (gtf-file)
-                      (bamfile-arg key)]))))
+    ;; (flatten [cuffdiff
+    ;;           "--output-dir" output-dir
+    ;;           "--labels" (labels-arg key ",")
+    ;;           "--num-threads" (str cores)
+    ;;           "--dispersion-method" (correction (bamfiles key))
+    ;;           "--library-norm-method" "quartile"
+    ;;           "--library-type" library-arg
+    ;;           (gtf-file)
+    ;;           (bamfile-arg key)])))
+;;    (apply sh
+
+(check-run (string/join " "
+            [cuffdiff
+                                 "--output-dir" output-dir
+                                 "--labels" (labels-arg key ",")
+                                 "--num-threads" (str cores)
+                                 "--dispersion-method" (correction (bamfiles key))
+                                 "--library-norm-method" "quartile"
+                                 "--library-type" library-arg
+                                 (gtf-file)
+                                 (bamfile-arg key)]) "tmp")))
