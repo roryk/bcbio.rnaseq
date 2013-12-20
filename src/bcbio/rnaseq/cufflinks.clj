@@ -1,7 +1,7 @@
 (ns bcbio.rnaseq.cufflinks
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
-        [bcbio.run.itx :only [run-cmd check-run]]
+        [bcbio.run.itx :only [check-run]]
         [clojure.java.shell :only [sh]])
   (:require [bcbio.run.itx :as itx]
             [me.raynes.fs :as fs]
@@ -59,24 +59,13 @@
         library-arg (str "fr-" (library-type))
         output-dir (str (fs/file (analysis-dir) "cufflinks" (labels-arg key "_vs_")))]
     (fs/mkdirs output-dir)
-    ;; (flatten [cuffdiff
-    ;;           "--output-dir" output-dir
-    ;;           "--labels" (labels-arg key ",")
-    ;;           "--num-threads" (str cores)
-    ;;           "--dispersion-method" (correction (bamfiles key))
-    ;;           "--library-norm-method" "quartile"
-    ;;           "--library-type" library-arg
-    ;;           (gtf-file)
-    ;;           (bamfile-arg key)])))
-;;    (apply sh
-
-(check-run (string/join " "
-            [cuffdiff
-                                 "--output-dir" output-dir
-                                 "--labels" (labels-arg key ",")
-                                 "--num-threads" (str cores)
-                                 "--dispersion-method" (correction (bamfiles key))
-                                 "--library-norm-method" "quartile"
-                                 "--library-type" library-arg
-                                 (gtf-file)
-                                 (bamfile-arg key)]) "tmp")))
+    (check-run (string/join " "
+                            [cuffdiff
+                             "--output-dir" output-dir
+                             "--labels" (labels-arg key ",")
+                             "--num-threads" (str cores)
+                             "--dispersion-method" (correction (bamfiles key))
+                             "--library-norm-method" "quartile"
+                             "--library-type" library-arg
+                             (gtf-file)
+                             (bamfile-arg key)]) "tmp")))
