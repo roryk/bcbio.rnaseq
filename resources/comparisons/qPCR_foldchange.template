@@ -1,10 +1,10 @@
 library(ggplot2)
-analysis_dir = {{{analysis-dir}}}
+#analysis_dir = {{{analysis-dir}}}
 qpcr_file = {{{qpcr-file}}}
 out_file = {{{out-file}}}
-#foldchange = read.table("foldchange_qpcr.tidy", header=TRUE, sep="\t")
 foldchange = read.table(qpcr_file, header=TRUE, sep="\t")
-in_files = list.files(analysis_dir, "*.tsv", full.names=TRUE)
+#in_files = list.files(analysis_dir, "*.tsv", full.names=TRUE)
+in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
 
