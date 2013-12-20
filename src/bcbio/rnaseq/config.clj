@@ -50,6 +50,6 @@
   (map #(str (fs/file (upload-dir) % (str % "-ready.counts"))) (sample-names)))
 
 (defn comparison-name [key]
-  (clojure.string/join "_vs_" (distinct (metadata-key key))))
+  (clojure.string/join "_vs_" (sort (distinct (metadata-key key)))))
 (def combined-count-file
   #(str (fs/file (analysis-dir) "combined.counts")))

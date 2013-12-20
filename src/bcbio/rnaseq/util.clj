@@ -43,10 +43,13 @@
   (str (dirname path) (base-stem path) extension))
 
 (defn seq-to-factor [xs]
-  "(seq-to-factor [1, 2, 3]) => 'c(1, 2, 3)'"
+  "(seq-to-factor [1, 2, 3]) => 'factor(c(1, 2, 3), levels=c(1,2,3))'"
   (str "factor(c(" (clojure.string/join "," (map escape-quote xs))
        "), levels=c(" (clojure.string/join "," (map escape-quote
                                                     (vec (apply sorted-set xs)))) "))"))
+(defn seq-to-rlist [xs]
+  "(seq-to-rlist [1, 2, 3]) => 'c(1, 2, 3)'"
+  (str "c(" (clojure.string/join "," (map escape-quote xs)) ")"))
 
 (defn- directory-exists? [dir]
   (.isDirectory (io/file dir)))

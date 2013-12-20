@@ -5,11 +5,11 @@
    [bcbio.rnaseq.htseq-combine :only [load-counts write-combined-count-file]]
    [bcbio.rnaseq.templates :only [templates get-analysis-config run-template]]
    [bcbio.rnaseq.config]
-   [bcbio.rnaseq.core :only [run-analyses run-comparisons]]
    [bcbio.rnaseq.compare :only [make-fc-plot]]
    [bcbio.rnaseq.cufflinks :only [run-cuffdiff]])
   (:require [clojure.java.io :as io]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs]
+            [bcbio.rnaseq.core :as core]))
 
 (setup-config default-bcbio-project)
 
@@ -23,41 +23,18 @@
     (file-exists? (:out-file (run-template template analysis-config))) => true))
  (fact
   "running a group of analyses produces output files"
-  (every? file-exists? (map :out-file (run-analyses :panel))) => true)
+  (every? file-exists? (map :out-file (core/run-R-analyses :panel))) => true)
  (fact
   "making the comparison plot automatically works"
-  (file-exists? (make-fc-plot (analysis-dir))) => true))
+  (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*.tsv")))]
+    (file-exists? (make-fc-plot in-files)) => true)))
 
 (facts
  "facts about cufflinks"
- (fact
+  (fact
   "running Cuffdiff works"
-  (run-cuffdiff 1 :panel) => nil))
+  (file-exists? (:out-file (core/run-cuffdiff :panel))) => true))
 
-;; (facts
-;;  "facts about running template files"
-;;  (fact
-;;   "writing a combined count file is functional"
-;;   (write-combined-count-file count-dir test-count-file) => test-count-file)
-;;  (fact
-;;   "running a single template works"
-;;   (let
-;;       [out-file (:out-file (run-template edger-template-file (get-analysis-config test-config)))]
-;;     (file-exists? out-file) => true)))
-
-;; (def seqc-dir (get-resource "seqc/seqc-counts"))
-;; (def test-config-file (get-resource "seqc/bcbio_sample_config.yaml"))
-;; (facts
-;;  "facts about high level functions"
-;;  (fact
-;;   "run-analysis outputs several .tsv files"
-;;   (let [out-maps (run-analyses test-config-file seqc-dir)
-;;         out-files (map :out-file out-maps)
-;;         normalized-files (map :normalized-file out-maps)
-;;         r-files (map :r-file out-maps)]
-;;     (every? file-exists? (concat out-files normalized-files r-files)) => true)))
-
-;; (fact
-;;  "run-comparisons outputs a .pdf file"
-;;  (let [analysis-dir (get-resource "test-analysis")]
-;;    (file-exists? (make-fc-plot analysis-dir)) => true))
+(fact
+ "combining R analyses and cuffdiff works"
+ (file-exists? (core/run-comparisons :panel)) => true)

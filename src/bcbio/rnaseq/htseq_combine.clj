@@ -31,6 +31,7 @@
    (cons "id" (map base-stem count-files))))
 
 (defn drop-last-rows [dataset n]
+  "removes the last n rows from a Incanter dataset"
   (sel dataset :except-rows (range (- (nrow dataset) 5) (nrow dataset))))
 
 (defn write-combined-count-file
@@ -40,9 +41,7 @@
        out-file)
      (do
        (io/make-parents (io/as-file out-file))
-         ; last 5 rows of htsseq-count datasets are summary rows
-       (save (drop-last-rows (combine-count-files count-files) 5) out-file
-               :delim "\t")
+       (save (combine-count-files count-files) out-file :delim "\t")
        out-file))
   ([count-files]
      (let [count-dir (dirname (first count-files))]

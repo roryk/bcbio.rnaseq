@@ -5,17 +5,31 @@
         [clojure.tools.cli :only [cli]]
         [bcbio.rnaseq.compare :only [make-fc-plot]])
   (:require [bcbio.rnaseq.htseq-combine :as combine-counts]
-            [clojure.java.io :as io])
+            [bcbio.rnaseq.cufflinks :as cufflinks]
+            [clojure.java.io :as io]
+            [me.raynes.fs :as fs])
   (:gen-class :main true))
 
-(defn run-analyses [key]
+(defn run-R-analyses [key]
   "run all of the template files using key as the comparison field in the
    metadata entries"
   (combine-counts/write-combined-count-file (count-files) (combined-count-file))
   (map (get-analysis-fn key) templates))
 
+(defn run-cuffdiff [key]
+  (let [out-file (str (fs/file (analysis-dir)
+                               (str "cuffdiff_"
+                                    (comparison-name key) ".tsv")))]
+    (when-not (file-exists? out-file)
+      (cufflinks/write-gene-info (cufflinks/run-cuffdiff 1 key) out-file))
+    {:out-file out-file}))
+
 (defn run-comparisons [key]
-  (map make-fc-plot (run-analyses key)))
+  (let [cuffdiff-out (run-cuffdiff key)
+        r-analyses-out (run-R-analyses key)
+        result-files (conj (map :out-file r-analyses-out)
+                           (:out-file cuffdiff-out))]
+    (make-fc-plot result-files)))
 
 (defn compare-callers [bcbio-project-file]
   )
