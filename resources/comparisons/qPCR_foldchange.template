@@ -1,21 +1,60 @@
 library(ggplot2)
-#analysis_dir = {{{analysis-dir}}}
+library(CHBUtils)
 qpcr_file = {{{qpcr-file}}}
-out_file = {{{out-file}}}
+FC_file = {{{out-file}}}
 foldchange = read.table(qpcr_file, header=TRUE, sep="\t")
-#in_files = list.files(analysis_dir, "*.tsv", full.names=TRUE)
 in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
+ROC_file = paste(dirname(FC_file), "roc-plot.pdf", sep="/")
+AUC_file = paste(dirname(FC_file), "auc-plot.pdf", sep="/")
 
-df = df[, c("id", "logFC", "algorithm")]
-colnames(df) = c("id", "logFC", "method")
-qpcr_foldchange = foldchange[, c("id", "logFC")]
-df = merge(df, qpcr_foldchange, by="id")
-colnames(df) = c("id", "seq_logFC", "method", "qPCR_logFC")
-p = ggplot(df, aes(seq_logFC, qPCR_logFC)) + geom_point() + facet_grid(. ~ method) +
-    xlab(expression(paste(log["2"],  " fold change via RNA-seq"))) +
-    ylab(expression(paste(log["2"], " fold change via qPCR")))
-ggsave(filename=out_file, plot=p)
-         
+plot_FC = function(df) {
+    df = df[, c("id", "logFC", "algorithm")]
+    colnames(df) = c("id", "logFC", "method")
+    qpcr_foldchange = foldchange[, c("id", "logFC")]
+    df = merge(df, qpcr_foldchange, by="id")
+    colnames(df) = c("id", "seq_logFC", "method", "qPCR_logFC")
+    p = ggplot(df, aes(seq_logFC, qPCR_logFC)) + geom_point() + facet_grid(. ~ method) +
+        xlab(expression(paste(log["2"],  " fold change via RNA-seq"))) +
+            ylab(expression(paste(log["2"], " fold change via qPCR")))
+    ggsave(filename=FC_file, plot=p)
+}
 
+plot_ROC = function(df) {
+    df = df[, c("id", "padj", "algorithm")]
+    colnames = c("id", "padj", "method")
+    qpcr_foldchange = foldchange[, c("id", "padj")]
+    df = merge(df, qpcr_foldchange, by="id")
+    colnames(df) = c("id", "padj", "method", "qPCR_padj")
+    df$pred = 1 - df$padj
+    df$qPCR_DE = as.numeric(df$qPCR_padj < 0.05)
+    p = ggROC(df, "method", "qPCR_DE", "pred", title="")
+    ggsave(filename=ROC_file, plot=p)
+}
+
+plot_AUC = function(df) {
+    cutoffs = seq(0.01, 0.20, 0.01)
+    df = df[, c("id", "padj", "algorithm")]
+    colnames = c("id", "padj", "method")
+    qpcr_foldchange = foldchange[, c("id", "padj")]
+    colnames(qpcr_foldchange) = c("id", "qPCR_padj")
+    df = merge(df, qpcr_foldchange, by="id")
+    colnames(df) = c("id", "padj", "method", "qPCR_padj")
+    df$pred = 1 - df$padj
+    complete = df[complete.cases(df),]
+    plotdata = c()
+    for (cutoff in cutoffs) {
+        complete$qPCR_DE = as.numeric(complete$qPCR_padj < cutoff)
+        out = ddply(complete, "method",
+            function(x) with(x, rocdata(grp=qPCR_DE, pred=pred)$stats))
+        out$cutoff = cutoff
+        plotdata = rbind(plotdata, out)
+    }
+    p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method))
+    ggsave(filename=AUC_file, plot=p)
+}
+
+plot_FC(df)
+plot_ROC(df)
+plot_AUC(df)
