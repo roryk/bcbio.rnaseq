@@ -41,18 +41,19 @@ plot_AUC = function(df) {
     colnames(qpcr_foldchange) = c("id", "qPCR_padj")
     df = merge(df, qpcr_foldchange, by="id")
     colnames(df) = c("id", "padj", "method", "qPCR_padj")
-    df$pred = 1 - df$padj
+    df$qPCR_DE = as.numeric(df$qPCR_padj < 0.05)
     complete = df[complete.cases(df),]
     plotdata = c()
     for (cutoff in cutoffs) {
         complete$qPCR_DE = as.numeric(complete$qPCR_padj < cutoff)
         out = ddply(complete, "method",
-            function(x) with(x, rocdata(grp=qPCR_DE, pred=pred)$stats))
+            function(x) data.frame(roc(x[,"qPCR_DE"], x[,"padj"])[c("auc")]))
         out$cutoff = cutoff
         plotdata = rbind(plotdata, out)
     }
     p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method))
     ggsave(filename=AUC_file, plot=p)
+    return(p)
 }
 
 plot_FC(df)
