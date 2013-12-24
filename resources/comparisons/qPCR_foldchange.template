@@ -1,3 +1,5 @@
+library(pROC)
+library(plyr)
 library(ggplot2)
 library(CHBUtils)
 qpcr_file = {{{qpcr-file}}}
@@ -29,7 +31,7 @@ plot_ROC = function(df) {
     colnames(df) = c("id", "padj", "method", "qPCR_padj")
     df$pred = 1 - df$padj
     df$qPCR_DE = as.numeric(df$qPCR_padj < 0.05)
-    p = ggROC(df, "method", "qPCR_DE", "pred", title="")
+    p = ggROC(df, "method", "qPCR_DE", "pred")
     ggsave(filename=ROC_file, plot=p)
 }
 

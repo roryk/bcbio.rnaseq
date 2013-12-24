@@ -38,3 +38,10 @@
 (fact
  "combining R analyses and cuffdiff works"
  (file-exists? (core/run-comparisons :panel)) => true)
+
+(fact
+ "making the seqc plots work"
+ (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
+       in-files (fs/glob (str dirname "*.tsv"))]
+   (alter-config! (assoc (get-config) :analysis-dir dirname))
+   (make-fc-plot in-files) => true))
