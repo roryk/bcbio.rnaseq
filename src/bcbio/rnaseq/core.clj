@@ -39,8 +39,13 @@
     (conj (map :out-file r-analyses-out) (:out-file cuffdiff-out))))
 
 (defn compare-callers [in-files]
-  (apply sh ["Rscript" (write-template caller-comparison-template
-                                       {:in-files (seq-to-rlist in-files)})]))
+  (let [out-dir (dirname (first in-files))
+        config {:in-files (seq-to-rlist in-files)
+                :fc-plot (str (fs/file out-dir "logFC_comparison_plot.pdf"))
+                :expr-plot (str (fs/file out-dir "log10expr_comparison_plot.pdf"))
+                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))}]
+    (apply sh ["Rscript" (write-template caller-comparison-template config)])
+    config))
 
 (defn -main [cur-type & args]
   (apply (case (keyword cur-type)

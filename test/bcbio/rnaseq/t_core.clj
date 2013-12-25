@@ -50,4 +50,4 @@
  "making comparison plots from a project works"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*.tsv"))]
-   (core/compare-callers in-files) => true))
+   (file-exists? (:fc-plot (core/compare-callers in-files))) => true))

@@ -3,26 +3,26 @@ library(reshape)
 in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
-out_dir = dirname(in_files[1])
+fc_plot = {{{fc-plot}}}
+expr_plot = {{{expr-plot}}}
+pval_plot = {{{pval-plot}}}
 
 df$log10expr = log(df$expr)
 complete = df[complete.cases(df),]
 melted = melt(complete, id=c("algorithm", "id"))
 
-pair_plot = function(var) {
-    out_file = paste(var, "_comparison_plot.pdf", sep="")
-    out_path = file.path(out_dir, out_file)
+pair_plot = function(var, out_file) {
     casted = cast(subset(melted, variable ==var), id  ~ algorithm + variable)
     rownames(casted) = casted$id
     casted$id = NULL
     p = plotmatrix(casted)
-    ggsave(filename=out_path, plot=p)
+    ggsave(filename=out_file, plot=p)
     return(p)
 }
 
-pair_plot("pval")
-pair_plot("logFC")
-pair_plot("log10expr")
+pair_plot("pval", pval_plot)
+pair_plot("logFC", fc_plot)
+pair_plot("log10expr", expr_plot)
     
 
 ## casted = cast(subset(melted, variable == "pval"), id  ~ algorithm + variable)
