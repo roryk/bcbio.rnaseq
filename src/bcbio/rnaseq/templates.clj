@@ -8,6 +8,7 @@
 
 (def resource-dir (dirname (get-resource "edgeR.template")))
 (def templates (fs/glob (str resource-dir "*.template")))
+(def caller-comparison-template (get-resource "comparisons/compare.template"))
 
 
 (defn- analysis-out-stem [template-file analysis-config]

@@ -1,23 +1,22 @@
 library(ggplot2)
 library(reshape)
-library(GGally)
-analysis_dir = {{analysis-dir}}
-analysis_dir = "de-analysis"
-in_files = list.files(analysis_dir, "*.tsv", full.names=TRUE)
+in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
+out_dir = dirname(in_files[1])
 
 df$log10expr = log(df$expr)
 complete = df[complete.cases(df),]
 melted = melt(complete, id=c("algorithm", "id"))
 
 pair_plot = function(var) {
-    out_file = paste(var, "_plot.pdf", sep="")
+    out_file = paste(var, "_comparison_plot.pdf", sep="")
+    out_path = file.path(out_dir, out_file)
     casted = cast(subset(melted, variable ==var), id  ~ algorithm + variable)
     rownames(casted) = casted$id
     casted$id = NULL
-    casted = casted[complete.cases(casted),]
-    p = ggpairs(casted)
+    p = plotmatrix(casted)
+    ggsave(filename=out_path, plot=p)
     return(p)
 }
 
@@ -26,42 +25,42 @@ pair_plot("logFC")
 pair_plot("log10expr")
     
 
-casted = cast(subset(melted, variable == "pval"), id  ~ algorithm + variable)
-rownames(casted) = casted$id
-casted$id = NULL
-casted = casted[complete.cases(casted),]
-ggpairs(casted)
+## casted = cast(subset(melted, variable == "pval"), id  ~ algorithm + variable)
+## rownames(casted) = casted$id
+## casted$id = NULL
+## casted = casted[complete.cases(casted),]
+## ggpairs(casted)
 
-casted = cast(subset(melted, variable == "logFC"), id  ~ algorithm + variable)
-rownames(casted) = casted$id
-casted$id = NULL
-casted = casted[complete.cases(casted),]
-ggpairs(casted)
+## casted = cast(subset(melted, variable == "logFC"), id  ~ algorithm + variable)
+## rownames(casted) = casted$id
+## casted$id = NULL
+## casted = casted[complete.cases(casted),]
+## ggpairs(casted)
 
-casted = cast(subset(melted, variable == "log10expr"), id  ~ algorithm + variable)
-rownames(casted) = casted$id
-casted$id = NULL
-casted = casted[complete.cases(casted),]
-ggpairs(casted)
+## casted = cast(subset(melted, variable == "log10expr"), id  ~ algorithm + variable)
+## rownames(casted) = casted$id
+## casted$id = NULL
+## casted = casted[complete.cases(casted),]
+## ggpairs(casted)
 
-jaccard = function(df, column, cutoff=0.05) {
-    algorithms = unique(df$algorithm)
-    sig = list()
-    for(alg in algorithms) {
-        sig[alg] = list(subset(df, algorithm == alg & df[,column] < cutoff)$id)
-    }
-    return(sig)
-    ji = list()
-    for(alg in algorithms) {
-        for(alg2 in algorithms) {
-            comparison = paste(alg, "_vs_", alg2, sep="")
-            alg_intersection = intersect(sig[alg], sig[alg2])
-            alg_union = union(sig[alg], sig[alg2])
-            ji[comparison] = length(alg_intersection) / length(alg_union)
-            print(alg_intersection)
-        }
-    }
-    return(ji)
-}
+## jaccard = function(df, column, cutoff=0.05) {
+##     algorithms = unique(df$algorithm)
+##     sig = list()
+##     for(alg in algorithms) {
+##         sig[alg] = list(subset(df, algorithm == alg & df[,column] < cutoff)$id)
+##     }
+##     return(sig)
+##     ji = list()
+##     for(alg in algorithms) {
+##         for(alg2 in algorithms) {
+##             comparison = paste(alg, "_vs_", alg2, sep="")
+##             alg_intersection = intersect(sig[alg], sig[alg2])
+##             alg_union = union(sig[alg], sig[alg2])
+##             ji[comparison] = length(alg_intersection) / length(alg_union)
+##             print(alg_intersection)
+##         }
+##     }
+##     return(ji)
+## }
 
-jaccard(df)
+## jaccard(df)

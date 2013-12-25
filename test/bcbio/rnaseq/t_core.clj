@@ -44,4 +44,10 @@
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*.tsv"))]
    (alter-config! (assoc (get-config) :analysis-dir dirname))
-   (make-fc-plot in-files) => true))
+   (file-exists? (make-fc-plot in-files)) => true))
+
+(fact
+ "making comparison plots from a project works"
+ (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
+       in-files (fs/glob (str dirname "*.tsv"))]
+   (core/compare-callers in-files) => true))
