@@ -8,7 +8,7 @@
                  [org.clojure/data.json "0.2.2"]
                  [clj-http "0.7.5"]
                  [org.clojure/math.combinatorics "0.0.4"]
-                 [org.clojure/tools.cli "0.2.4"]
+                 [org.clojure/tools.cli "0.3.0"]
                  [bcbio.run "0.0.1-SNAPSHOT"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :jvm-opts ["-Xmx2g"]
