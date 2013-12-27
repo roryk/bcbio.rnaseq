@@ -25,24 +25,6 @@ pair_plot("logFC", fc_plot)
 pair_plot("log10expr", expr_plot)
     
 
-## casted = cast(subset(melted, variable == "pval"), id  ~ algorithm + variable)
-## rownames(casted) = casted$id
-## casted$id = NULL
-## casted = casted[complete.cases(casted),]
-## ggpairs(casted)
-
-## casted = cast(subset(melted, variable == "logFC"), id  ~ algorithm + variable)
-## rownames(casted) = casted$id
-## casted$id = NULL
-## casted = casted[complete.cases(casted),]
-## ggpairs(casted)
-
-## casted = cast(subset(melted, variable == "log10expr"), id  ~ algorithm + variable)
-## rownames(casted) = casted$id
-## casted$id = NULL
-## casted = casted[complete.cases(casted),]
-## ggpairs(casted)
-
 ## jaccard = function(df, column, cutoff=0.05) {
 ##     algorithms = unique(df$algorithm)
 ##     sig = list()
