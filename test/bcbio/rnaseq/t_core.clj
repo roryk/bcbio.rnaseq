@@ -6,10 +6,20 @@
    [bcbio.rnaseq.templates :only [templates get-analysis-config run-template]]
    [bcbio.rnaseq.config]
    [bcbio.rnaseq.compare :only [make-fc-plot]]
-   [bcbio.rnaseq.cufflinks :only [run-cuffdiff]])
+   [bcbio.rnaseq.cufflinks :only [run-cuffdiff]]
+   [clojure.java.shell :only [sh]])
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]
             [bcbio.rnaseq.core :as core]))
+
+(def bcbio-rnaseq-jar
+  "/v-data/bcbio.rnaseq/target/bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar")
+
+(defn this-jar
+  "utility function to get the name of jar in which this function is invoked"
+  [& [ns]]
+  (-> (or ns (class *ns*))
+      .getProtectionDomain .getCodeSource .getLocation .getPath))
 
 (setup-config default-bcbio-project)
 
@@ -51,3 +61,9 @@
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*.tsv"))]
    (file-exists? (:fc-plot (core/compare-callers in-files))) => true))
+
+(fact
+ "running the comparisons on a bcbio-nextgen project file works"
+ (let [out-map (core/main "compare-bcbio-run"
+                          default-bcbio-project "panel")]
+   (file-exists? (:fc-plot out-map)) => true))

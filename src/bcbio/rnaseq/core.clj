@@ -3,13 +3,13 @@
                                        caller-comparison-template]]
         [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
-        [clojure.tools.cli :only [cli]]
         [bcbio.rnaseq.compare :only [make-fc-plot write-template]]
         [clojure.java.shell :only [sh]])
   (:require [bcbio.rnaseq.htseq-combine :as combine-counts]
             [bcbio.rnaseq.cufflinks :as cufflinks]
             [clojure.java.io :as io]
-            [me.raynes.fs :as fs])
+            [me.raynes.fs :as fs]
+            [clojure.tools.cli :refer [parse-opts]])
   (:gen-class :main true))
 
 (defn run-R-analyses [key]
@@ -43,12 +43,23 @@
         config {:in-files (seq-to-rlist in-files)
                 :fc-plot (str (fs/file out-dir "logFC_comparison_plot.pdf"))
                 :expr-plot (str (fs/file out-dir "log10expr_comparison_plot.pdf"))
-                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))}]
-    (apply sh ["Rscript" (write-template caller-comparison-template config)])
+                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))}
+        template-config (apply-to-keys config escape-quote
+                                       :fc-plot :expr-plot :pval-plot)]
+    (apply sh ["Rscript" (write-template caller-comparison-template template-config)])
     config))
 
-(defn -main [cur-type & args]
+(defn compare-bcbio-run [project-file key]
+  (setup-config project-file)
+  (compare-callers (run-callers key)))
+
+(defn compare-bcbio-cl-entry [& args]
+  (let [[project-file key] (:arguments (parse-opts args [["-h" "--help"]]))]
+    (compare-bcbio-run project-file (keyword key))))
+
+(defn main [cur-type & args]
   (apply (case (keyword cur-type)
+           :compare-bcbio-run compare-bcbio-cl-entry
            :combine-counts combine-counts/cl-entry
            :run-comparisons run-comparisons
            :compare-callers compare-callers)
