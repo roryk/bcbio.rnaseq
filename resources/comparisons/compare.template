@@ -25,24 +25,27 @@ pair_plot("logFC", fc_plot)
 pair_plot("log10expr", expr_plot)
     
 
-## jaccard = function(df, column, cutoff=0.05) {
-##     algorithms = unique(df$algorithm)
-##     sig = list()
-##     for(alg in algorithms) {
-##         sig[alg] = list(subset(df, algorithm == alg & df[,column] < cutoff)$id)
-##     }
-##     return(sig)
-##     ji = list()
-##     for(alg in algorithms) {
-##         for(alg2 in algorithms) {
-##             comparison = paste(alg, "_vs_", alg2, sep="")
-##             alg_intersection = intersect(sig[alg], sig[alg2])
-##             alg_union = union(sig[alg], sig[alg2])
-##             ji[comparison] = length(alg_intersection) / length(alg_union)
-##             print(alg_intersection)
-##         }
-##     }
-##     return(ji)
-## }
+jaccard = function(df, column, cutoff=0.05) {
+    algorithms = unique(df$algorithm)
+    sig = list()
+    for(alg in algorithms) {
+        sig[alg] = list(subset(df, algorithm == alg & df[,column] < cutoff)$id)
+    }
+    ji = list()
+    for(alg in algorithms) {
+        for(alg2 in algorithms) {
+            if (alg == alg2) next
+            algs = sort(c(alg, alg2))
+            alg1 = algs[1]
+            alg2 = algs[2]
+            comparison = paste(alg1, "_vs_", alg2, sep="")
+            alg_intersection = intersect(sig[alg1][[1]], sig[alg2][[1]])
+            alg_union = union(sig[alg1][[1]], sig[alg2][[1]])
+            ji[comparison] = length(alg_intersection) / length(alg_union)
+        }
+    }
+    return(data.frame(ji))
+}
 
-## jaccard(df)
+ji = jaccard(df, "padj")
+write.table(ji, file.path(out_dir, "jaccard.tsv"), quote=FALSE, row.names=FALSE, sep="\t")
