@@ -12,15 +12,6 @@
             [me.raynes.fs :as fs]
             [bcbio.rnaseq.core :as core]))
 
-(def bcbio-rnaseq-jar
-  "/v-data/bcbio.rnaseq/target/bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar")
-
-(defn this-jar
-  "utility function to get the name of jar in which this function is invoked"
-  [& [ns]]
-  (-> (or ns (class *ns*))
-      .getProtectionDomain .getCodeSource .getLocation .getPath))
-
 (setup-config default-bcbio-project)
 
 (facts
@@ -36,7 +27,7 @@
   (every? file-exists? (map :out-file (core/run-R-analyses :panel))) => true)
  (fact
   "making the comparison plot automatically works"
-  (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*.tsv")))]
+  (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
     (file-exists? (make-fc-plot in-files)) => true)))
 
 (facts
@@ -52,14 +43,14 @@
 (fact
  "making the seqc plots work"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
-       in-files (fs/glob (str dirname "*.tsv"))]
+       in-files (fs/glob (str dirname "*_vs_*.tsv"))]
    (alter-config! (assoc (get-config) :analysis-dir dirname))
    (file-exists? (make-fc-plot in-files)) => true))
 
 (fact
  "making comparison plots from a project works"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
-       in-files (fs/glob (str dirname "*.tsv"))]
+       in-files (fs/glob (str dirname "*_vs_*.tsv"))]
    (file-exists? (:fc-plot (core/compare-callers in-files))) => true))
 
 (fact
