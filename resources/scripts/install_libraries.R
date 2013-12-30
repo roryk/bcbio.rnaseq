@@ -28,9 +28,10 @@ install.bioconductor = function(packages, default_mirror="http://cran.at.r-proje
 
 install.github = function(packages, username) {
     install.cran(c("devtools"))
+    library(devtools)
     for(i in packages) {
         if(!is_package_installed(i)) {
-            suppressMessages(suppressWarnings(biocLite(i, ask=FALSE)))
+            suppressMessages(suppressWarnings(install_github(i, username)))
         }
     }
 }
