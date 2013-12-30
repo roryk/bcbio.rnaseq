@@ -26,7 +26,7 @@ made on the qPCR data via the hacky method of performing a t-test and
 BH correcting the p-values, and calling anything with a FDR < 0.05 as
 differentially expressed. To run in this mode you would first download
 and prepare the [SEQC][SEQC] data, align it with
-[bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
+[bcbio-nextgen][bcbio-nextgen] and run bcbio.rnaseq on the
 results.
 
 ## Status
