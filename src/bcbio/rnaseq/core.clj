@@ -62,6 +62,6 @@
   (apply (case (keyword cur-type)
            :compare-bcbio-run compare-bcbio-cl-entry
            :combine-counts combine-counts/cl-entry
-           :run-comparisons run-comparisons
+           :seqc-comparisons run-comparisons
            :compare-callers compare-callers)
          args))
