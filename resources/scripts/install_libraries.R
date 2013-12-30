@@ -12,7 +12,7 @@ install.cran = function(packages, default_mirror="http://cran.at.r-project.org")
     #  require returns TRUE invisibly if it was able to load package
     if(!is_package_installed(i)) {
       options(repos = c(CRAN = default_mirror))
-      suppressMessages(suppressWarnings(install.packages(i, dependencies = TRUE, default_mirror)))
+      suppressMessages(suppressWarnings(install.packages(i, dependencies = TRUE, repo=default_mirror)))
     }
   }
 }
