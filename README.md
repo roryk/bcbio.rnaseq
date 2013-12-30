@@ -43,7 +43,16 @@ At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
 ``bcbio.rnaseq`` at the project-summary.yaml file in your
 ``upload`` directory:
 
-    java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar compare-bcbio-run
+    java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar compare-bcbio-run /path/to/project_summary.yaml key
+
+where ``key`` is the field in the [metadata][metadata] entry you want
+to use as the two groups to compare to each other.
+
+To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
+files, align them with [bcbio-nextgen][bcbio-nextgen] and point
+the ``bcbio.rnaseq`` to the results:
+
+    java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar seqc-comparisons /path/to/project_summary.yaml key
 
 ## Adding new R-based DE callers
 
@@ -97,3 +106,4 @@ and the output, [sample-output][sample-output].
 [sample-output]: https://raw.github.com/roryk/bcbio.rnaseq/master/resources/test-analysis/deseq_A_vs_B.tsv?token=414586__eyJzY29wZSI6IlJhd0Jsb2I6cm9yeWsvYmNiaW8ucm5hc2VxL21hc3Rlci9yZXNvdXJjZXMvdGVzdC1hbmFseXNpcy9kZXNlcV9BX3ZzX0IudHN2IiwiZXhwaXJlcyI6MTM4OTAyMzQ5Nn0%3D--f1e0e3f110d49e0ab961426f4d608bd86d195e3d
 [trimming]: http://biorxiv.org/content/early/2013/12/23/000422
 [bcbio-nextgen]: https://github.com/chapmanb/bcbio-nextgen
+[metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
