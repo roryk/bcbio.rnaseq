@@ -13,7 +13,7 @@ caller comes out, there was a way to automatically place it in the
 context of the other callers. This project aims to do that, at least
 for the output of [bcbio-nextgen][bcbio-nextgen] runs.
 
-bcbio.rnaseq can be run in two different modes.  The first mode is
+``bcbio.rnaseq`` can be run in two different modes.  The first mode is
 ``compare-bcbio-run`` which takes the output from a
 [bcbio-nextgen][bcbio-nextgen] RNA-seq analysis and runs several
 different DE callers and compares the results to each other. Since
@@ -40,7 +40,7 @@ calls, not splicing events.
 ## Quickstart
 
 At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
-bcbio.rnaseq at the project-summary.yaml file in your
+``bcbio.rnaseq`` at the project-summary.yaml file in your
 ``upload`` directory:
 
     java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar compare-bcbio-run
