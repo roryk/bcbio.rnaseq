@@ -3,7 +3,7 @@ before_install:
   - sudo apt-get install fabric
   - git clone https://github.com/chapmanb/cloudbiolinux
   - cd cloudbiolinux
-  - python setup.py install
+  - sudo python setup.py install
   - fab -f fabfile.py -H localhost install_custom:R
   - fab -f fabfile.py -H localhost install_custom:cufflinks
   - cd ..
