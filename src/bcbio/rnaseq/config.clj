@@ -7,14 +7,15 @@
 (def default-bcbio-system (get-resource "bcbio_system.yaml"))
 (def default-bcbio-sample (get-resource "bcbio_sample.yaml"))
 ;;(def default-bcbio-project (get-resource "project-summary.yaml"))
-(def default-bcbio-project (get-resource "seqc/bcbio_upload/final/131111_standardization/project-summary.yaml"))
+;;(def default-bcbio-project (get-resource "seqc/bcbio_upload/final/131111_standardization/project-summary.yaml"))
+(def default-bcbio-project (get-resource "seqc/sample-project/ERCC92/131111_standardization/project-summary.yaml"))
 
 (def cfg-state (atom {}))
 (def get-config #(deref cfg-state))
 (defn alter-config! [new-cfg]
   (swap! cfg-state (constantly new-cfg)))
 
-(defn- load-yaml [yaml-file]
+(defn load-yaml [yaml-file]
   (yaml/parse-string (slurp yaml-file)))
 
 
@@ -53,4 +54,3 @@
   (clojure.string/join "_vs_" (sort (distinct (metadata-key key)))))
 (def combined-count-file
   #(str (fs/file (analysis-dir) "combined.counts")))
-
