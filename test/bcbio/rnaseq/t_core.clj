@@ -13,11 +13,15 @@
             [bcbio.rnaseq.core :as core]
             [clojure.string :as string]
             [clojure.walk :as walk]
-            [clj-yaml.core :as yaml]))
+            [clj-yaml.core :as yaml]
+            [clj-http.client :as client]))
+
+(def data-url "https://dl.dropboxusercontent.com/u/2822886/chb/bcbio.rnaseq/sample-project.tar")
 
 (def stock-bcbio-project
-  (get-resource "seqc/sample-project/ERCC92/131111_standardization/project-summary-stock.yaml"))
+  #(get-resource "seqc/sample-project/ERCC92/131111_standardization/project-summary-stock.yaml"))
 
+(def default-bcbio-project #(str (fs/file (get-resource "seqc/sample-project/ERCC92/131111_standardization") "project-summary.yaml")))
 
 (defn replace-if [pred s match replacement]
   (if (pred s)
@@ -52,12 +56,27 @@
   (-> m replace-project-dir replace-bcbio-system replace-genome-dir))
 
 (defn fix-project-config []
-  (when-not (file-exists? default-bcbio-project)
-    (let [config (load-yaml stock-bcbio-project)]
-      (spit default-bcbio-project (yaml/generate-string (fix-dirs config))))))
+  (when-not (file-exists? (default-bcbio-project))
+    (let [config (load-yaml (stock-bcbio-project))]
+      (spit (default-bcbio-project) (yaml/generate-string (fix-dirs config))))))
 
+(defn download-file [url out-file]
+  (when-not (file-exists? out-file)
+    (with-open [out-buffer (io/output-stream out-file)]
+      (.write out-buffer (:body (client/get url {:as :byte-array}))))
+    out-file))
+
+(defn install-test-data []
+  (when-not (file-exists? (str (fs/file (get-resource "seqc") "sample-project")))
+    (let [tar-file
+          (str (fs/file (get-resource "seqc") (fs/base-name data-url)))]
+      (println  (format "Downloading %s to %s." data-url tar-file))
+      (download-file data-url tar-file)
+      (sh "tar" "-xvf" tar-file "-C" (dirname tar-file)))))
+
+(install-test-data)
 (fix-project-config)
-(setup-config default-bcbio-project)
+(setup-config (default-bcbio-project))
 
 (facts
  "facts about template files"
@@ -103,5 +122,8 @@
 (fact
  "running the comparisons on a bcbio-nextgen project file works"
  (let [out-map (core/main "compare-bcbio-run"
-                          default-bcbio-project "panel")]
+                          (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
+
+;; clean-up the analysis directory
+(fs/delete-dir (analysis-dir))

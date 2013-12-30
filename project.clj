@@ -9,7 +9,8 @@
                  [clj-http "0.7.5"]
                  [org.clojure/math.combinatorics "0.0.4"]
                  [org.clojure/tools.cli "0.3.0"]
-                 [bcbio.run "0.0.1-SNAPSHOT"]]
+                 [bcbio.run "0.0.1-SNAPSHOT"]
+                 [clj-http "0.7.8"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :jvm-opts ["-Xmx2g"]
   :aot [bcbio.rnaseq.core]
