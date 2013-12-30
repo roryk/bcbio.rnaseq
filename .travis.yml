@@ -1,8 +1,5 @@
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get upgrade
-  - sudo apt-get install git
   - sudo apt-get install fabric
   - git clone https://github.com/chapmanb/cloudbiolinux
   - cd cloudbiolinux
