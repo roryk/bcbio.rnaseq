@@ -4,9 +4,6 @@
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
-(def default-bcbio-system (get-resource "bcbio_system.yaml"))
-(def default-bcbio-sample (get-resource "bcbio_sample.yaml"))
-
 (def cfg-state (atom {}))
 (def get-config #(deref cfg-state))
 (defn alter-config! [new-cfg]
