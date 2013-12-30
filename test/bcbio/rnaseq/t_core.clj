@@ -10,8 +10,53 @@
    [clojure.java.shell :only [sh]])
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]
-            [bcbio.rnaseq.core :as core]))
+            [bcbio.rnaseq.core :as core]
+            [clojure.string :as string]
+            [clojure.walk :as walk]
+            [clj-yaml.core :as yaml]))
 
+(def stock-bcbio-project
+  (get-resource "seqc/sample-project/ERCC92/131111_standardization/project-summary-stock.yaml"))
+
+
+(defn replace-if [pred s match replacement]
+  (if (pred s)
+    (string/replace s match replacement)
+    s))
+
+(defn replace-project-dir [config]
+  (walk/prewalk
+   #(replace-if string?
+                %
+                "/n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset/../ERCC92"
+                (get-resource "seqc/sample-project/ERCC92"))
+   config))
+
+(defn replace-bcbio-system [config]
+  (walk/prewalk
+   #(replace-if string?
+                %
+                "/n/hsphS10/hsphfs1/chb/biodata/galaxy/bcbio_system.yaml"
+                (get-resource "seqc/sample-project/bcbio_system.yaml"))
+   config))
+
+(defn replace-genome-dir [config]
+  (walk/prewalk
+   #(replace-if string?
+                %
+                "/n/hsphS10/hsphfs1/chb/biodata"
+                (get-resource "seqc/sample-project"))
+   config))
+
+(defn fix-dirs [m]
+  (-> m replace-project-dir replace-bcbio-system replace-genome-dir))
+
+(defn fix-project-config []
+  (when-not (file-exists? default-bcbio-project)
+    (let [config (load-yaml stock-bcbio-project)]
+      (spit default-bcbio-project (yaml/generate-string (fix-dirs config))))))
+
+(fix-project-config)
 (setup-config default-bcbio-project)
 
 (facts
