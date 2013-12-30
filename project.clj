@@ -12,6 +12,8 @@
                  [bcbio.run "0.0.1-SNAPSHOT"]
                  [clj-http "0.7.8"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
+  :plugins [[lein-midje "3.0.1"]]
+
   :jvm-opts ["-Xmx2g"]
   :aot [bcbio.rnaseq.core]
   :main bcbio.rnaseq.core
