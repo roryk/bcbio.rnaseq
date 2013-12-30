@@ -1,10 +1,10 @@
 
 before_install:
   - sudo apt-get install fabric
+  - sudo apt-get install r-base r-base-dev
   - git clone https://github.com/chapmanb/cloudbiolinux
   - cd cloudbiolinux
   - sudo python setup.py install
-  - fab -f fabfile.py -H localhost install_custom:R
   - fab -f fabfile.py -H localhost install_custom:cufflinks
   - cd ..
   - Rscript resources/script/install_libraries.R
