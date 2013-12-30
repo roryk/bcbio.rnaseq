@@ -77,7 +77,7 @@
                              "--no-js-tests"
                              "--min-alignment-count" "0"
                              (gtf-file)
-                             (bamfile-arg key)]) "tmp")
+                             (bamfile-arg key)]))
     (str (fs/file output-dir "gene_exp.diff"))))
 
 (defn read-cufflinks [in-file]
