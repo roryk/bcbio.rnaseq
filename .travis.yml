@@ -7,7 +7,7 @@ before_install:
   - sudo python setup.py install
   - fab -f fabfile.py -H localhost install_custom:cufflinks
   - cd ..
-  - Rscript resources/scripts/install_libraries.R
+  - sudo Rscript resources/scripts/install_libraries.R
 
 language: clojure
 lein: lein2
