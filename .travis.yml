@@ -1,0 +1,18 @@
+
+before_install:
+  - sudo apt-get install git
+  - sudo apt-get upgrade
+  - sudo apt-get install fabric
+  - git clone https://github.com/chapmanb/cloudbiolinux
+  - cd cloudbiolinux
+  - python setup.py install
+  - fab -f fabfile.py -H localhost install_custom:R
+  - fab -f fabfile.py -H localhost install_custom:cufflinks
+  - cd ..
+  - Rscript resources/script/install_libraries.R
+
+language: clojure
+lein: lein2
+jdk:
+  - openjdk7
+  - openjdk6
