@@ -62,4 +62,5 @@
   (.exists (io/as-file fname)))
 
 (defn apply-to-keys [m f & keyseq]
+  "apply a function to only values of specific keys in a sequence"
   (reduce #(assoc %1 %2 (f (%1 %2))) m keyseq))
