@@ -30,6 +30,8 @@ and prepare the [SEQC][SEQC] data, align it with
 results.
 
 ## Status
+[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
+
 This is in a pre-release state, but theoretically should work for you
 assuming you have ``cufflinks`` and ``R`` installed and in your path.
 We'd really appreciate an issue being opened with the error if it does
