@@ -15,18 +15,19 @@ for the output of [bcbio-nextgen][bcbio-nextgen] runs.
 
 bcbio.rnaseq can be run in two different modes.  The first mode is
 ``compare-bcbio-run`` which takes the output from a
-[bcbio-nextgen][bcbio-nextgen]
-RNA-seq analysis and runs several different DE callers and compares
-the results to each other. Since there is no true set of calls this is
-just a way to assess which callers are different from each other.  The
-second mode is a ``seqc-comparisons`` which is a diagnostic mode for
-determining how well DE callers work against a reference set of ~ 1000
-qPCR assayed genes from the [SEQC][SEQC] project. The true set of DE
-calls were made on the qPCR data via the hacky method of performing a
-t-test and BH correcting the p-values, and calling anything with a
-FDR < 0.05 as differentially expressed. To run in this mode you would
-first download and prepare the [SEQC][SEQC] data, align it with
-[bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the results.
+[bcbio-nextgen][bcbio-nextgen] RNA-seq analysis and runs several
+different DE callers and compares the results to each other. Since
+there is no true set of calls this is just a way to assess which
+callers are different from each other.  The second mode is a
+``seqc-comparisons`` which is a diagnostic mode for determining how
+well DE callers work against a reference set of ~ 1000 qPCR assayed
+genes from the [SEQC][SEQC] project. The true set of DE calls were
+made on the qPCR data via the hacky method of performing a t-test and
+BH correcting the p-values, and calling anything with a FDR < 0.05 as
+differentially expressed. To run in this mode you would first download
+and prepare the [SEQC][SEQC] data, align it with
+[bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
+results.
 
 ## Status
 This is in a pre-release state, but theoretically should work for you
@@ -52,7 +53,7 @@ added to the list of callers to run. The templates have to handle
 three things: transforming the counts to something the caller can use,
 resolving the groups to be compared from a list indicating which
 column in the table goes with which group and outputting a table with
-the DE calls in the right format. It is pretty simple to do.
+the DE calls in the right format. Each file takes three inputs:
 
 1. ``count-file``: a file of counts of reads mapping to genes, with
 the rows the IDs and the columns the sample names. This will be
@@ -74,8 +75,8 @@ condition 2, ``padj`` the Benjamini-Hochberg adjusted p-value and
 ``algorithm`` the name for this caller that you want to show up on the
 graphs.
 
-An example of what a proper template file looks like: [deseq][deseq]
-and the output: [sample-output][sample-output]
+An example is clearer: a proper template, [deseq][deseq]
+and the output, [sample-output][sample-output].
 
 ## TODO
 
@@ -87,6 +88,9 @@ and the output: [sample-output][sample-output]
   data sets.
 * Better comparison metrics overall.
 * Inclusion of more callers.
+* Try to put expression values on the same scale somehow; hard to do
+  with RPKM/count based methods though. Maybe convert everything
+  to RPKM?
 
 [SEQC]: http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE49712
 [deseq]: https://raw.github.com/roryk/bcbio.rnaseq/master/resources/deseq.template?token=414586__eyJzY29wZSI6IlJhd0Jsb2I6cm9yeWsvYmNiaW8ucm5hc2VxL21hc3Rlci9yZXNvdXJjZXMvZGVzZXEudGVtcGxhdGUiLCJleHBpcmVzIjoxMzg5MDIzNDQ2fQ%3D%3D--280e317fb477c6bbe3aa89e09ec598f46e7847d3
