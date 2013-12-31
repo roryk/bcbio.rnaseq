@@ -6,8 +6,7 @@
   (:require [me.raynes.fs :as fs]
             [clojure.java.io :as io]))
 
-(def resource-dir (dirname (get-resource "edgeR.template")))
-(def templates (fs/glob (str resource-dir "*.template")))
+(def templates (fs/glob (str (get-resource "templates") "/*.template")))
 (def caller-comparison-template (get-resource "comparisons/compare.template"))
 
 
