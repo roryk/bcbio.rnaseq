@@ -67,8 +67,3 @@
   "get a function that will run an analysis on a template file"
     (fn [template-file]
       (run-template template-file (get-analysis-config key))))
-
-;; (defn cuffdiff-runner [comparison project-dir]
-;;   (let [cuffdiff (program-path :cuffdiff)]
-;;     (group-details comparison)))
-;; ;    (group-by #(get-in % [:metadata comparison]) (:details (get-config)))))
