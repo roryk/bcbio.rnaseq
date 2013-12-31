@@ -10,7 +10,9 @@
   (str "\"" string "\""))
 
 (defn get-resource [filename]
-  (.getFile (io/resource filename)))
+  (try
+    (.getFile (io/resource filename))
+    (catch Exception e (println (format "Resource %s not found." filename)))))
 
 (defn base-filename [filename]
   (fs/split-ext (fs/base-name filename)))
