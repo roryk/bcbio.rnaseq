@@ -104,8 +104,8 @@ and the output, [sample-output][sample-output].
   to RPKM?
 
 [SEQC]: http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE49712
-[deseq]: https://raw.github.com/roryk/bcbio.rnaseq/master/resources/deseq.template?token=414586__eyJzY29wZSI6IlJhd0Jsb2I6cm9yeWsvYmNiaW8ucm5hc2VxL21hc3Rlci9yZXNvdXJjZXMvZGVzZXEudGVtcGxhdGUiLCJleHBpcmVzIjoxMzg5MDIzNDQ2fQ%3D%3D--280e317fb477c6bbe3aa89e09ec598f46e7847d3
-[sample-output]: https://raw.github.com/roryk/bcbio.rnaseq/master/resources/test-analysis/deseq_A_vs_B.tsv?token=414586__eyJzY29wZSI6IlJhd0Jsb2I6cm9yeWsvYmNiaW8ucm5hc2VxL21hc3Rlci9yZXNvdXJjZXMvdGVzdC1hbmFseXNpcy9kZXNlcV9BX3ZzX0IudHN2IiwiZXhwaXJlcyI6MTM4OTAyMzQ5Nn0%3D--f1e0e3f110d49e0ab961426f4d608bd86d195e3d
+[deseq]: http://raw.github.com/roryk/bcbio.rnaseq/master/resources/templates/deseq.template
+[sample-output]: http://raw.github.com/roryk/bcbio.rnaseq/master/resources/test-analysis/deseq_A_vs_B.tsv
 [trimming]: http://biorxiv.org/content/early/2013/12/23/000422
 [bcbio-nextgen]: https://github.com/chapmanb/bcbio-nextgen
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
