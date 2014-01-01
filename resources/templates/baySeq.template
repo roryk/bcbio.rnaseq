@@ -1,0 +1,89 @@
+# baySeq analysis
+# Adapted from Soneson, C. & Delorenzi, M. A comparison of methods for
+# differential expression analysis of RNA-seq data.
+# BMC Bioinformatics 14, 91 (2013).
+
+library(baySeq)
+library(HTSFilter)
+library(tools)
+library(edgeR)
+
+count_file = {{{count-file}}}
+out_file = {{{out-file}}}
+class = {{{class}}}
+counts = read.table(count_file, header=TRUE, row.names="id")
+normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
+
+baySeq.cd = new("countData", data = as.matrix(counts), replicates = class,
+    groups=list(NDE = rep(1, length(class)), DE = class))
+baySeq.cd@libsizes = getLibsizes(baySeq.cd, estimationType = "edgeR")
+baySeq.cd = getPriors.NB(baySeq.cd, samplesize = 5000,
+    equalDispersions = TRUE, estimation = "QL", cl = NULL)
+baySeq.cd = getLikelihoods.NB(baySeq.cd, prs = c(0.5,
+    0.5), pET = "BIC", cl = NULL)
+baySeq.posteriors.DE = exp(baySeq.cd@posteriors)[, 2]
+baySeq.table = topCounts(baySeq.cd, group = "DE", FDR = 1)
+baySeq.FDR = baySeq.table$FDR[match(rownames(counts),
+    rownames(baySeq.table))]
+baySeq.pval = baySeq.cd
+
+getExpr = function (cD, samplesA, samplesB, normaliseData = TRUE, scale=NULL) {
+    if (is.character(samplesA)) {
+        Asamps <- which(as.character(cD@replicates) %in% samplesA)
+        if (!all(samplesA %in% cD@replicates)) 
+            Asamps <- c(Asamps, which(colnames(cD@data) %in% 
+                samplesA[!(samplesA %in% as.character(cD@replicates))]))
+        if (!all(samplesA %in% c(colnames(cD@data), as.character(cD@replicates)))) 
+            warning("Some members of 'samplesA' were not found!")
+        samplesA <- Asamps
+    }
+    if (length(samplesA) == 0) 
+        stop("Can't find any data for sample set A!")
+    if (is.character(samplesB)) {
+        Bsamps <- which(as.character(cD@replicates) %in% samplesB)
+        if (!all(samplesB %in% cD@replicates)) 
+            Bsamps <- c(Bsamps, which(colnames(cD@data) %in% 
+                samplesB[!(samplesB %in% as.character(cD@replicates))]))
+        if (!all(samplesB %in% c(colnames(cD@data), as.character(cD@replicates)))) 
+            warning("Some members of 'samplesB' were not found!")
+        samplesB <- Bsamps
+    }
+    if (length(samplesB) == 0) 
+        stop("Can't find any data for sample set B!")
+    if (!inherits(cD, what = "countData")) 
+        stop("variable 'cD' must be of or descend from class 'countData'")
+    Adata <- cD@data[, samplesA]
+    Bdata <- cD@data[, samplesB]
+    if (normaliseData) {
+        Adata <- t(t(Adata)/cD@libsizes[samplesA]) * mean(cD@libsizes[c(samplesA, 
+            samplesB)])
+        Bdata <- t(t(Bdata)/cD@libsizes[samplesB]) * mean(cD@libsizes[c(samplesA, 
+            samplesB)])
+    }
+    if (nrow(cD@seglens) > 0) 
+        if (ncol(cD@seglens) == 1) {
+            Adata <- Adata/cD@seglens[, 1]
+            Bdata <- Bdata/cD@seglens[, 1]
+        }
+        else {
+            Adata <- Adata/cD@seglens[, samplesA]
+            Bdata <- Bdata/cD@seglens[, samplesB]
+        }
+    Adata <- colSums(t(Adata))/length(samplesA)
+    Bdata <- colSums(t(Bdata))/length(samplesB)
+    Azeros <- which(Adata == 0)
+    Bzeros <- which(Bdata == 0)
+    nonzeros <- which(Adata != 0 & Bdata != 0)
+    infRatio <- ceiling(max(abs((log2(Adata) - log2(Bdata))[nonzeros]), 
+        na.rm = TRUE))
+    if (!is.null(scale) && scale > infRatio) 
+        infRatio <- scale
+    return(data.frame(samplesA=Adata, samplesB=Bdata))
+}
+expr = getExpr(baySeq.cd, levels(class)[1], levels(class)[2])
+out_table = data.frame(id=rownames(baySeq.table), expr=rowMeans(expr),
+    logFC=log2(expr[,1]) - log2(expr[,2]),
+    pval=1-baySeq.posteriors.DE, padj=baySeq.FDR, algorithm="baySeq")
+write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
+            sep="\t")
+write.table(baySeq.cd@data, file=normalized_file, quote=FALSE, sep="\t")

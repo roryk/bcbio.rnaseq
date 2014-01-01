@@ -39,7 +39,7 @@ install.github = function(packages, username) {
 cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr")
 install.cran(cran_packages)
 
-bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2")
+bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq")
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
 
