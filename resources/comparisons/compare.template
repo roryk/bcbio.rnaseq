@@ -20,9 +20,9 @@ pair_plot = function(var, out_file) {
     return(p)
 }
 
-pair_plot("pval", pval_plot)
+pair_plot("padj", pval_plot)
 pair_plot("logFC", fc_plot)
-#pair_plot("log10expr", expr_plot)
+pair_plot("log10expr", expr_plot)
     
 
 jaccard = function(df, column, cutoff=0.05) {
