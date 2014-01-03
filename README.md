@@ -16,16 +16,16 @@ for the output of [bcbio-nextgen][bcbio-nextgen] runs.
 ``bcbio.rnaseq`` can be run in two different modes.  The first mode is
 ``compare-bcbio-run`` which takes the output from a
 [bcbio-nextgen][bcbio-nextgen] RNA-seq analysis and runs several
-different DE callers and compares the results to each other. Since
-there is no true set of calls this is just a way to assess which
-callers are different from each other.  The second mode is a
-``seqc-comparisons`` which is a diagnostic mode for determining how
-well DE callers work against a reference set of ~ 1000 qPCR assayed
-genes from the [SEQC][SEQC] project. The true set of DE calls were
-made on the qPCR data via the hacky method of performing a t-test and
-BH correcting the p-values, and calling anything with a FDR < 0.05 as
-differentially expressed. To run in this mode you would first download
-and prepare the [SEQC][SEQC] data, align it with
+different DE callers and compares the results to each other. If your
+run includes [ERCC spike-in][ERCC] data ``bcbio.rnaseq`` will detect
+this automatically and run a concordance analysis on the ERCC data.
+The second mode is a ``seqc-comparisons`` which is a diagnostic mode
+for determining how well DE callers work against a reference set of ~
+1000 qPCR assayed genes from the [SEQC][SEQC] project. The true set of
+DE calls were made on the qPCR data via the hacky method of performing
+a t-test and BH correcting the p-values, and calling anything with a
+FDR < 0.05 as differentially expressed. To run in this mode you would
+first download and prepare the [SEQC][SEQC] data, align it with
 [bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
 results.
 
@@ -95,8 +95,7 @@ and the output, [sample-output][sample-output].
   determining the effect of pipeline tweaks like [trimming][trimming].
 * Ability to compare non-bcbio nextgen runs. This will require a
   little bit of work but should be doable.
-* Automatic evaluation of ERCC spike-in data if available in non-SEQC
-  data sets.
+* Add SEQC downloader and prepper script.
 * Better comparison metrics overall.
 * Inclusion of more callers.
 * Try to put expression values on the same scale somehow; hard to do
@@ -109,3 +108,4 @@ and the output, [sample-output][sample-output].
 [trimming]: http://biorxiv.org/content/early/2013/12/23/000422
 [bcbio-nextgen]: https://github.com/chapmanb/bcbio-nextgen
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
+[ERCC]: http://www.lifetechnologies.com/order/catalog/product/4456740
