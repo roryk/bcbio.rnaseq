@@ -126,4 +126,4 @@
    (file-exists? (:fc-plot out-map)) => true))
 
 ;; clean-up the analysis directory
-(fs/delete-dir (analysis-dir))
+;; (fs/delete-dir (analysis-dir))

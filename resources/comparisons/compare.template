@@ -6,6 +6,7 @@ df = do.call(rbind, ldf)
 fc_plot = {{{fc-plot}}}
 expr_plot = {{{expr-plot}}}
 pval_plot = {{{pval-plot}}}
+out_dir =  {{{out-dir}}}
 
 #df$log10expr = log(df$expr)
 complete = df[complete.cases(df),]

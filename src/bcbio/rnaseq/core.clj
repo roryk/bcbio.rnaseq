@@ -7,6 +7,7 @@
         [clojure.java.shell :only [sh]])
   (:require [bcbio.rnaseq.htseq-combine :as combine-counts]
             [bcbio.rnaseq.cufflinks :as cufflinks]
+            [bcbio.rnaseq.ercc :as ercc]
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]
             [clojure.tools.cli :refer [parse-opts]])
@@ -43,11 +44,15 @@
         config {:in-files (seq-to-rlist in-files)
                 :fc-plot (str (fs/file out-dir "logFC_comparison_plot.pdf"))
                 :expr-plot (str (fs/file out-dir "log10expr_comparison_plot.pdf"))
-                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))}
+                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))
+                :out-dir out-dir}
         template-config (apply-to-keys config escape-quote
-                                       :fc-plot :expr-plot :pval-plot)]
+                                       :fc-plot :expr-plot :pval-plot :out-dir)]
     (apply sh ["Rscript" (write-template caller-comparison-template template-config)])
+    (when (ercc/ercc-analysis? in-files) (assoc config :ercc-file
+                                                (ercc/ercc-analysis in-files)))
     config))
+
 
 (defn compare-bcbio-run [project-file key]
   (setup-config project-file)

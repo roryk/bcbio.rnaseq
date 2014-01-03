@@ -4,6 +4,7 @@
         [clostache.parser :only [render]]
         [clojure.java.shell :only [sh]]))
 
+
 (defn write-template [template hashmap]
   (let [rfile (change-extension (swap-directory template (analysis-dir)) ".R")]
     (spit rfile (render (slurp template) hashmap))
@@ -20,3 +21,4 @@
                          :in-files (seq-to-rlist in-files)}]
     (apply sh ["Rscript" (write-template template-file template-config)])
     out-file))
+

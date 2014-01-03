@@ -1,0 +1,41 @@
+library(ggplot2)
+library(reshape)
+ercc_file = {{{ercc-file}}}
+in_files = {{{in-files}}}
+out_dir = {{{out-dir}}}
+
+ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
+df = do.call(rbind, ldf)
+
+melted = melt(df, id=c("algorithm", "id"))
+
+ercc = read.table(ERCC_FILE, header=TRUE, sep="\t")[,c(2, 4, 5, 7)]
+colnames(ercc) = c("id", "mix1", "mix2", "logFC")
+
+true_set = subset(ercc, logFC > 0)$id
+algorithms = unique(df$algorithm)
+sig = list()
+for(alg in algorithms) {
+    sig[alg] = list(subset(df, algorithm == alg & df[,"padj"] < 0.05)$id)
+}
+
+concordant = list()
+for(alg in algorithms) {
+    concordant[alg] = list(intersect(sig[alg][[1]], true_set))
+}
+false_positive = list()
+for(alg in algorithms) {
+    false_positive[alg] = list(setdiff(sig[alg][[1]], true_set))
+}
+false_negative = list()
+for(alg in algorithms) {
+    false_negative[alg] = list(setdiff(true_set, sig[alg][[1]]))
+}
+
+out_df = data.frame(lapply(concordant, length))
+out_df = rbind(out_df, lapply(false_positive, length))
+out_df = rbind(out_df, lapply(false_negative, length))
+rownames(out_df) = c("concordant", "false positive", "false negative")
+
+write.table(out_df, file.path(out_dir, "ERCC_concordance.tsv"), quote=FALSE,
+            row.names=TRUE, sep="\t")
