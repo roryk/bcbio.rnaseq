@@ -14,7 +14,8 @@
             [clojure.string :as string]
             [clojure.walk :as walk]
             [clj-yaml.core :as yaml]
-            [clj-http.client :as client]))
+            [clj-http.client :as client]
+            [bcbio.rnaseq.ercc :as ercc]))
 
 (def data-url "https://dl.dropboxusercontent.com/u/2822886/chb/bcbio.rnaseq/sample-project.tar")
 
@@ -94,7 +95,11 @@
  (fact
   "making the comparison plot automatically works"
   (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
-    (file-exists? (make-fc-plot in-files)) => true)))
+    (file-exists? (make-fc-plot in-files)) => true))
+ (fact
+  "ERCC analysis works"
+  (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
+    (file-exists? (ercc/ercc-analysis in-files)) => true)))
 
 (facts
  "facts about cufflinks"

@@ -9,7 +9,7 @@ df = do.call(rbind, ldf)
 
 melted = melt(df, id=c("algorithm", "id"))
 
-ercc = read.table(ERCC_FILE, header=TRUE, sep="\t")[,c(2, 4, 5, 7)]
+ercc = read.table(ercc_file, header=TRUE, sep="\t")[,c(2, 4, 5, 7)]
 colnames(ercc) = c("id", "mix1", "mix2", "logFC")
 
 true_set = subset(ercc, logFC > 0)$id
