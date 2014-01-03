@@ -23,9 +23,8 @@ baySeq.cd = getLikelihoods.NB(baySeq.cd, prs = c(0.5,
     0.5), pET = "BIC", cl = NULL)
 baySeq.posteriors.DE = exp(baySeq.cd@posteriors)[, 2]
 baySeq.table = topCounts(baySeq.cd, group = "DE", FDR = 1)
-baySeq.FDR = baySeq.table$FDR[match(rownames(counts),
-    rownames(baySeq.table))]
-baySeq.pval = baySeq.cd
+baySeq.table = baySeq.table[match(rownames(counts), rownames(baySeq.table)),]
+baySeq.FDR = baySeq.table$FDR
 
 getExpr = function (cD, samplesA, samplesB, normaliseData = TRUE, scale=NULL) {
     if (is.character(samplesA)) {
