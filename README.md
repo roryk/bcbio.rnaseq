@@ -39,13 +39,6 @@ it.
 ## Installation
 The latest release is 0.1.0a (4 January 2013): [download][dl].
 
-You will also need to install several R libraries via the installation
-script:
-
-    git clone https://github.com/roryk/bcbio.rnaseq
-    cd bcbio.rnaseq
-    Rscript resources/scripts/install_libraries.R
-
 ## Quickstart
 
 At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
