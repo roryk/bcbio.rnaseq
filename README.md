@@ -37,7 +37,8 @@ should work for you.  If it doesn't please open an issue and we'll fix
 it.
 
 ## Installation
-The latest release is 0.1.0a (4 January 2013): [download][dl]
+The latest release is 0.1.0a (4 January 2013): [download][dl].
+
 You will also need to install several R libraries via the installation
 script:
 
