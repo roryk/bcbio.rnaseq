@@ -32,12 +32,13 @@ results.
 ## Status
 [![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
 
-This is in a pre-release state, but theoretically should work for you
-assuming you have ``cufflinks`` and ``R`` installed and in your path.
-We'd really appreciate an issue being opened with the error if it does
-not work for you, it will greatly help in getting this polished up for
-an official release. The only current functionality is comparing DE
-calls, not splicing events.
+If you have ``cufflinks`` and ``R`` installed and in your path, this
+should work for you.  If it doesn't please open an issue and we'll fix
+it.
+
+## Installation
+The latest release is 0.1.0a (4 January 2013): [download][dl]
+
 
 ## Quickstart
 
@@ -45,7 +46,7 @@ At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
 ``bcbio.rnaseq`` at the project-summary.yaml file in your
 ``upload`` directory:
 
-    java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar compare-bcbio-run /path/to/project_summary.yaml key
+    java -jar bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar compare-bcbio-run /path/to/project_summary.yaml key
 
 where ``key`` is the field in the [metadata][metadata] entry you want
 to use as the two groups to compare to each other.
@@ -54,7 +55,7 @@ To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
 files, align them with [bcbio-nextgen][bcbio-nextgen] and point
 the ``bcbio.rnaseq`` to the results:
 
-    java -jar bcbio.rnaseq-0.0.1-SNAPSHOT-standalone.jar seqc-comparisons /path/to/project_summary.yaml key
+    java -jar bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar seqc-comparisons /path/to/project_summary.yaml key
 
 ## Adding new R-based DE callers
 
@@ -109,3 +110,4 @@ and the output, [sample-output][sample-output].
 [bcbio-nextgen]: https://github.com/chapmanb/bcbio-nextgen
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
 [ERCC]: http://www.lifetechnologies.com/order/catalog/product/4456740
+[dl]: http://github.com/roryk/bcbio.rnaseq/releases/download/v.0.1.0a/bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar
