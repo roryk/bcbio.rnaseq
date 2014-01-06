@@ -37,7 +37,8 @@
     (spit rfile
           (render (slurp template) {:count-file (escape-quote count-file)
                                     :class comparison
-                                    :out-file (escape-quote out-file)}))
+                                    :out-file (escape-quote out-file)
+                                    :project (escape-quote (project-name))}))
     config))
 
 

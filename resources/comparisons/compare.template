@@ -10,7 +10,7 @@ out_dir =  {{{out-dir}}}
 
 #df$log10expr = log(df$expr)
 complete = df[complete.cases(df),]
-melted = melt(complete, id=c("algorithm", "id"))
+melted = melt(complete, id=c("algorithm", "id", "project"))
 
 pair_plot = function(var, out_file) {
     casted = cast(subset(melted, variable ==var), id  ~ algorithm + variable)

@@ -18,7 +18,9 @@
         system-config (load-yaml (:bcbio_system project-config))]
     (alter-config! (merge system-config project-config))
     (alter-config! (assoc (get-config) :analysis-dir
-                          (str (io/file (dirname bcbio-project-file) "de"))))))
+                          (str (io/file (dirname bcbio-project-file) "de"))))
+    (alter-config! (assoc (get-config) :project-name
+                          (fs/base-name (dirname (dirname bcbio-project-file)))))))
 
 
 (defn metadata-key [key]
@@ -48,3 +50,6 @@
   (clojure.string/join "_vs_" (sort (distinct (metadata-key key)))))
 (def combined-count-file
   #(str (fs/file (analysis-dir) "combined.counts")))
+
+(def project-name
+  #(:project-name (get-config)))

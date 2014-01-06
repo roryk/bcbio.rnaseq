@@ -9,6 +9,7 @@ library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
+project = {{{project}}}
 normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]),
     "counts", sep="")
 counts = read.table(count_file, header=TRUE, row.names="id")
@@ -21,7 +22,7 @@ res = nbinomTest(DESeq.cds, levels(class)[1], levels(class)[2])
 
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
 out_table = data.frame(id=res$id, expr=res$baseMean, logFC=res$log2FoldChange,
-          pval=res$pval, padj=res$padj, algorithm="deseq")
+          pval=res$pval, padj=res$padj, algorithm="deseq", project=project)
 out_table$pval[is.na(out_table$pval)] = 1
 out_table$padj[is.na(out_table$padj)] = 1
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,

@@ -11,6 +11,7 @@ library(edgeR)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
+project = {{{project}}}
 counts = read.table(count_file, header=TRUE, row.names="id")
 normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
 
@@ -82,7 +83,8 @@ getExpr = function (cD, samplesA, samplesB, normaliseData = TRUE, scale=NULL) {
 expr = getExpr(baySeq.cd, levels(class)[1], levels(class)[2])
 out_table = data.frame(id=rownames(baySeq.table), expr=rowMeans(expr),
     logFC=log2(expr[,1]) - log2(expr[,2]),
-    pval=1-baySeq.posteriors.DE, padj=baySeq.FDR, algorithm="baySeq")
+    pval=1-baySeq.posteriors.DE, padj=baySeq.FDR, algorithm="baySeq",
+    project=project)
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
 write.table(baySeq.cd@data, file=normalized_file, quote=FALSE, sep="\t")

@@ -93,8 +93,9 @@
               (sel df :cols 10)
               (sel df :cols :p_value)
               (sel df :cols :q_value)
-              (repeat (nrow df) "cuffdiff"))
-   ["id" "expr" "logFC" "pval" "padj" "algorithm"]))
+              (repeat (nrow df) "cuffdiff")
+              (repeat (nrow df) (project-name)))
+   ["id" "expr" "logFC" "pval" "padj" "algorithm" "project"]))
 
 (defn write-gene-info [in-file out-file]
   (let [info-df (reformat-gene-info (read-cufflinks in-file))]

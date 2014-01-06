@@ -8,6 +8,7 @@ library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
 class = {{{class}}}
+project = {{{project}}}
 counts = read.table(count_file, header=TRUE, row.names="id")
 normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
 edgeR.dgelist = DGEList(counts = counts, group = class)
@@ -27,6 +28,7 @@ out_table$algorithm = "edgeR"
 out_table$expr = 2^out_table$logCPM
 out_table = out_table[, c("id", "expr", "logFC", "PValue", "padj", "algorithm")]
 colnames(out_table) = c("id", "expr", "logFC", "pval", "padj", "algorithm")
+out_table$project = project
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
 write.table(edgeR.dgelist$pseudo.counts, file=normalized_file,
