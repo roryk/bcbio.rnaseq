@@ -62,7 +62,7 @@
   (let [[project-file key] (:arguments (parse-opts args [["-h" "--help"]]))]
     (compare-bcbio-run project-file (keyword key))))
 
-(defn main [cur-type & args]
+(defn -main [cur-type & args]
   (apply sh ["Rscript" (get-resource "scripts/install_libraries.R")])
   (apply (case (keyword cur-type)
            :compare-bcbio-run compare-bcbio-cl-entry

@@ -7,8 +7,8 @@
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]))
 
-(def ercc-template #(str (get-resource "comparisons/ERCC.template")))
-(def ercc-known #(str (get-resource "seqc/ERCC/ERCC_Controls_Analysis.txt")))
+(def ercc-template "comparisons/ERCC.template")
+(def ercc-known (get-resource "seqc/ERCC/ERCC_Controls_Analysis.txt"))
 
 (defn ercc-analysis? [in-files]
   "returns non-nil if in-files look like they have ERCC data in them"
@@ -20,9 +20,9 @@
   (let [out-file (str (fs/file (analysis-dir) "ERCC_concordance.tsv"))
         config {:in-files (seq-to-rlist in-files)
                 :out-dir (analysis-dir)
-                :ercc-file (ercc-known)
+                :ercc-file ercc-known
                 :out-file out-file}
         template-config (apply-to-keys config escape-quote
                                        :out-dir :ercc-file :out-file)]
-    (apply sh ["Rscript" (write-template (ercc-template) template-config)])
+    (apply sh ["Rscript" (write-template ercc-template template-config)])
     out-file))

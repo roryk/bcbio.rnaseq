@@ -1,13 +1,14 @@
 (ns bcbio.rnaseq.templates
-  (:use [clostache.parser :only [render]]
+  (:use [clostache.parser :only [render-resource]]
         [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]
             [clojure.java.io :as io]))
 
-(def templates (fs/glob (str (get-resource "templates") "/*.template")))
-(def caller-comparison-template (get-resource "comparisons/compare.template"))
+(def templates ["templates/deseq.template", "templates/deseq2.template",
+                "templates/edgeR.template", "templates/baySeq.template"])
+(def caller-comparison-template "comparisons/compare.template")
 
 
 (defn- analysis-out-stem [template-file analysis-config]
@@ -35,7 +36,7 @@
         out-file (:out-file config)
         rfile (:r-file config)]
     (spit rfile
-          (render (slurp template) {:count-file (escape-quote count-file)
+          (render-resource template {:count-file (escape-quote count-file)
                                     :class comparison
                                     :out-file (escape-quote out-file)
                                     :project (escape-quote (project-name))}))

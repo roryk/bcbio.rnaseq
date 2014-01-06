@@ -13,7 +13,7 @@
                  [clj-http "0.7.8"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :plugins [[lein-midje "3.0.1"]]
-
+  :resource-paths ["resources"]
   :jvm-opts ["-Xmx2g"]
   :aot [bcbio.rnaseq.core]
   :main bcbio.rnaseq.core
