@@ -45,7 +45,7 @@ At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
 ``bcbio.rnaseq`` at the project-summary.yaml file in your
 ``upload`` directory:
 
-    java -jar bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar compare-bcbio-run /path/to/project_summary.yaml key
+    java -jar bcbio.rnaseq-0.1.0a.jar compare-bcbio-run /path/to/project_summary.yaml key
 
 where ``key`` is the field in the [metadata][metadata] entry you want
 to use as the two groups to compare to each other.
@@ -54,7 +54,7 @@ To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
 files, align them with [bcbio-nextgen][bcbio-nextgen] and point
 the ``bcbio.rnaseq`` to the results:
 
-    java -jar bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar seqc-comparisons /path/to/project_summary.yaml key
+    java -jar bcbio.rnaseq-0.1.0a.jar seqc-comparisons /path/to/project_summary.yaml key
 
 ## Adding new R-based DE callers
 
@@ -109,4 +109,4 @@ and the output, [sample-output][sample-output].
 [bcbio-nextgen]: https://github.com/chapmanb/bcbio-nextgen
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
 [ERCC]: http://www.lifetechnologies.com/order/catalog/product/4456740
-[dl]: http://github.com/roryk/bcbio.rnaseq/releases/download/v.0.1.0a/bcbio.rnaseq-0.1.0a-SNAPSHOT-standalone.jar
+[dl]: http://github.com/roryk/bcbio.rnaseq/releases/download/v.0.1.0a/bcbio.rnaseq-0.1.0a.jar
