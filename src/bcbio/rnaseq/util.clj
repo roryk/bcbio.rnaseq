@@ -61,7 +61,9 @@
     (.mkdir (io/file dir))))
 
 (defn file-exists? [fname]
-  (.exists (io/as-file fname)))
+  (if fname
+    (.exists (io/as-file fname))
+    false))
 
 (defn apply-to-keys [m f & keyseq]
   "apply a function to only values of specific keys in a sequence"

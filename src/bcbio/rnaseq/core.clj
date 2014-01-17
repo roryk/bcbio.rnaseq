@@ -54,9 +54,13 @@
     config))
 
 
-(defn compare-bcbio-run [project-file key]
-  (setup-config project-file)
-  (compare-callers (run-callers key)))
+(defn compare-bcbio-run [& rest]
+  (into []
+        (for [[project-file key] (partition 2 rest)]
+          (when project-file
+            (do
+              (setup-config project-file)
+              (compare-callers (run-callers key)))))))
 
 (defn compare-bcbio-cl-entry [& args]
   (let [[project-file key] (:arguments (parse-opts args [["-h" "--help"]]))]
