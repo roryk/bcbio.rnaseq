@@ -48,7 +48,12 @@ At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
     java -jar bcbio.rnaseq-0.1.0a.jar compare-bcbio-run /path/to/project_summary.yaml key
 
 where ``key`` is the field in the [metadata][metadata] entry you want
-to use as the two groups to compare to each other.
+to use as the two groups to compare to each other. You can provide multiple
+pairs of project_summary.yaml files and keys to run multiple analyses at the
+same time:
+
+    java -jar bcbio.rnaseq-0.1.0a.jar compare-bcbio-run /path/to/project_summary1.yaml key1 /path/to/project_summary2.yaml key2
+
 
 To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
 files, align them with [bcbio-nextgen][bcbio-nextgen] and point
