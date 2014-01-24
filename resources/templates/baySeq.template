@@ -82,7 +82,7 @@ getExpr = function (cD, samplesA, samplesB, normaliseData = TRUE, scale=NULL) {
 }
 expr = getExpr(baySeq.cd, levels(class)[1], levels(class)[2])
 out_table = data.frame(id=rownames(baySeq.table), expr=rowMeans(expr),
-    logFC=log2(expr[,1]) - log2(expr[,2]),
+    logFC=log2(expr[,2]) - log2(expr[,1]),
     pval=1-baySeq.posteriors.DE, padj=baySeq.FDR, algorithm="baySeq",
     project=project)
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
