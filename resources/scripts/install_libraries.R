@@ -1,4 +1,6 @@
 # adapted from http://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
+mirror = "http://cran.at.r-project.org"
+update.packages(checkBuilt = TRUE, ask = FALSE, repos=mirror)
 is_package_installed = function(package) {
     available = suppressMessages(suppressWarnings(sapply(package, require,
         quietly = TRUE, character.only = TRUE, warn.conflicts = FALSE)))
