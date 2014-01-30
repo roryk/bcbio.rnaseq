@@ -19,23 +19,23 @@
   (combine-counts/write-combined-count-file (count-files) (combined-count-file))
   (map (get-analysis-fn key) templates))
 
-(defn run-cuffdiff [key]
+(defn run-cuffdiff [key cores]
   (let [out-file (str (fs/file (analysis-dir)
                                (str "cuffdiff_"
                                     (comparison-name key) ".tsv")))]
     (when-not (file-exists? out-file)
-      (cufflinks/write-gene-info (cufflinks/run-cuffdiff 1 key) out-file))
+      (cufflinks/write-gene-info (cufflinks/run-cuffdiff cores key) out-file))
     {:out-file out-file}))
 
-(defn run-comparisons [key]
-  (let [cuffdiff-out (run-cuffdiff key)
+(defn run-comparisons [key cores]
+  (let [cuffdiff-out (run-cuffdiff key cores)
         r-analyses-out (run-R-analyses key)
         result-files (conj (map :out-file r-analyses-out)
                            (:out-file cuffdiff-out))]
     (make-fc-plot result-files)))
 
-(defn run-callers [key]
-  (let [cuffdiff-out (run-cuffdiff key)
+(defn run-callers [key cores]
+  (let [cuffdiff-out (run-cuffdiff key cores)
         r-analyses-out (run-R-analyses key)]
     (conj (map :out-file r-analyses-out) (:out-file cuffdiff-out))))
 
@@ -54,17 +54,22 @@
     config))
 
 
-(defn compare-bcbio-run [& rest]
-  (into []
-        (for [[project-file key] (partition 2 rest)]
-          (when project-file
-            (do
-              (setup-config project-file)
-              (compare-callers (run-callers key)))))))
+(defn compare-bcbio-run [project-file key cores]
+  (setup-config project-file)
+  (compare-callers (run-callers key cores)))
+
+(def compare-bcbio-run-options
+  [["-h" "--help"]
+   ["-n" "--cores CORES" "Number of cores"
+    :default 1
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(> 0)]]])
 
 (defn compare-bcbio-cl-entry [& args]
-  (let [[project-file key] (:arguments (parse-opts args [["-h" "--help"]]))]
-    (compare-bcbio-run project-file (keyword key))))
+  (let [cli-options (parse-opts args compare-bcbio-run-options)
+        [project-file key] (:arguments cli-options)
+        cores (get-in cli-options [:options :cores])]
+    (compare-bcbio-run project-file (keyword key) cores)))
 
 (defn -main [cur-type & args]
   (apply sh ["Rscript" (get-resource "scripts/install_libraries.R")])
