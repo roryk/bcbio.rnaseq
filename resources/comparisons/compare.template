@@ -8,7 +8,7 @@ expr_plot = {{{expr-plot}}}
 pval_plot = {{{pval-plot}}}
 out_dir =  {{{out-dir}}}
 
-#df$log10expr = log(df$expr)
+df$log10expr = log(df$expr + 1)
 complete = df[complete.cases(df),]
 melted = melt(complete, id=c("algorithm", "id", "project"))
 
