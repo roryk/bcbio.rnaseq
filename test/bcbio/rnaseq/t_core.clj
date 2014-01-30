@@ -86,9 +86,9 @@
   (let [template (first templates)
         analysis-config (get-analysis-config :panel)]
     (write-combined-count-file (count-files) (combined-count-file))
+;    (:out-file (run-template template analysis-config)) => true))
     (file-exists? (:out-file (run-template template analysis-config))) => true))
 
-    ;; (file-exists? (:out-file (run-template template analysis-config))) => true))
  (fact
   "running a group of analyses produces output files"
   (every? file-exists? (map :out-file (core/run-R-analyses :panel))) => true)
@@ -105,11 +105,11 @@
  "facts about cufflinks"
   (fact
   "running Cuffdiff works"
-  (file-exists? (:out-file (core/run-cuffdiff :panel))) => true))
+  (file-exists? (:out-file (core/run-cuffdiff :panel 1))) => true))
 
 (fact
  "combining R analyses and cuffdiff works"
- (file-exists? (core/run-comparisons :panel)) => true)
+ (file-exists? (core/run-comparisons :panel 1)) => true)
 
 (fact
  "making the seqc plots work"
@@ -128,8 +128,7 @@
  "running the comparisons on a bcbio-nextgen project file works"
  (let [out-map (core/-main "compare-bcbio-run"
                           (default-bcbio-project) "panel")]
-   (every? file-exists? (map :fc-plot out-map)) => true))
-;;   (file-exists? (:fc-plot out-map)) => true))
+   (file-exists? (:fc-plot out-map)) => true))
 
 ;; clean-up the analysis directory
 ;;(fs/delete-dir (analysis-dir))
