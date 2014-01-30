@@ -17,12 +17,17 @@
             [clj-http.client :as client]
             [bcbio.rnaseq.ercc :as ercc]))
 
-(def data-url "https://dl.dropboxusercontent.com/u/2822886/chb/bcbio.rnaseq/sample-project.tar")
+(def data-url
+  "https://dl.dropboxusercontent.com/u/2822886/chb/bcbio.rnaseq/sample-project.tar")
 
 (def stock-bcbio-project
-  #(get-resource "seqc/sample-project/ERCC92/131111_standardization/project-summary-stock.yaml"))
+  #(get-resource
+    "seqc/sample-project/ERCC92/131111_standardization/project-summary-stock.yaml"))
 
-(def default-bcbio-project #(str (fs/file (get-resource "seqc/sample-project/ERCC92/131111_standardization") "project-summary.yaml")))
+(def default-bcbio-project
+  #(str (fs/file
+         (get-resource "seqc/sample-project/ERCC92/131111_standardization")
+         "project-summary.yaml")))
 
 (defn replace-if [pred s match replacement]
   (if (pred s)
