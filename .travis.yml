@@ -16,7 +16,7 @@ before_install:
   - "[ ! -d ${R_LIBS_USER} ] && mkdir ${R_LIBS_USER}"
   - R --version
   - R -e '.libPaths(); sessionInfo()'
-  - Rscript resources/scripts/install_libraries.R
+  - sudo Rscript resources/scripts/install_libraries.R
   - git clone https://github.com/chapmanb/cloudbiolinux
   - cd cloudbiolinux
   - sudo python setup.py install
