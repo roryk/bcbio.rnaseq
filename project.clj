@@ -1,4 +1,4 @@
-(defproject bcbio.rnaseq "0.1.1a-pre"
+(defproject bcbio.rnaseq "0.1.1a-SNAPSHOT"
   :description "Run mutiple DE callers on RNA-seq data"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [de.ubercode.clostache/clostache "1.3.1"]
