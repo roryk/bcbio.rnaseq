@@ -58,6 +58,10 @@
   (setup-config project-file)
   (compare-callers (run-callers key cores)))
 
+(defn compare-seqc-run [project-file key cores]
+  (setup-config project-file)
+  (run-comparisons (keyword key) cores))
+
 (def compare-bcbio-run-options
   [["-h" "--help"]
    ["-n" "--cores CORES" "Number of cores"
@@ -71,11 +75,18 @@
         cores (get-in cli-options [:options :cores])]
     (compare-bcbio-run project-file (keyword key) cores)))
 
+(defn compare-seqc-cl-entry [& args]
+  (let [cli-options (parse-opts args compare-bcbio-run-options)
+        [project-file key] (:arguments cli-options)
+        cores (get-in cli-options [:options :cores])]
+    (compare-seqc-run project-file (keyword key) cores)))
+
+
 (defn -main [cur-type & args]
   (apply sh ["Rscript" (get-resource "scripts/install_libraries.R")])
   (apply (case (keyword cur-type)
            :compare-bcbio-run compare-bcbio-cl-entry
            :combine-counts combine-counts/cl-entry
-           :seqc-comparisons run-comparisons
+           :seqc-comparisons compare-seqc-cl-entry
            :compare-callers compare-callers)
          args))

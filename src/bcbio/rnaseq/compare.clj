@@ -1,4 +1,5 @@
 (ns bcbio.rnaseq.compare
+  (:require [clojure.java.io :as io])
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
         [clostache.parser :only [render-resource]]
@@ -15,7 +16,8 @@
   "create a fold change plot comparing to the seqc qPCR data"
   (let [template-file "comparisons/qPCR_foldchange.template"
         out-file (swap-directory "fc-plot.pdf" (analysis-dir))
-        qpcr-file (get-resource "seqc/qPCR/qpcr_HBRR_vs_UHRR.tidy")
+        qpcr-file (copy-resource
+                   "seqc/qPCR/qpcr_HBRR_vs_UHRR.tidy" (analysis-dir))
         template-config {:out-file (escape-quote out-file)
                          :qpcr-file (escape-quote qpcr-file)
                          :in-files (seq-to-rlist in-files)}]

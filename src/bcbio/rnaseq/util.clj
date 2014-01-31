@@ -2,6 +2,19 @@
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
+(defn get-resource [filename]
+  "return a path to an included resource"
+  (try
+    (.getFile (io/resource filename))
+    (catch Exception e (println (format "Resource %s not found." filename)))))
+
+(defn copy-resource [resource dir]
+  "copy a resource from the .jar file to an external directory so
+   outside programs can use it"
+  (let [out-file (io/file dir (str (fs/base-name resource)))]
+    (spit out-file (slurp (io/resource resource)))
+    (str out-file)))
+
 (defn swap-directory [file dir]
   "/path/to/file -> /dir/file"
   (str (io/file dir (fs/base-name file))))
@@ -9,10 +22,6 @@
 (defn escape-quote [string]
   (str "\"" string "\""))
 
-(defn get-resource [filename]
-  (try
-    (.getFile (io/resource filename))
-    (catch Exception e (println (format "Resource %s not found." filename)))))
 
 (defn base-filename [filename]
   (fs/split-ext (fs/base-name filename)))
