@@ -131,9 +131,9 @@
 
 (fact
  "running the comparisons on a bcbio-nextgen project file works"
- (let [out-map (core/-main "compare-bcbio-run"
-                          (default-bcbio-project) "panel")]
+ (let [out-map (core/-main (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
 
 ;; clean-up the analysis directory
-;;(fs/delete-dir (analysis-dir))
+(when (directory-exists? (get-resource "seqc/sample-project"))
+  (fs/delete-dir (get-resource "seqc/sample-project")))

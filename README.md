@@ -37,7 +37,14 @@ should work for you.  If it doesn't please open an issue and we'll fix
 it.
 
 ## Installation
-The latest release is 0.1.0a (4 January 2013): [download][dl].
+
+```
+git clone https://github.com/roryk/bcbio.rnaseq
+cd bcbio.rnaseq
+make
+```
+
+The executable will be in `bin/bcbio-rnaseq`.
 
 ## Quickstart
 
@@ -45,21 +52,16 @@ At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
 ``bcbio.rnaseq`` at the project-summary.yaml file in your
 ``upload`` directory:
 
-    java -jar bcbio.rnaseq-0.1.0a.jar compare-bcbio-run /path/to/project_summary.yaml key
+    bin/bcbio-rnaseq --cores 1 /path/to/project_summary.yaml key
 
 where ``key`` is the field in the [metadata][metadata] entry you want
-to use as the two groups to compare to each other. You can provide multiple
-pairs of project_summary.yaml files and keys to run multiple analyses at the
-same time:
-
-    java -jar bcbio.rnaseq-0.1.0a.jar compare-bcbio-run /path/to/project_summary1.yaml key1 /path/to/project_summary2.yaml key2
-
+to use as the two groups to compare to each other.
 
 To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
 files, align them with [bcbio-nextgen][bcbio-nextgen] and point
-the ``bcbio.rnaseq`` to the results:
+the ``bcbio.rnaseq`` to the results with the `--seqc` flag set:
 
-    java -jar bcbio.rnaseq-0.1.0a.jar seqc-comparisons /path/to/project_summary.yaml key
+    bin/bcbio-rnaseq --seqc --cores 1 /path/to/project_summary.yaml key
 
 ## Adding new R-based DE callers
 
@@ -103,9 +105,6 @@ and the output, [sample-output][sample-output].
 * Add SEQC downloader and prepper script.
 * Better comparison metrics overall.
 * Inclusion of more callers.
-* Try to put expression values on the same scale somehow; hard to do
-  with RPKM/count based methods though. Maybe convert everything
-  to RPKM?
 
 [SEQC]: http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE49712
 [deseq]: http://raw.github.com/roryk/bcbio.rnaseq/master/resources/templates/deseq.template

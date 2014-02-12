@@ -10,7 +10,8 @@
             [bcbio.rnaseq.ercc :as ercc]
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]
-            [clojure.tools.cli :refer [parse-opts]])
+            [clojure.tools.cli :refer [parse-opts]]
+            [clojure.string :as string])
   (:gen-class :main true))
 
 (defn run-R-analyses [key]
@@ -54,39 +55,42 @@
     config))
 
 
-(defn compare-bcbio-run [project-file key cores]
-  (setup-config project-file)
-  (compare-callers (run-callers key cores)))
-
-(defn compare-seqc-run [project-file key cores]
-  (setup-config project-file)
-  (run-comparisons (keyword key) cores))
-
-(def compare-bcbio-run-options
+(def options
   [["-h" "--help"]
    ["-n" "--cores CORES" "Number of cores"
     :default 1
     :parse-fn #(Integer/parseInt %)
-    :validate [#(> 0)]]])
+    :validate [#(> 0)]]
+   [nil "--seqc" "Data is from a SEQC alignment"]])
 
-(defn compare-bcbio-cl-entry [& args]
-  (let [cli-options (parse-opts args compare-bcbio-run-options)
-        [project-file key] (:arguments cli-options)
-        cores (get-in cli-options [:options :cores])]
-    (compare-bcbio-run project-file (keyword key) cores)))
+(defn usage [options-summary]
+  (->> [
+    ""
+    "Usage: bcbio-rnaseq [options] bcbio-project-file"
+    ""
+    "Options:"
+    options-summary
+    ]
+    (string/join \newline)))
 
-(defn compare-seqc-cl-entry [& args]
-  (let [cli-options (parse-opts args compare-bcbio-run-options)
-        [project-file key] (:arguments cli-options)
-        cores (get-in cli-options [:options :cores])]
-    (compare-seqc-run project-file (keyword key) cores)))
+(defn error-msg [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (string/join \newline errors)))
 
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
 
-(defn -main [cur-type & args]
-  (apply sh ["Rscript" (get-resource "scripts/install_libraries.R")])
-  (apply (case (keyword cur-type)
-           :compare-bcbio-run compare-bcbio-cl-entry
-           :combine-counts combine-counts/cl-entry
-           :seqc-comparisons compare-seqc-cl-entry
-           :compare-callers compare-callers)
-         args))
+(defn compare-bcbio-run [seqc cores project-file key]
+  (setup-config project-file)
+  (if seqc
+    (run-comparisons (keyword key) cores)
+    (compare-callers (run-callers (keyword key) cores))))
+
+(defn -main [& args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args options)]
+    (cond
+      (:help options) (exit 0 (usage summary))
+      (not= (count arguments) 2) (exit 1 (usage summary))
+      errors (exit 1 (error-msg errors)))
+    (compare-bcbio-run (:seqc options) (:cores options) (first arguments) (second arguments))))

@@ -62,7 +62,7 @@
   "(seq-to-rlist [1, 2, 3]) => 'c(1, 2, 3)'"
   (str "c(" (clojure.string/join "," (map escape-quote xs)) ")"))
 
-(defn- directory-exists? [dir]
+(defn directory-exists? [dir]
   (.isDirectory (io/file dir)))
 
 (defn safe-makedir [dir]
