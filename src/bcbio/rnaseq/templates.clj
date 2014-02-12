@@ -1,5 +1,6 @@
 (ns bcbio.rnaseq.templates
   (:use [clostache.parser :only [render-resource]]
+        [bcbio.rnaseq.htseq-combine :as counts]
         [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
         [clojure.java.shell :only [sh]])
@@ -69,3 +70,9 @@
   "get a function that will run an analysis on a template file"
     (fn [template-file]
       (run-template template-file (get-analysis-config key))))
+
+(defn run-R-analyses [key]
+  "run all of the template files using key as the comparison field in the
+   metadata entries"
+  (counts/write-combined-count-file (count-files) (combined-count-file))
+  (map (get-analysis-fn key) templates))

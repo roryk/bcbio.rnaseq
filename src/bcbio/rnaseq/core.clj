@@ -1,42 +1,25 @@
 (ns bcbio.rnaseq.core
-  (:use [bcbio.rnaseq.templates :only [get-analysis-fn templates
-                                       caller-comparison-template]]
+  (:use [bcbio.rnaseq.templates :only [caller-comparison-template run-R-analyses]]
         [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
         [bcbio.rnaseq.compare :only [make-fc-plot write-template]]
         [clojure.java.shell :only [sh]])
-  (:require [bcbio.rnaseq.htseq-combine :as combine-counts]
-            [bcbio.rnaseq.cufflinks :as cufflinks]
+  (:require [bcbio.rnaseq.cuffdiff :as cuffdiff]
             [bcbio.rnaseq.ercc :as ercc]
-            [clojure.java.io :as io]
             [me.raynes.fs :as fs]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.string :as string])
   (:gen-class :main true))
 
-(defn run-R-analyses [key]
-  "run all of the template files using key as the comparison field in the
-   metadata entries"
-  (combine-counts/write-combined-count-file (count-files) (combined-count-file))
-  (map (get-analysis-fn key) templates))
-
-(defn run-cuffdiff [key cores]
-  (let [out-file (str (fs/file (analysis-dir)
-                               (str "cuffdiff_"
-                                    (comparison-name key) ".tsv")))]
-    (when-not (file-exists? out-file)
-      (cufflinks/write-gene-info (cufflinks/run-cuffdiff cores key) out-file))
-    {:out-file out-file}))
-
 (defn run-comparisons [key cores]
-  (let [cuffdiff-out (run-cuffdiff key cores)
+  (let [cuffdiff-out (cuffdiff/run key cores)
         r-analyses-out (run-R-analyses key)
         result-files (conj (map :out-file r-analyses-out)
                            (:out-file cuffdiff-out))]
     (make-fc-plot result-files)))
 
 (defn run-callers [key cores]
-  (let [cuffdiff-out (run-cuffdiff key cores)
+  (let [cuffdiff-out (cuffdiff/run key cores)
         r-analyses-out (run-R-analyses key)]
     (conj (map :out-file r-analyses-out) (:out-file cuffdiff-out))))
 

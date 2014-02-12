@@ -3,12 +3,13 @@
    [midje.sweet]
    [bcbio.rnaseq.util]
    [bcbio.rnaseq.htseq-combine :only [load-counts write-combined-count-file]]
-   [bcbio.rnaseq.templates :only [templates get-analysis-config run-template]]
+   [bcbio.rnaseq.templates :only [templates get-analysis-config run-template
+                                  run-R-analyses]]
    [bcbio.rnaseq.config]
    [bcbio.rnaseq.compare :only [make-fc-plot]]
-   [bcbio.rnaseq.cufflinks :only [run-cuffdiff]]
    [clojure.java.shell :only [sh]])
   (:require [clojure.java.io :as io]
+            [bcbio.rnaseq.cuffdiff :as cuffdiff]
             [me.raynes.fs :as fs]
             [bcbio.rnaseq.core :as core]
             [clojure.string :as string]
@@ -96,7 +97,7 @@
 
  (fact
   "running a group of analyses produces output files"
-  (every? file-exists? (map :out-file (core/run-R-analyses :panel))) => true)
+  (every? file-exists? (map :out-file (run-R-analyses :panel))) => true)
  (fact
   "making the comparison plot automatically works"
   (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
@@ -107,10 +108,10 @@
     (file-exists? (ercc/ercc-analysis in-files)) => true)))
 
 (facts
- "facts about cufflinks"
+ "facts about Cuffdiff"
   (fact
   "running Cuffdiff works"
-  (file-exists? (:out-file (core/run-cuffdiff :panel 1))) => true))
+  (file-exists? (:out-file (cuffdiff/run :panel 1))) => true))
 
 (fact
  "combining R analyses and cuffdiff works"

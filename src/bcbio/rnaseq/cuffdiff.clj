@@ -1,4 +1,4 @@
-(ns bcbio.rnaseq.cufflinks
+(ns bcbio.rnaseq.cuffdiff
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
         [bcbio.run.itx :only [check-run]]
@@ -10,7 +10,6 @@
             [me.raynes.fs :as fs]
             [clojure.string :as string]
             [incanter.core :as incanter]))
-
 
 (defn- align-files []
   (map #(str (fs/file (upload-dir) % (str % "-ready.bam"))) (sample-names)))
@@ -101,3 +100,11 @@
   (let [info-df (reformat-gene-info (read-cufflinks in-file))]
     (save info-df out-file :delim "\t")
     out-file))
+
+(defn run [key cores]
+  (let [out-file (str (fs/file (analysis-dir)
+                               (str "cuffdiff_"
+                                    (comparison-name key) ".tsv")))]
+    (when-not (file-exists? out-file)
+      (write-gene-info (run-cuffdiff cores key) out-file))
+    {:out-file out-file}))
