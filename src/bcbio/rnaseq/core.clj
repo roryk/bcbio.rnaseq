@@ -43,7 +43,7 @@
    ["-n" "--cores CORES" "Number of cores"
     :default 1
     :parse-fn #(Integer/parseInt %)
-    :validate [#(> 0)]]
+    :validate [#(> % 0)]]
    [nil "--seqc" "Data is from a SEQC alignment"]])
 
 (defn usage [options-summary]
