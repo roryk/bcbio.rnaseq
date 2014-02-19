@@ -1,0 +1,32 @@
+# voom + limma analysis
+
+library(edgeR)
+library(limma)
+library(tools)
+
+count_file = {{{count-file}}}
+out_file = {{{out-file}}}
+class = {{{class}}}
+project = {{{project}}}
+counts = read.table(count_file, header=TRUE, row.names="id")
+comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
+normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
+
+
+design = model.matrix(~ 0 + class)
+colnames(design) = c(levels(class)[1], levels(class)[2])
+comparison = paste(levels(class)[2], "-", levels(class)[1], sep="")
+cm = makeContrasts(contrast=comparison, levels=design)
+y = DGEList(counts = counts)
+y = calcNormFactors(y)
+v = voom(y, design, plot=FALSE)
+fit = lmFit(v, design)
+fit2 = contrasts.fit(fit, cm)
+fit2 = eBayes(fit2)
+top_table = topTable(fit2, p.val=1, sort.by="none", n=Inf)
+out_table = data.frame(id=rownames(top_table), expr=top_table$AveExpr,
+    logFC=top_table$logFC, pval=top_table$P.Value,
+    padj=top_table$adj.P.Val, algorithm="voom_limma", project=project)
+write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
+            sep="\t")
+write.table(y$pseudo.counts, file=normalized_file, quote=FALSE, sep="\t")

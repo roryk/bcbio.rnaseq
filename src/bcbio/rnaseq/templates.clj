@@ -7,8 +7,11 @@
   (:require [me.raynes.fs :as fs]
             [clojure.java.io :as io]))
 
+
 (def templates ["templates/deseq.template", "templates/deseq2.template",
-                "templates/edgeR.template", "templates/baySeq.template"])
+                "templates/edgeR.template", "templates/baySeq.template"
+                "templates/voom_limma.template"])
+
 (def caller-comparison-template "comparisons/compare.template")
 
 
