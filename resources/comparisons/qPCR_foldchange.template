@@ -9,7 +9,8 @@ in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
 ROC_file = paste(dirname(FC_file), "roc-plot.pdf", sep="/")
-AUC_file = paste(dirname(FC_file), "auc-plot.pdf", sep="/")
+pval_AUC_file = paste(dirname(FC_file), "pvalue-auc-plot.pdf", sep="/")
+logFC_AUC_file = paste(dirname(FC_file), "logFC-auc-plot.pdf", sep="/")
 
 plot_FC = function(df) {
     df = df[, c("id", "logFC", "algorithm")]
@@ -35,7 +36,7 @@ plot_ROC = function(df) {
     ggsave(filename=ROC_file, plot=p)
 }
 
-plot_AUC = function(df) {
+plot_pvalue_AUC = function(df) {
     cutoffs = seq(0.01, 0.20, 0.01)
     df = df[, c("id", "padj", "algorithm")]
     colnames = c("id", "padj", "method")
@@ -53,11 +54,37 @@ plot_AUC = function(df) {
         out$cutoff = cutoff
         plotdata = rbind(plotdata, out)
     }
-    p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method))
-    ggsave(filename=AUC_file, plot=p)
+    p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method)) +
+        xlab("p-value cutoff for qPCR data")
+    ggsave(filename=pval_AUC_file, plot=p)
+    return(p)
+}
+
+plot_logFC_AUC = function(df) {
+    cutoffs = seq(0.5, 2, 0.1)
+    df = df[, c("id", "padj", "algorithm")]
+    colnames = c("id", "logFC", "method")
+    qpcr_foldchange = foldchange[, c("id", "logFC")]
+    colnames(qpcr_foldchange) = c("id", "logFC")
+    df = merge(df, qpcr_foldchange, by="id")
+    colnames(df) = c("id", "padj", "method", "logFC")
+    df$qPCR_DE = as.numeric(df$qPCR_padj < 0.05)
+    complete = df[complete.cases(df),]
+    plotdata = c()
+    for (cutoff in cutoffs) {
+        complete$qPCR_DE = as.numeric(complete$logFC < cutoff)
+        out = ddply(complete, "method",
+            function(x) data.frame(roc(x[,"qPCR_DE"], x[,"padj"])[c("auc")]))
+        out$cutoff = cutoff
+        plotdata = rbind(plotdata, out)
+    }
+    p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method)) +
+        xlab("foldChange cutoff for qPCR data")
+    ggsave(filename=logFC_AUC_file, plot=p)
     return(p)
 }
 
 plot_FC(df)
 plot_ROC(df)
-plot_AUC(df)
+plot_pvalue_AUC(df)
+plot_logFC_AUC(df)
