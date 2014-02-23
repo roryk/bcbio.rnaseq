@@ -20,7 +20,8 @@
                    "seqc/qPCR/qpcr_HBRR_vs_UHRR.tidy" (analysis-dir))
         template-config {:out-file (escape-quote out-file)
                          :qpcr-file (escape-quote qpcr-file)
-                         :in-files (seq-to-rlist in-files)}]
+                         :in-files (seq-to-rlist in-files)
+                         :project (escape-quote (project-name))}]
     (apply sh ["Rscript" (write-template template-file template-config)])
     out-file))
 
