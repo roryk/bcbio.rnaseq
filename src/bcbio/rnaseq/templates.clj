@@ -56,9 +56,10 @@
 
 (defn run-template [template analysis-config]
   (let [config (add-out-files-to-config template analysis-config)]
-    (safe-makedir (:de-out-dir analysis-config))
-    (write-template template config)
-    (sh "Rscript" (:r-file config))
+    (when-not (file-exists? (:out-file config))
+      (safe-makedir (:de-out-dir analysis-config))
+      (write-template template config)
+      (sh "Rscript" (:r-file config)))
     config))
 
 (defn get-analysis-config [key]
