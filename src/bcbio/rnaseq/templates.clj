@@ -9,8 +9,7 @@
 
 
 (def templates ["templates/deseq.template", "templates/deseq2.template",
-                "templates/edgeR.template", "templates/baySeq.template"
-                "templates/voom_limma.template"])
+                "templates/edgeR.template", "templates/voom_limma.template"])
 
 (def caller-comparison-template "comparisons/compare.template")
 
@@ -59,7 +58,8 @@
     (when-not (file-exists? (:out-file config))
       (safe-makedir (:de-out-dir analysis-config))
       (write-template template config)
-      (sh "Rscript" (:r-file config)))
+      (println (format "Running %s." template ))
+      (sh "Rscript" "--verbose" (:r-file config)))
     config))
 
 (defn get-analysis-config [key]

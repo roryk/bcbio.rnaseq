@@ -43,5 +43,5 @@
                          :in-files (seq-to-rlist in-files)
                          :project (escape-quote "simulated")}]
     (spit rfile (stache/render-resource compare-template template-config))
-    (apply sh ["Rscript" rfile])
+    (apply sh ["Rscript" "--verbose" rfile])
     out-file))
