@@ -1,0 +1,97 @@
+library(pROC)
+library(plyr)
+library(ggplot2)
+library(CHBUtils)
+score_file = {{{score-file}}}
+FC_file = {{{out-file}}}
+project = {{{project}}}
+scores = read.table(score_file, header=TRUE, sep="\t")
+in_files = {{{in-files}}}
+ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
+df = do.call(rbind, ldf)
+ROC_file = paste(dirname(FC_file), "roc-plot.pdf", sep="/")
+pval_AUC_file = paste(dirname(FC_file), "pvalue-auc-plot.pdf", sep="/")
+logFC_AUC_file = paste(dirname(FC_file), "logFC-auc-plot.pdf", sep="/")
+out_dir = dirname(FC_file)
+
+
+plot_ROC = function(df, scores) {
+    df_new = df[, c("id", "padj", "algorithm")]
+    colnames = c("id", "padj", "method")
+    df_new = merge(df_new, scores, by="id")
+    colnames(df_new) = c("id", "padj", "method", "correct")
+    df_new$pred = 1 - df_new$padj
+    df_new$qPCR_DE = df_new$correct != 1
+    p = ggROC(df_new, "method", "qPCR_DE", "pred")
+    ggsave(filename=ROC_file, plot=p)
+}
+
+plot_logFC_AUC = function(df, scores) {
+    cutoffs = sort(unique(abs(scores$correct)))
+    cutoffs = cutoffs[cutoffs != 0]
+    df_new = df[, c("id", "padj", "algorithm")]
+    df_new = merge(df_new, scores, by="id")
+    colnames(df_new) = c("id", "padj", "method", "correct")
+    complete = df_new[complete.cases(df_new),]
+    plotdata = c()
+    for (cutoff in cutoffs) {
+        submatrix = subset(complete, abs(correct) >=cutoff | correct == 0)
+        submatrix$DE = abs(submatrix$correct) >= cutoff
+        out = ddply(submatrix, "method",
+            function(x) data.frame(roc(x[,"DE"], x[,"padj"])[c("auc")]))
+        out$cutoff = cutoff
+        plotdata = rbind(plotdata, out)
+    }
+    p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method)) +
+        xlab("foldChange cutoff for qPCR data")
+    ggsave(filename=logFC_AUC_file, plot=p)
+    return(p)
+}
+
+jaccard = function(df, column, scores, cutoff=0.05) {
+    true_set = subset(scores, correct != 0)$id
+    algorithms = unique(df$algorithm)
+    sig = list()
+    for(alg in algorithms) {
+        sig[alg] = list(subset(df, algorithm == alg & df[,column] < cutoff)$id)
+    }
+    algorithm = c()
+    ji = c()
+    for(alg in algorithms) {
+        comparison = paste(alg, "_vs_simulated")
+        algorithm = c(algorithm, alg)
+        alg_intersection = intersect(sig[alg][[1]], true_set)
+        alg_union = union(sig[alg][[1]], true_set)
+        ji = c(ji, length(alg_intersection) / length(alg_union))
+    }
+    return(data.frame(algorithm=algorithm, jaccard=ji, project=project))
+}
+
+concordance = function(df, scores) {
+    algorithms = unique(df$algorithm)
+    true_set = subset(scores, correct != 0)$id
+    concordant = list()
+    algorithm = list()
+    false_positive = list()
+    false_negative = list()
+    for(alg in algorithms) {
+        sig = subset(df, algorithm == alg & df[, "padj"] < 0.05)$id
+        concordant = c(concordant, length(intersect(sig, true_set)))
+        false_positive = c(false_positive, length(setdiff(sig, true_set)))
+        false_negative = c(false_negative, length(setdiff(true_set, sig)))
+        algorithm = c(algorithm, alg)
+    }
+    return(data.frame(concordant=unlist(concordant), false_positive=unlist(false_positive),
+                      false_negative=unlist(false_negative), algorithm=unlist(algorithm),
+                      project=project))
+}
+
+
+plot_ROC(df, scores)
+plot_logFC_AUC(df, scores)
+ji = jaccard(df, "padj", scores)
+write.table(ji, file.path(out_dir, "simulated_jaccard.tsv"),
+            quote=FALSE, row.names=FALSE, sep="\t")
+concord = concordance(df, scores)
+write.table(concord, file.path(out_dir, "simulated_concord.tsv"),
+            quote=FALSE, row.names=FALSE, sep="\t")

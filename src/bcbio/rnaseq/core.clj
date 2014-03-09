@@ -1,27 +1,28 @@
 (ns bcbio.rnaseq.core
-  (:use [bcbio.rnaseq.templates :only [caller-comparison-template run-R-analyses]]
+  (:use [bcbio.rnaseq.templates :only [caller-comparison-template run-R-analyses templates]]
         [bcbio.rnaseq.config]
         [bcbio.rnaseq.util]
         [bcbio.rnaseq.compare :only [make-fc-plot write-template]]
         [clojure.java.shell :only [sh]])
   (:require [bcbio.rnaseq.cuffdiff :as cuffdiff]
             [bcbio.rnaseq.ercc :as ercc]
+            [bcbio.rnaseq.simulate :as simulate]
             [me.raynes.fs :as fs]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.string :as string])
   (:gen-class :main true))
 
-(defn run-comparisons [key cores]
-  (let [cuffdiff-out (cuffdiff/run key cores)
-        r-analyses-out (run-R-analyses key)
-        result-files (conj (map :out-file r-analyses-out)
-                           (:out-file cuffdiff-out))]
-    (make-fc-plot result-files)))
+(defn run-comparisons [key cores counts-only]
+  (let [result-files (map :out-file (run-R-analyses key))]
+    (if counts-only
+      (make-fc-plot result-files)
+      (make-fc-plot (conj result-files (:out-file (cuffdiff/run key cores)))))))
 
-(defn run-callers [key cores]
-  (let [cuffdiff-out (cuffdiff/run key cores)
-        r-analyses-out (run-R-analyses key)]
-    (conj (map :out-file r-analyses-out) (:out-file cuffdiff-out))))
+(defn run-callers [key cores counts-only]
+  (let [result-files (map :out-file (run-R-analyses key))]
+    (if counts-only
+      result-files
+      (conj result-files (:out-file (cuffdiff/run key cores))))))
 
 (defn compare-callers [in-files]
   (let [out-dir (dirname (first in-files))
@@ -37,6 +38,13 @@
                                                 (ercc/ercc-analysis in-files)))
     config))
 
+(defn run-simulation []
+  (let [count-file (simulate/simulate)
+        analysis-template (simulate/get-analysis-template (simulate/sim-dir) count-file)
+        out-files (map :out-file (map (partial simulate/run-one-template analysis-template)
+                                      templates))]
+    (compare-callers out-files)
+    (simulate/compare-simulated-results out-files)))
 
 (def options
   [["-h" "--help"]
@@ -44,6 +52,8 @@
     :default 1
     :parse-fn #(Integer/parseInt %)
     :validate [#(> % 0)]]
+   [nil "--simulate" "Run on simulated data"]
+   [nil "--counts-only" "Only run count-based analyses"]
    [nil "--seqc" "Data is from a SEQC alignment"]])
 
 (defn usage [options-summary]
@@ -64,16 +74,19 @@
   (println msg)
   (System/exit status))
 
-(defn compare-bcbio-run [seqc cores project-file key]
+(defn compare-bcbio-run [seqc counts-only cores project-file key]
   (setup-config project-file)
   (if seqc
     (run-comparisons (keyword key) cores)
-    (compare-callers (run-callers (keyword key) cores))))
+    (compare-callers (run-callers (keyword key) counts-only cores))))
+
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
       (:help options) (exit 0 (usage summary))
+      (:simulate options) (run-simulation)
       (not= (count arguments) 2) (exit 1 (usage summary))
       errors (exit 1 (error-msg errors)))
-    (compare-bcbio-run (:seqc options) (:cores options) (first arguments) (second arguments))))
+    (compare-bcbio-run (:seqc options) (:counts-only options)
+                       (:cores options) (first arguments) (second arguments))))

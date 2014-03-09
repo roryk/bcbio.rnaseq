@@ -10,6 +10,7 @@
    [clojure.java.shell :only [sh]])
   (:require [clojure.java.io :as io]
             [bcbio.rnaseq.cuffdiff :as cuffdiff]
+            [bcbio.rnaseq.simulate :as simulate]
             [me.raynes.fs :as fs]
             [bcbio.rnaseq.core :as core]
             [clojure.string :as string]
@@ -115,7 +116,7 @@
 
 (fact
  "combining R analyses and cuffdiff works"
- (file-exists? (core/run-comparisons :panel 1)) => true)
+ (file-exists? (core/run-comparisons :panel 1 false)) => true)
 
 (fact
  "making the seqc plots work"
@@ -135,6 +136,12 @@
  (let [out-map (core/-main (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
 
+;;(alter-config! {})
+(fact
+ "test running on simulated data"
+ (file-exists? (core/run-simulation)) => true)
+ ;(every? file-exists? (core/run-simulation)) => true)
+
 ;; clean-up the analysis directory
-(when (directory-exists? (get-resource "seqc/sample-project"))
-  (fs/delete-dir (get-resource "seqc/sample-project")))
+;;(when (directory-exists? (get-resource "seqc/sample-project"))
+;;  (fs/delete-dir (get-resource "seqc/sample-project")))
