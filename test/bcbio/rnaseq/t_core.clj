@@ -86,7 +86,7 @@
 (fix-project-config)
 (setup-config (default-bcbio-project))
 
-(facts
+(facts :integration
  "facts about template files"
  (fact
   "running a single template file is functional"
@@ -108,36 +108,36 @@
   (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
     (file-exists? (ercc/ercc-analysis in-files)) => true)))
 
-(facts
+(facts :integration
  "facts about Cuffdiff"
   (fact
   "running Cuffdiff works"
   (file-exists? (:out-file (cuffdiff/run :panel 1))) => true))
 
-(fact
+(fact :integration
  "combining R analyses and cuffdiff works"
  (file-exists? (core/run-comparisons :panel 1 false)) => true)
 
-(fact
+(fact :integration
  "making the seqc plots work"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*_vs_*.tsv"))]
    (alter-config! (assoc (get-config) :analysis-dir dirname))
    (file-exists? (make-fc-plot in-files)) => true))
 
-(fact
+(fact :integration
  "making comparison plots from a project works"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*_vs_*.tsv"))]
    (file-exists? (:fc-plot (core/compare-callers in-files))) => true))
 
-(fact
+(fact :integration
  "running the comparisons on a bcbio-nextgen project file works"
  (let [out-map (core/-main (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
 
 ;;(alter-config! {})
-(fact
+(fact :integration
  "test running on simulated data"
  (file-exists? (core/run-simulation)) => true)
  ;(every? file-exists? (core/run-simulation)) => true)
