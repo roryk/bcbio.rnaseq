@@ -33,7 +33,7 @@
 (defn usage [options-summary]
   (->> [
         ""
-        "Usage: bcbio-rnaseq summarize [options]"
+        "Usage: bcbio-rnaseq summarize bcbio-project-file.yaml"
         ""
         "Options:"
         options-summary]
@@ -49,5 +49,6 @@
 (defn summarize-cli [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
-     (:help options) (exit 0 (usage summary)))
+     (:help options) (exit 0 (usage summary))
+     (not= (count arguments) 1) (exit 1 (usage summary)))
     (write-tidy-summary (first arguments))))
