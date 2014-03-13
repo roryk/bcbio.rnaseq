@@ -1,8 +1,14 @@
 (ns bcbio.rnaseq.compare
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [clojure.string :as string]
+            [bcbio.rnaseq.cuffdiff :as cuffdiff]
+            [bcbio.rnaseq.ercc :as ercc]
+            [me.raynes.fs :as fs])
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
         [clostache.parser :only [render-resource]]
+        [clojure.tools.cli :refer [parse-opts]]
+        [bcbio.rnaseq.templates :only [run-R-analyses caller-comparison-template templates]]
         [clojure.java.shell :only [sh]]))
 
 
@@ -25,3 +31,68 @@
     (apply sh ["Rscript" (write-template template-file template-config)])
     out-file))
 
+(def options
+  [["-h" "--help"]
+   ["-n" "--cores CORES" "Number of cores"
+    :default 1
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(> % 0)]]
+   [nil "--counts-only" "Only run count-based analyses"]
+   [nil "--seqc" "Data is from a SEQC alignment"]])
+
+(defn usage [options-summary]
+  (->> [
+        ""
+        "Usage: bcbio-rnaseq compare [options]"
+        ""
+        "Options:"
+        options-summary]
+       (string/join \newline)))
+
+(defn run-comparisons [key cores counts-only]
+  (let [result-files (map :out-file (run-R-analyses key))]
+    (if counts-only
+      (make-fc-plot result-files)
+      (make-fc-plot (conj result-files (:out-file (cuffdiff/run key cores)))))))
+
+
+
+(defn run-callers [key cores counts-only]
+  (let [result-files (map :out-file (run-R-analyses key))]
+    (if counts-only
+      result-files
+      (conj result-files (:out-file (cuffdiff/run key cores))))))
+
+
+(defn compare-callers [in-files]
+  (let [out-dir (dirname (first in-files))
+        config {:in-files (seq-to-rlist in-files)
+                :fc-plot (str (fs/file out-dir "logFC_comparison_plot.pdf"))
+                :expr-plot (str (fs/file out-dir "log10expr_comparison_plot.pdf"))
+                :pval-plot (str (fs/file out-dir "pval_comparison_plot.pdf"))
+                :out-dir out-dir}
+        template-config (apply-to-keys config escape-quote
+                                       :fc-plot :expr-plot :pval-plot :out-dir)]
+    (apply sh ["Rscript" (write-template caller-comparison-template template-config)])
+    (when (ercc/ercc-analysis? in-files) (assoc config :ercc-file
+                                                (ercc/ercc-analysis in-files)))
+    config))
+
+(defn compare-bcbio-run [seqc counts-only cores project-file key]
+  (setup-config project-file)
+  (if seqc
+    (run-comparisons (keyword key) cores)
+    (compare-callers (run-callers (keyword key) counts-only cores))))
+
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn compare-cli [& args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args options)]
+    (cond
+     (:help options) (exit 0 (usage summary))
+     (not= (count arguments) 2) (exit 1 (usage summary)))
+    (compare-bcbio-run (:seqc options) (:counts-only options)
+                       (:cores options) (first arguments) (second arguments))))

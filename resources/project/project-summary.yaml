@@ -1,0 +1,175 @@
+date: '2013-12-27 18:25:15.890944'
+test_run: true
+upload: /v-data/bcbio.rnaseq/resources/seqc/sample-project/ERCC92
+bcbio_system: /v-data/bcbio.rnaseq/resources/seqc/sample-project/bcbio_system.yaml
+samples:
+- description: UHRR_rep1
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep1, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '109', Intergenic Rate: '0.0',
+      Mapping Rate: '0.009244668', Encoding: Sanger / Illumina 1.9, Mapped: '176',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.2582409', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: UHRR}
+- description: HBRR_rep1
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep1, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '102', Intergenic Rate: '0.0',
+      Mapping Rate: '0.0131607335', Encoding: Sanger / Illumina 1.9, Mapped: '244',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.9348196', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: HBRR}
+- description: UHRR_rep2
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '6',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep2, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '106', Intergenic Rate: '0.0',
+      Mapping Rate: '0.00960625', Encoding: Sanger / Illumina 1.9, Mapped: '182',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.8414882', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: UHRR}
+- description: HBRR_rep2
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep2, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '115', Intergenic Rate: '0.0',
+      Mapping Rate: '0.0120684225', Encoding: Sanger / Illumina 1.9, Mapped: '230',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.7839526', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: HBRR}
+- description: UHRR_rep3
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep3, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
+      Mapping Rate: '0.009656896', Encoding: Sanger / Illumina 1.9, Mapped: '170',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.2880712', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: UHRR}
+- description: HBRR_rep3
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep3, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '114', Intergenic Rate: '0.0',
+      Mapping Rate: '0.01123953', Encoding: Sanger / Illumina 1.9, Mapped: '212',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '2.01483', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: HBRR}
+- description: UHRR_rep4
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep4, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '103', Intergenic Rate: '0.0',
+      Mapping Rate: '0.01090093', Encoding: Sanger / Illumina 1.9, Mapped: '204',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.6628839', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: UHRR}
+- description: HBRR_rep4
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep4, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '104', Intergenic Rate: '0.0',
+      Mapping Rate: '0.014245015', Encoding: Sanger / Illumina 1.9, Mapped: '270',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.8671364', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: HBRR}
+- description: UHRR_rep5
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '49', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep5, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
+      Mapping Rate: '0.011639992', Encoding: Sanger / Illumina 1.9, Mapped: '224',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.1668276', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: UHRR}
+- description: HBRR_rep5
+  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
+    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
+    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
+  genome_build: ERCC92
+  genome_resources:
+    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
+    version: 1
+  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+  summary:
+    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
+      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep5, rRNA rate: '0.0',
+      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
+      Mapping Rate: '0.018580029', Encoding: Sanger / Illumina 1.9, Mapped: '358',
+      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '2.8404477', unique_starts_per_read: nan,
+      complexity: NA}
+  metadata: {panel: HBRR}

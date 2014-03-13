@@ -6,10 +6,10 @@
    [bcbio.rnaseq.templates :only [templates get-analysis-config run-template
                                   run-R-analyses]]
    [bcbio.rnaseq.config]
-   [bcbio.rnaseq.compare :only [make-fc-plot]]
    [clojure.java.shell :only [sh]])
   (:require [clojure.java.io :as io]
             [bcbio.rnaseq.cuffdiff :as cuffdiff]
+            [bcbio.rnaseq.compare :as compare]
             [bcbio.rnaseq.simulate :as simulate]
             [me.raynes.fs :as fs]
             [bcbio.rnaseq.core :as core]
@@ -102,7 +102,7 @@
  (fact
   "making the comparison plot automatically works"
   (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
-    (file-exists? (make-fc-plot in-files)) => true))
+    (file-exists? (compare/make-fc-plot in-files)) => true))
  (fact
   "ERCC analysis works"
   (let [in-files (map str (fs/glob (fs/file (analysis-dir) "*_vs_*.tsv")))]
@@ -116,30 +116,30 @@
 
 (fact :integration
  "combining R analyses and cuffdiff works"
- (file-exists? (core/run-comparisons :panel 1 false)) => true)
+ (file-exists? (compare/run-comparisons :panel 1 false)) => true)
 
 (fact :integration
  "making the seqc plots work"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*_vs_*.tsv"))]
    (alter-config! (assoc (get-config) :analysis-dir dirname))
-   (file-exists? (make-fc-plot in-files)) => true))
+   (file-exists? (compare/make-fc-plot in-files)) => true))
 
 (fact :integration
  "making comparison plots from a project works"
  (let [dirname (dirname (get-resource "test-analysis/combined.counts"))
        in-files (fs/glob (str dirname "*_vs_*.tsv"))]
-   (file-exists? (:fc-plot (core/compare-callers in-files))) => true))
+   (file-exists? (:fc-plot (compare/compare-callers in-files))) => true))
 
 (fact :integration
  "running the comparisons on a bcbio-nextgen project file works"
- (let [out-map (core/-main (default-bcbio-project) "panel")]
+ (let [out-map (core/-main "compare" (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
 
 ;;(alter-config! {})
 (fact :integration
  "test running on simulated data"
- (file-exists? (core/run-simulation)) => true)
+ (file-exists? (simulate/run-simulation)) => true)
  ;(every? file-exists? (core/run-simulation)) => true)
 
 ;; clean-up the analysis directory

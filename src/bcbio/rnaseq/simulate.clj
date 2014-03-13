@@ -1,9 +1,12 @@
 (ns bcbio.rnaseq.simulate
   (:use [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
-        [clojure.java.shell :only [sh]])
+        [bcbio.rnaseq.compare :only [compare-callers]]
+        [clojure.java.shell :only [sh]]
+        [clojure.tools.cli :refer [parse-opts]])
   (:require [me.raynes.fs :as fs]
             [clostache.parser :as stache]
+            [clojure.string :as string]
             [bcbio.rnaseq.templates :as templates]))
 
 (def sim-template "comparisons/simulate.template")
@@ -45,3 +48,33 @@
     (spit rfile (stache/render-resource compare-template template-config))
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
+
+(defn run-simulation []
+  (let [count-file (simulate)
+        analysis-template (get-analysis-template (sim-dir) count-file)
+        out-files (map :out-file (map (partial run-one-template analysis-template)
+                                      templates/templates))]
+    (compare-callers out-files)
+    (compare-simulated-results out-files)))
+
+(def options
+  [["-h" "--help"]])
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn usage [options-summary]
+  (->> [
+        ""
+        "Usage: bcbio-rnaseq simulate [options]"
+        ""
+        "Options:"
+        options-summary]
+       (string/join \newline)))
+
+(defn simulate-cli [& args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args options)]
+    (cond
+     (:help options) (exit 0 (usage summary)))
+    (run-simulation)))

@@ -1,11 +1,16 @@
 (ns bcbio.rnaseq.ercc
   (:use [incanter.io :only [read-dataset]]
         [incanter.core :only [sel]]
-        [bcbio.rnaseq.compare :only [write-template]]
         [bcbio.rnaseq.util]
         [bcbio.rnaseq.config]
+        [clostache.parser :only [render-resource]]
         [clojure.java.shell :only [sh]])
   (:require [me.raynes.fs :as fs]))
+
+(defn write-template [template hashmap]
+  (let [rfile (change-extension (swap-directory template (analysis-dir)) ".R")]
+    (spit rfile (render-resource template hashmap))
+  rfile))
 
 (def ercc-template "comparisons/ERCC.template")
 (def ercc-known (get-resource "seqc/ERCC/ERCC_Controls_Analysis.txt"))
