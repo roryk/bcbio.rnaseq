@@ -37,12 +37,13 @@
   (let [count-file (:count-file config)
         comparison (seq-to-factor (:conditions config))
         out-file (:out-file config)
+        project (:project config)
         rfile (:r-file config)]
     (spit rfile
           (render-resource template {:count-file (escape-quote count-file)
                                     :class comparison
                                     :out-file (escape-quote out-file)
-                                    :project (escape-quote (project-name))}))
+                                    :project (escape-quote project)}))
     config))
 
 
@@ -59,6 +60,7 @@
       (safe-makedir (:de-out-dir analysis-config))
       (write-template template config)
       (println (format "Running %s." template ))
+      (println config)
       (sh "Rscript" "--verbose" (:r-file config)))
     config))
 
@@ -68,7 +70,8 @@
    :count-file (combined-count-file)
    :comparison (distinct (metadata-key key))
    :conditions (metadata-key key)
-   :condition-name (comparison-name key)})
+   :condition-name (comparison-name key)
+   :project (project-name)})
 
 (defn get-analysis-fn [key]
   "get a function that will run an analysis on a template file"

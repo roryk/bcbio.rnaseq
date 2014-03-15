@@ -31,7 +31,8 @@
    :count-file count-file
    :comparison ["group1" "group2"]
    :conditions ["group1" "group1" "group1" "group2" "group2" "group2"]
-   :condition-name "group1_vs_group2"})
+   :condition-name "group1_vs_group2"
+   :project "simulated"})
 
 (defn run-one-template [analysis-template template]
   (let [analysis-config (templates/add-out-files-to-config template analysis-template)]
@@ -52,7 +53,7 @@
 (defn run-simulation []
   (let [count-file (simulate)
         analysis-template (get-analysis-template (sim-dir) count-file)
-        out-files (map :out-file (map (partial run-one-template analysis-template)
+        out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
     (compare-callers out-files)
     (compare-simulated-results out-files)))
