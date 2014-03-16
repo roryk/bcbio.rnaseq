@@ -60,7 +60,6 @@
       (safe-makedir (:de-out-dir analysis-config))
       (write-template template config)
       (println (format "Running %s." template ))
-      (println config)
       (sh "Rscript" "--verbose" (:r-file config)))
     config))
 

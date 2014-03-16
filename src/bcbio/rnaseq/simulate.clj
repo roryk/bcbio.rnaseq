@@ -12,25 +12,22 @@
 (def sim-template "comparisons/simulate.template")
 (def compare-template "comparisons/compare-simulated.template")
 
-(defn sim-dir [] (str (fs/file (analysis-dir) "simulation")))
+(defn simulate [out-dir sample-size]
+  (let [count-file (str (fs/file out-dir "sim.counts"))
+        rfile (str (fs/file out-dir "sim.R"))]
+    (safe-makedir out-dir)
+    (spit rfile
+          (stache/render-resource sim-template
+                                  {:count-file (escape-quote count-file)
+                                   :sample-size sample-size}))
+    (sh "Rscript" rfile)
+    count-file))
 
-(defn simulate
-  ([sim-dir]
-     (let [count-file (str (fs/file sim-dir "sim.counts"))
-           rfile (str (fs/file sim-dir "sim.R"))]
-       (safe-makedir sim-dir)
-       (spit rfile
-             (stache/render-resource sim-template
-                                  {:count-file (escape-quote count-file)}))
-       (sh "Rscript" rfile)
-       count-file))
-  ([] (simulate (sim-dir))))
-
-(defn get-analysis-template [out-dir count-file]
+(defn get-analysis-template [out-dir count-file sample-size]
   {:de-out-dir out-dir
    :count-file count-file
    :comparison ["group1" "group2"]
-   :conditions ["group1" "group1" "group1" "group2" "group2" "group2"]
+   :conditions (concat (repeat sample-size "group1") (repeat sample-size "group2"))
    :condition-name "group1_vs_group2"
    :project "simulated"})
 
@@ -38,10 +35,10 @@
   (let [analysis-config (templates/add-out-files-to-config template analysis-template)]
     (templates/run-template template analysis-config)))
 
-(defn compare-simulated-results [in-files]
-  (let [out-file (swap-directory "roc-plot.pdf" (sim-dir))
-        score-file (str (fs/file (sim-dir) "sim.scores"))
-        rfile (str (fs/file (sim-dir) "compare-simulated.R"))
+(defn compare-simulated-results [sim-dir in-files]
+  (let [out-file (swap-directory "roc-plot.pdf" sim-dir)
+        score-file (str (fs/file sim-dir "sim.scores"))
+        rfile (str (fs/file sim-dir "compare-simulated.R"))
         template-config {:out-file (escape-quote out-file)
                          :score-file (escape-quote score-file)
                          :in-files (seq-to-rlist in-files)
@@ -50,16 +47,21 @@
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
 
-(defn run-simulation []
-  (let [count-file (simulate)
-        analysis-template (get-analysis-template (sim-dir) count-file)
+(defn run-simulation [out-dir sample-size]
+  (let [count-file (simulate out-dir sample-size)
+        analysis-template (get-analysis-template out-dir count-file sample-size)
         out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
     (compare-callers out-files)
-    (compare-simulated-results out-files)))
+    (compare-simulated-results out-dir out-files)))
 
 (def options
-  [["-h" "--help"]])
+  [["-h" "--help"]
+   ["-d" "--out-dir" "Output directory"
+    :default "simulate"]
+   ["-s" "--sample-size SAMPLE_SIZE" "Sample size of each group"
+    :default 3
+    :parse-fn #(Integer/parseInt %)]])
 
 (defn exit [status msg]
   (println msg)
@@ -78,4 +80,4 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
      (:help options) (exit 0 (usage summary)))
-    (run-simulation)))
+    (run-simulation (:out-dir options) (:sample-size options))))
