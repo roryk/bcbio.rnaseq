@@ -139,7 +139,7 @@
 ;;(alter-config! {})
 (fact :integration
  "test running on simulated data"
- (file-exists? (simulate/run-simulation)) => true)
+ (file-exists? (simulate/run-simulation "simulate" 3)) => true)
  ;(every? file-exists? (core/run-simulation)) => true)
 
 ;; clean-up the analysis directory
