@@ -57,7 +57,7 @@
 
 (def options
   [["-h" "--help"]
-   ["-d" "--out-dir" "Output directory"
+   ["-d" "--out-dir OUT_DIR" "Output directory"
     :default "simulate"]
    ["-s" "--sample-size SAMPLE_SIZE" "Sample size of each group"
     :default 3
