@@ -1,0 +1,36 @@
+# edgeR analysis
+# Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
+# analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
+
+library(edgeRuc)
+library(HTSFilter)
+library(tools)
+count_file = {{{count-file}}}
+out_file = {{{out-file}}}
+class = {{{class}}}
+project = {{{project}}}
+counts = read.table(count_file, header=TRUE, row.names="id")
+normalized_file = paste(strsplit(out_file, file_ext(out_file)[[1]][[1]]), "counts", sep="")
+edgeR.dgelist = DGEList(counts = counts, group = class)
+edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
+edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
+edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
+edgeRuc_pvalues = UCexactTest(edgeR.dgelist, tagwise=TRUE)
+edgeRuc_pvalues[is.na(edgeRuc_pvalues)] = 1 
+
+# this is to get the data into a common format
+# id, logCPM, logFC, pval, pdj
+comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
+out_table = exactTest(edgeR.dgelist, dispersion="tagwise")$table
+out_table$PValue = edgeRuc_pvalues
+out_table$id = rownames(out_table)
+out_table$padj = p.adjust(out_table$PValue, method = "BH")
+out_table$algorithm = "edgeRuc"
+out_table$expr = 2^out_table$logCPM
+out_table = out_table[, c("id", "expr", "logFC", "PValue", "padj", "algorithm")]
+colnames(out_table) = c("id", "expr", "logFC", "pval", "padj", "algorithm")
+out_table$project = project
+write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
+            sep="\t")
+write.table(edgeR.dgelist$pseudo.counts, file=normalized_file,
+            quote=FALSE, sep="\t")
