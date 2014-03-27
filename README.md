@@ -8,24 +8,92 @@
 
 There are a huge number of algorithms designed to call differential
 events from RNA-seq data at the gene, isoform and splicing-event
-level, with more coming out every day. It would be great if when a new
-caller comes out, there was a way to automatically place it in the
-context of the other callers. This project aims to do that, at least
-for the output of [bcbio-nextgen][bcbio-nextgen] runs.
+level. It would be great if when a new caller comes out, there was a
+way to automatically place it in the context of the other
+callers. Every now and then a review article comes out which compares
+a subset of the tools against each other. This project aims to do provide
+a tool to do that automatically.
 
-``bcbio.rnaseq`` can be run in two different modes.  The first mode is
-``compare-bcbio-run`` which takes the output from a
+## Quickstart
+
+1. Install [leiningen](https://github.com/technomancy/leiningen)
+2. Download the bcbio.repository
+
+```
+git clone https://github.com/roryk/bcbio.rnaseq
+```
+
+3. Install the necessary libraries
+
+```
+cd bcbio.rnaseq
+Rscript resources/scripts/install_libraries.R
+```
+
+4. Run a simulation of sample size 5
+
+```
+lein run simulate -s 5 -d output_dir
+```
+
+In the **output_dir** you will find plots comparing the output from
+the callers against the set of simulated true positives. For example
+here are concordance plots vs. the set of true simulated RNA-seq genes for
+an experiment with 3 samples:
+
+![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/concordant.png)
+
+vs 30 samples:
+
+![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/concordant_30samples.png)
+
+The simulator simulates a range of fold changes and the two concordance plots are
+faceted on the log2 fold change cutoff listed at the top. The simulated set has
+200 additional genes that are DE between each cutoff, for a total of 1000 genes.
+For three samples you can see almost all DE genes are called at a 4-fold change.
+At a 2-fold change only around half of the correct DE genes are called and almost none
+for fold changes lower than that. For 30 samples genes with a lower fold change are
+called much more accurately.
+
+Other useful plots are the Jaccard index:
+
+![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/jaccard.png)
+
+and the area under the ROC curve for each fold change cutoff:
+![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/logFC-auc-plot.png)
+
+
+## Modes of operation
+### Simulation
+``bcbio.rnaseq`` can be used to simulate a RNA-seq experiment of
+a given sample size. Running bcbio.rnaseq with:
+
+```
+lein run simulate -s 3 -d sample_size_3
+```
+Will output the results of simulating an experiment of size 3 to the
+directory sample_size_3.
+
+### bcbio-nextgen comparison
+This mode is invoked with
+
+```
+lein run compare
+```
+
+and takes the output from a
 [bcbio-nextgen][bcbio-nextgen] RNA-seq analysis and runs several
 different DE callers and compares the results to each other. If your
 run includes [ERCC spike-in][ERCC] data ``bcbio.rnaseq`` will detect
 this automatically and run a concordance analysis on the ERCC data.
-The second mode is a ``seqc-comparisons`` which is a diagnostic mode
+Passing the ``--seqc`` flag turns on a
+a diagnostic mode
 for determining how well DE callers work against a reference set of ~
 1000 qPCR assayed genes from the [SEQC][SEQC] project. The true set of
 DE calls were made on the qPCR data via the hacky method of performing
 a t-test and BH correcting the p-values, and calling anything with a
 FDR < 0.05 as differentially expressed. To run in this mode you would
-first download and prepare the [SEQC][SEQC] data, align it with
+first download and prepare the [SEQC][SEQC] data, align and quantitate it with
 [bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
 results.
 
@@ -36,7 +104,7 @@ If you have ``cufflinks`` and ``R`` installed and in your path, this
 should work for you.  If it doesn't please open an issue and we'll fix
 it.
 
-## Installation
+## Creating a standalone executable
 
 ```
 git clone https://github.com/roryk/bcbio.rnaseq
@@ -45,23 +113,6 @@ make
 ```
 
 The executable will be in `bin/bcbio-rnaseq`.
-
-## Quickstart
-
-At the end of your [bcbio-nextgen][bcbio-nextgen] run, point
-``bcbio.rnaseq`` at the project-summary.yaml file in your
-``upload`` directory:
-
-    bin/bcbio-rnaseq --cores 1 /path/to/project_summary.yaml key
-
-where ``key`` is the field in the [metadata][metadata] entry you want
-to use as the two groups to compare to each other.
-
-To run against the [SEQC][SEQC] data, you would download the [SEQC][SEQC]
-files, align them with [bcbio-nextgen][bcbio-nextgen] and point
-the ``bcbio.rnaseq`` to the results with the `--seqc` flag set:
-
-    bin/bcbio-rnaseq --seqc --cores 1 /path/to/project_summary.yaml key
 
 ## Adding new R-based DE callers
 
@@ -95,16 +146,6 @@ graphs.
 
 An example is clearer: a proper template, [deseq][deseq]
 and the output, [sample-output][sample-output].
-
-## TODO
-
-* Ability to compare different bcbio-nextgen runs to each other, for
-  determining the effect of pipeline tweaks like [trimming][trimming].
-* Ability to compare non-bcbio nextgen runs. This will require a
-  little bit of work but should be doable.
-* Add SEQC downloader and prepper script.
-* Better comparison metrics overall.
-* Inclusion of more callers.
 
 [SEQC]: http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE49712
 [deseq]: http://raw.github.com/roryk/bcbio.rnaseq/master/resources/templates/deseq.template
