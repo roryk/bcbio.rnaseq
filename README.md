@@ -49,7 +49,7 @@ vs 30 replicates:
 
 The simulator simulates a range of fold changes and the two concordance plots are
 faceted on the log2 fold change cutoff listed at the top. The simulated set has
-200 additional genes that are DE between each cutoff, for a total of 1000 genes.
+200 additional genes that are DE between each cutoff, for a total of 1000 DE genes.
 For three samples you can see almost all DE genes are called at a 4-fold change.
 At a 2-fold change only around half of the correct DE genes are called and almost none
 for fold changes lower than that. For 30 samples genes with a lower fold change are
@@ -72,7 +72,9 @@ a given sample size. Running bcbio.rnaseq with:
 lein run simulate -s 3 -d sample_size_3
 ```
 Will output the results of simulating an experiment of size 3 to the
-directory sample_size_3.
+directory sample_size_3. The simulator simulates an experiment with 20 million
+reads with 10,000 total genes, 1000 of which are differentially expressed,
+200 at five different fold change levels.
 
 ### bcbio-nextgen comparison
 This mode is invoked with
