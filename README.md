@@ -39,13 +39,13 @@ lein run simulate -s 5 -d output_dir
 In the **output_dir** you will find plots comparing the output from
 the callers against the set of simulated true positives. For example
 here are concordance plots vs. the set of true simulated RNA-seq genes for
-an experiment with 3 samples:
+an experiment with 3 replicates:
 
 ![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/concordant.png)
 
-vs 30 samples:
+vs 30 replicates:
 
-![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/concordant_30samples.png)
+![](https://raw.githubusercontent.com/roryk/bcbio.rnaseq/master/docs/images/concordant_30replicates.png)
 
 The simulator simulates a range of fold changes and the two concordance plots are
 faceted on the log2 fold change cutoff listed at the top. The simulated set has
