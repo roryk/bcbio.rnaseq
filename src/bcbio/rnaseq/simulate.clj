@@ -36,7 +36,7 @@
     (templates/run-template template analysis-config)))
 
 (defn compare-simulated-results [sim-dir in-files]
-  (let [out-file (swap-directory "roc-plot.pdf" sim-dir)
+  (let [out-file (swap-directory "concordant.pdf" sim-dir)
         score-file (str (fs/file sim-dir "sim.scores"))
         rfile (str (fs/file sim-dir "compare-simulated.R"))
         template-config {:out-file (escape-quote out-file)
