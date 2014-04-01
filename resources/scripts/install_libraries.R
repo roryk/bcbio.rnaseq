@@ -38,7 +38,7 @@ install.github = function(packages, username) {
     }
 }
 
-cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr")
+cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gplots")
 install.cran(cran_packages)
 
 bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq")

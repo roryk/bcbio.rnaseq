@@ -8,17 +8,36 @@ opts_chunk$set(tidy=TRUE, highlight=TRUE, fig.align='left', fig.show='hold',
 ```{r qc-setup}
 library(ggplot2)
 library(reshape)
+library(gplots)
+library(edgeR)
+library(CHBUtils)
 project_summary = {{{summary-csv}}}
+counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = read.table(project_summary, header=TRUE, sep=",")
+counts = read.table(counts_file, header=TRUE, row.names="id")
 ```
 
-```{r transcripts-detected-plot}
-ggplot(summarydata, aes(x=Name, y=Transcripts.Detected)) +
+```{r mapped-plot}
+ggplot(summarydata, aes(x=Name, y=Mapped)) + 
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) +
+    ylab("mapped reads")
+```
+
+```{r mapping-rate-plot}
+ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) + 
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) +
+    ylab("mapping rate")
+```
+
+```{r genes-detected-plot}
+ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) + 
-    ylab("transcripts detected")
+    ylab("genes detected")
 ```
 
 ```{r intragenic-rate-plot}
@@ -27,3 +46,31 @@ ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("intragenic rate")
 ```
+
+```{r fragment-length-plot}
+ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) + 
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) +
+    ylab("fragment length")
+```
+
+```{r boxplot-raw}
+melted = melt(counts)
+colnames(melted) = c("sample", "count")
+melted$count = log(melted$count)
+ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r boxplot-normalized}
+y = DGEList(counts=counts)
+y = calcNormFactors(y)
+normalized_counts = cpm(y, normalized.lib.sizes=TRUE)
+melted = melt(normalized_counts)
+colnames(melted) = c("gene", "sample", "count")
+melted$count = log(melted$count)
+ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
+```
+

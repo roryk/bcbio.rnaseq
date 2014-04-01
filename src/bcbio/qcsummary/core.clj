@@ -24,9 +24,13 @@
     rfile))
 
 (defn make-Rmd-summary [summary-csv]
-  (let [summary-config {:summary-csv (util/escape-quote summary-csv)
-                        :out-dir (util/escape-quote (util/dirname summary-csv))}
-        out-dir (util/dirname summary-csv)]
+  (let [out-dir (util/dirname summary-csv)
+        summary-config {:summary-csv (util/escape-quote summary-csv)
+                        :out-dir (util/escape-quote (util/dirname summary-csv))
+                        :counts-file (->> "combined.counts"
+                                          (fs/file out-dir)
+                                          str
+                                          util/escape-quote)}]
     (write-template summary-template summary-config out-dir ".Rmd")))
 
 (defn load-summary [fn]
