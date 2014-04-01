@@ -1,0 +1,29 @@
+```{r setup, echo=FALSE}
+opts_chunk$set(tidy=TRUE, highlight=TRUE, fig.align='left', fig.show='hold',
+               cache=FALSE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
+               message=FALSE, prompt=TRUE, comment='', fig.cap='', fig.width=8,
+               fix.height=11, base.dir={{{out-dir}}})
+```
+
+```{r qc-setup}
+library(ggplot2)
+library(reshape)
+project_summary = {{{summary-csv}}}
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+"#0072B2", "#D55E00", "#CC79A7")
+summarydata = read.table(project_summary, header=TRUE, sep=",")
+```
+
+```{r transcripts-detected-plot}
+ggplot(summarydata, aes(x=Name, y=Transcripts.Detected)) +
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) + 
+    ylab("transcripts detected")
+```
+
+```{r intragenic-rate-plot}
+ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) + 
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) +
+    ylab("intragenic rate")
+```

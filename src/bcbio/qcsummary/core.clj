@@ -4,8 +4,33 @@
             [incanter.core :as ic]
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]
-            [clojure.string :as string])
-  (:use [clojure.tools.cli :refer [parse-opts]]))
+            [clojure.string :as string]
+            [clostache.parser :as stache])
+  (:use [clojure.tools.cli :refer [parse-opts]]
+        [clojure.java.shell :only [sh with-sh-dir]]))
+
+(defn knit-file [rmd-file]
+  (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
+        cmd (str "library(knitr); knit('" rmd-file "')")]
+    (println (util/escape-quote cmd))
+    (sh "Rscript" "-e" (str setwd "library(knitr); knit('" rmd-file "')"))))
+
+       ; "'library(knitr); knit(" (util/escape-quote rmd-file) ")'" :dir (util/dirname rmd-file))))
+;        (str setwd "library(knitr); knit('" rmd-file "')"))))
+
+(def summary-template "bcbio/qc-summary.template")
+
+(defn write-template [template hashmap out-dir extension]
+  (let [rfile (util/change-extension (util/swap-directory template out-dir)
+                                     ".Rmd")]
+    (spit rfile (stache/render-resource template hashmap))
+    rfile))
+
+(defn make-Rmd-summary [summary-csv]
+  (let [summary-config {:summary-csv (util/escape-quote summary-csv)
+                        :out-dir (util/escape-quote (util/dirname summary-csv))}
+        out-dir (util/dirname summary-csv)]
+    (write-template summary-template summary-config out-dir ".Rmd")))
 
 (defn load-summary [fn]
   (config/load-yaml fn))
@@ -51,4 +76,4 @@
     (cond
      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
-    (write-tidy-summary (first arguments))))
+    (knit-file (make-Rmd-summary (write-tidy-summary (first arguments))))))
