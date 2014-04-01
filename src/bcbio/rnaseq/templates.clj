@@ -13,7 +13,6 @@
 
 (def caller-comparison-template "comparisons/compare.template")
 
-
 (defn- analysis-out-stem [template-file analysis-config]
   (str (io/file (:de-out-dir analysis-config)
                 (str (base-stem template-file) "_"
