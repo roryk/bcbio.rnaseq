@@ -12,7 +12,8 @@ before_install:
   - sudo apt-get update -o Dir::Etc::sourcelist="sources.list.d/marutter-c2d4u-precise.list"
       -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
   - sudo apt-get install fabric
-  - sudo apt-get install r-base-dev=3.0.3-1precise0 r-cran-xml r-cran-rcurl r-cran-rgl r-recommended=3.0.3-1precise0
+  - sudo apt-get --purge remove r-base-dev r-base-core r-recommended
+  - sudo apt-get install r-base-dev=3.0.3-1precise0 r-cran-xml r-cran-rcurl r-cran-rgl r-recommended=3.0.3-1precise0 r-base-core=3.0.3-1precise0
   - "[ ! -d ${R_LIBS_USER} ] && mkdir ${R_LIBS_USER}"
   - R --version
   - R -e '.libPaths(); sessionInfo()'
