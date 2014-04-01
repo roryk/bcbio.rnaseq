@@ -93,7 +93,6 @@
   (let [template (first templates)
         analysis-config (get-analysis-config :panel)]
     (write-combined-count-file (count-files) (combined-count-file))
-;    (:out-file (run-template template analysis-config)) => true))
     (file-exists? (:out-file (run-template template analysis-config))) => true))
 
  (fact
@@ -136,11 +135,9 @@
  (let [out-map (core/-main "compare" (default-bcbio-project) "panel")]
    (file-exists? (:fc-plot out-map)) => true))
 
-;;(alter-config! {})
 (fact :integration
  "test running on simulated data"
  (file-exists? (simulate/run-simulation "simulate" 3)) => true)
- ;(every? file-exists? (core/run-simulation)) => true)
 
 ;; clean-up the analysis directory
 ;;(when (directory-exists? (get-resource "seqc/sample-project"))

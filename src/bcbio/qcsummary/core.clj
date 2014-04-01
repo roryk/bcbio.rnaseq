@@ -12,11 +12,8 @@
 (defn knit-file [rmd-file]
   (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
         cmd (str "library(knitr); knit('" rmd-file "')")]
-    (println (util/escape-quote cmd))
     (sh "Rscript" "-e" (str setwd "library(knitr); knit('" rmd-file "')"))))
 
-       ; "'library(knitr); knit(" (util/escape-quote rmd-file) ")'" :dir (util/dirname rmd-file))))
-;        (str setwd "library(knitr); knit('" rmd-file "')"))))
 
 (def summary-template "bcbio/qc-summary.template")
 
