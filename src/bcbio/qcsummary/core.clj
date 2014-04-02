@@ -38,6 +38,8 @@
 
 (defn summary [sample] (get-in sample [:summary :metrics]))
 
+(defn metadata [sample] (:metadata sample))
+
 (defn tidy-summary [summary]
   "tidy a set of summary statistics"
   (let [df (ic/to-dataset summary)]
@@ -45,7 +47,9 @@
 
 (defn load-tidy-summary [fn]
   "load the summaries from a bcbio project file"
-  (->> fn load-summary :samples (map summary) tidy-summary))
+  (let [summary (->> fn load-summary :samples (map summary) tidy-summary)
+        metadata (->> fn load-summary :samples (map :metadata) tidy-summary)]
+    (ic/conj-cols summary metadata)))
 
 (defn write-tidy-summary [fn]
   "from a bcbio project file write a tidy version of the
