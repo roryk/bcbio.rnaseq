@@ -12,14 +12,15 @@
 (def sim-template "comparisons/simulate.template")
 (def compare-template "comparisons/compare-simulated.template")
 
-(defn simulate [out-dir sample-size]
+(defn simulate [out-dir sample-size library-size]
   (let [count-file (str (fs/file out-dir "sim.counts"))
         rfile (str (fs/file out-dir "sim.R"))]
     (safe-makedir out-dir)
     (spit rfile
           (stache/render-resource sim-template
                                   {:count-file (escape-quote count-file)
-                                   :sample-size sample-size}))
+                                   :sample-size sample-size
+                                   :library-size library-size}))
     (sh "Rscript" rfile)
     count-file))
 
@@ -47,8 +48,8 @@
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
 
-(defn run-simulation [out-dir sample-size]
-  (let [count-file (simulate out-dir sample-size)
+(defn run-simulation [out-dir sample-size library-size]
+  (let [count-file (simulate out-dir sample-size library-size)
         analysis-template (get-analysis-template out-dir count-file sample-size)
         out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
@@ -61,7 +62,10 @@
     :default "simulate"]
    ["-s" "--sample-size SAMPLE_SIZE" "Sample size of each group"
     :default 3
-    :parse-fn #(Integer/parseInt %)]])
+    :parse-fn #(Integer/parseInt %)]
+   ["-l" "--library-size SIZE" "Library size in millions of reads"
+    :default 20
+    :parse-fn #(Float/parseFloat %)]])
 
 (defn exit [status msg]
   (println msg)
@@ -80,4 +84,4 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
      (:help options) (exit 0 (usage summary)))
-    (run-simulation (:out-dir options) (:sample-size options))))
+    (run-simulation (:out-dir options) (:sample-size options) (:library-size options))))

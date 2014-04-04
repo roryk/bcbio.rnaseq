@@ -4,6 +4,7 @@
 library(tools)
 count_file = {{{count-file}}}
 sample_size = {{{sample-size}}}
+library_size = {{{library-size}}} * 1e6
 score_file = paste(file_path_sans_ext(count_file), ".scores", sep="")
 invChisq = TRUE
 ngenes = 10000
@@ -20,7 +21,7 @@ n2 = sample_size
 group = factor(c(rep(1, n1), rep(2, n2)))
 design = model.matrix(~ group)
 nlibs = n1 + n2
-expected.lib.size = 20e6 * rep(1, nlibs)
+expected.lib.size = library_size * rep(1, nlibs)
 fcs = c(1.05, 1.1, 1.5, 2, 4)
 i = sample(1:ngenes, 1000)
 baselineprop1 <- baselineprop2 <- baselineprop
