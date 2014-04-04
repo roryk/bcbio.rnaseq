@@ -17,50 +17,58 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = read.table(project_summary, header=TRUE, sep=",")
 counts = read.table(counts_file, header=TRUE, row.names="id")
+counts = counts[, order(colnames(counts))]
 ```
 
 ```{r mapped-plot}
 ggplot(summarydata, aes(x=Name, y=Mapped)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("mapped reads")
+    ylab("mapped reads") + xlab("")
 ```
 
 ```{r mapping-rate-plot}
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("mapping rate")
+    ylab("mapping rate") + xlab("")
 ```
 
 ```{r genes-detected-plot}
 ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) + 
-    ylab("genes detected")
+    ylab("genes detected") + xlab("")
 ```
 
 ```{r intragenic-rate-plot}
 ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("intragenic rate")
+    ylab("intragenic rate") + xlab("")
 ```
 
 ```{r fragment-length-plot}
 ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("fragment length")
+    ylab("fragment length") + xlab("")
 ```
 
 ```{r boxplot-raw}
 melted = melt(counts)
 colnames(melted) = c("sample", "count")
+melted$sample = factor(melted$sample)
+melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+
+```{r heatmap-raw}
+heatmap.2(cor(counts), trace="none")
+```
+
 
 ```{r boxplot-normalized}
 y = DGEList(counts=counts)
@@ -68,9 +76,15 @@ y = calcNormFactors(y)
 normalized_counts = cpm(y, normalized.lib.sizes=TRUE)
 melted = melt(normalized_counts)
 colnames(melted) = c("gene", "sample", "count")
+melted$sample = factor(melted$sample)
+melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 ```
 
+
+```{r top-count-genes, results='asis'}
+kable(head(counts[order(-rowSums(counts)),], format="markdown")
+```
