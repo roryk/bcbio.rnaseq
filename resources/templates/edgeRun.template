@@ -2,7 +2,7 @@
 # Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
 # analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
 
-library(edgeRuc)
+library(edgeRun)
 library(HTSFilter)
 library(tools)
 count_file = {{{count-file}}}
@@ -15,14 +15,11 @@ edgeR.dgelist = DGEList(counts = counts, group = class)
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
-edgeRuc_pvalues = UCexactTest(edgeR.dgelist, tagwise=TRUE)
-edgeRuc_pvalues[is.na(edgeRuc_pvalues)] = 1 
+out_table = UCexactTest(edgeR.dgelist)$table
 
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
-out_table = exactTest(edgeR.dgelist, dispersion="tagwise")$table
-out_table$PValue = edgeRuc_pvalues
 out_table$id = rownames(out_table)
 out_table$padj = p.adjust(out_table$PValue, method = "BH")
 out_table$algorithm = "edgeRuc"
