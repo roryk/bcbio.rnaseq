@@ -86,5 +86,5 @@ mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 
 
 ```{r top-count-genes, results='asis'}
-kable(head(counts[order(-rowSums(counts)),], format="markdown")
+kable(head(counts[order(-rowSums(counts)),], format="markdown"))
 ```
