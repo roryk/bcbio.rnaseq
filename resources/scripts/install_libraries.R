@@ -45,5 +45,4 @@ install.cran(cran_packages)
 bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq")
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
-
 install.github(c("CHBUtils"), "hbc")
