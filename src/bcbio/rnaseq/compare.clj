@@ -43,10 +43,15 @@
 (defn usage [options-summary]
   (->> [
         ""
-        "Usage: bcbio-rnaseq compare [options]"
+        "Usage: bcbio-rnaseq compare [options] project-file key"
         ""
         "Options:"
-        options-summary]
+        options-summary
+        ""
+        "Arguments:"
+        "  project-file    A bcbio-nextgen project file"
+        "  key             Key in the metadata field to do pairwise comparisons"
+        ""]
        (string/join \newline)))
 
 (defn run-comparisons [key cores counts-only]
