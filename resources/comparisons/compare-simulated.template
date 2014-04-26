@@ -98,7 +98,7 @@ concordance = function(df, scores) {
             false_positive = c(false_positive, length(setdiff(sig, true_set)))
             false_negative = c(false_negative, length(setdiff(true_set, sig)))
             algorithm = c(algorithm, alg)
-            cutoffs = c(cutoffs, cutoff)
+            cutoffs = c(cutoffs, 2^cutoff)
             }
     }
     return(data.frame(concordant=unlist(concordant), false_positive=unlist(false_positive),
@@ -112,7 +112,7 @@ concordance_plot = function(concord) {
     p = ggplot(melted, aes(x=method, y=value, fill=algorithm)) +
         geom_bar(stat="identity", position="dodge") + facet_wrap(~ cutoffs) +
           theme(axis.text.x = element_text(angle=90)) +
-              scale_fill_manual(values=cbPalette) + ylab("")
+              scale_fill_manual(values=cbPalette) + ylab("") + xlab("") 
     ggsave(filename=concord_plot, plot=p)
 }
 
