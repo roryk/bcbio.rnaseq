@@ -16,6 +16,7 @@ counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = read.table(project_summary, header=TRUE, sep=",")
+summarydata = summarydata[order(rownames(summarydata)),]
 counts = read.table(counts_file, header=TRUE, row.names="id")
 counts = counts[, order(colnames(counts))]
 ```
@@ -66,7 +67,8 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
 ```
 
 ```{r heatmap-raw}
-heatmap.2(cor(counts), trace="none")
+p = ggheatmap(cor(counts))
+ggheatmap.show(p)
 ```
 
 
@@ -81,9 +83,17 @@ melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
-mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 ```
 
+```{r heatmap-normalized}
+p = ggheatmap(cor(normalized_counts))
+ggheatmap.show(p)
+#heatmap.2(cor(counts), trace="none")
+```
+
+```{r mds-normalized}
+mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
+```
 
 ```{r top-count-genes, results='asis'}
 kable(head(counts[order(-rowSums(counts)),], format="markdown"))
