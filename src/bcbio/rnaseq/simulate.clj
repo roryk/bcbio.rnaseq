@@ -12,7 +12,7 @@
 (def sim-template "comparisons/simulate.template")
 (def compare-template "comparisons/compare-simulated.template")
 
-(defn simulate [out-dir sample-size library-size]
+(defn simulate [out-dir sample-size library-size ngenes]
   (let [count-file (str (fs/file out-dir "sim.counts"))
         rfile (str (fs/file out-dir "sim.R"))]
     (safe-makedir out-dir)
@@ -20,7 +20,8 @@
           (stache/render-resource sim-template
                                   {:count-file (escape-quote count-file)
                                    :sample-size sample-size
-                                   :library-size library-size}))
+                                   :library-size library-size
+                                   :ngenes ngenes}))
     (sh "Rscript" rfile)
     count-file))
 
@@ -48,8 +49,8 @@
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
 
-(defn run-simulation [out-dir sample-size library-size]
-  (let [count-file (simulate out-dir sample-size library-size)
+(defn run-simulation [out-dir sample-size library-size num-genes]
+  (let [count-file (simulate out-dir sample-size library-size num-genes)
         analysis-template (get-analysis-template out-dir count-file sample-size)
         out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
@@ -65,7 +66,10 @@
     :parse-fn #(Integer/parseInt %)]
    ["-l" "--library-size SIZE" "Library size in millions of reads"
     :default 20
-    :parse-fn #(Float/parseFloat %)]])
+    :parse-fn #(Float/parseFloat %)]
+   ["-n" "--num-genes GENES" "Number of genes to simulate"
+    :default 10000
+    :parse-fn #(Integer/parseInt %)]])
 
 (defn exit [status msg]
   (println msg)
@@ -84,4 +88,5 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
      (:help options) (exit 0 (usage summary)))
-    (run-simulation (:out-dir options) (:sample-size options) (:library-size options))))
+    (run-simulation (:out-dir options) (:sample-size options)
+                    (:library-size options) (:num-genes options))))

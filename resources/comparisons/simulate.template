@@ -7,7 +7,8 @@ sample_size = {{{sample-size}}}
 library_size = {{{library-size}}} * 1e6
 score_file = paste(file_path_sans_ext(count_file), ".scores", sep="")
 invChisq = TRUE
-ngenes = 10000
+ngenes = {{{ngenes}}}
+ndiff = round(ngenes * 0.10)
 load(url("http://bioinf.wehi.edu.au/voom/qAbundanceDist.RData"))
 
 # these are from a real dataset. this is the baseline proportion of genes, normalized to
@@ -23,15 +24,15 @@ design = model.matrix(~ group)
 nlibs = n1 + n2
 expected.lib.size = library_size * rep(1, nlibs)
 fcs = c(1.05, 1.1, 1.5, 2, 4)
-i = sample(1:ngenes, 1000)
+i = sample(1:ngenes, ndiff)
 baselineprop1 <- baselineprop2 <- baselineprop
 offset = 0
 correct = rep(0, ngenes)
 for (fc in fcs) {
-    new_offset = offset + 100
+    new_offset = offset + round(ndiff * 0.1)
     i1 = i[(offset + 1):new_offset]
     offset = new_offset
-    new_offset = offset + 100
+    new_offset = offset + round(ndiff * 0.1)
     i2 = i[(offset + 1):new_offset]
     baselineprop1[i1] = baselineprop[i1]*fc
     baselineprop2[i2] = baselineprop[i2]*fc
