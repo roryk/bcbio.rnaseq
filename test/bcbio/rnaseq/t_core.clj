@@ -137,7 +137,7 @@
 
 (fact :integration
  "test running on simulated data"
- (file-exists? (simulate/run-simulation "simulate" 3 20)) => true)
+ (file-exists? (simulate/run-simulation "simulate" 3 20 10000)) => true)
 
 ;; clean-up the analysis directory
 ;;(when (directory-exists? (get-resource "seqc/sample-project"))
