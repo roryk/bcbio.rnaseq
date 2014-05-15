@@ -5,6 +5,8 @@
 </head>
 
 ## Overview
+[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
+
 
 There are a huge number of algorithms designed to call differential
 events from RNA-seq data at the gene, isoform and splicing-event
@@ -100,7 +102,6 @@ first download and prepare the [SEQC][SEQC] data, align and quantitate it with
 results.
 
 ## Status
-[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
 
 If you have ``cufflinks`` and ``R`` installed and in your path, this
 should work for you.  If it doesn't please open an issue and we'll fix
