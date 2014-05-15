@@ -7,23 +7,10 @@
   (:require [me.raynes.fs :as fs]
             [clostache.parser :as stache]
             [clojure.string :as string]
+            [bcbio.rnaseq.simulator :as sim]
             [bcbio.rnaseq.templates :as templates]))
 
-(def sim-template "comparisons/simulate.template")
 (def compare-template "comparisons/compare-simulated.template")
-
-(defn simulate [out-dir sample-size library-size ngenes]
-  (let [count-file (str (fs/file out-dir "sim.counts"))
-        rfile (str (fs/file out-dir "sim.R"))]
-    (safe-makedir out-dir)
-    (spit rfile
-          (stache/render-resource sim-template
-                                  {:count-file (escape-quote count-file)
-                                   :sample-size sample-size
-                                   :library-size library-size
-                                   :ngenes ngenes}))
-    (sh "Rscript" rfile)
-    count-file))
 
 (defn get-analysis-template [out-dir count-file sample-size]
   {:de-out-dir out-dir
@@ -49,8 +36,8 @@
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
 
-(defn run-simulation [out-dir sample-size library-size num-genes]
-  (let [count-file (simulate out-dir sample-size library-size num-genes)
+(defn run-simulation [out-dir sample-size library-size]
+  (let [count-file (sim/simulate-and-write out-dir sample-size library-size)
         analysis-template (get-analysis-template out-dir count-file sample-size)
         out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
@@ -66,10 +53,7 @@
     :parse-fn #(Integer/parseInt %)]
    ["-l" "--library-size SIZE" "Library size in millions of reads"
     :default 20
-    :parse-fn #(Float/parseFloat %)]
-   ["-n" "--num-genes GENES" "Number of genes to simulate"
-    :default 10000
-    :parse-fn #(Integer/parseInt %)]])
+    :parse-fn #(Float/parseFloat %)]])
 
 (defn exit [status msg]
   (println msg)
@@ -89,4 +73,4 @@
     (cond
      (:help options) (exit 0 (usage summary)))
     (run-simulation (:out-dir options) (:sample-size options)
-                    (:library-size options) (:num-genes options))))
+                        (:library-size options))))
