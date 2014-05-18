@@ -9,29 +9,15 @@
             [incanter.stats :as stats]
             [me.raynes.fs :as fs]))
 
-(defn matmin [M]
-  (apply min (flatten M)))
-
-(defn matmax [M]
-  (apply max (flatten M)))
-
-
 (def default-library-size 20e6)
 (def default-fold-changes [1.05 1.1 1.5 2 4])
 
-(def not-nil? (complement nil?))
-
-(def default-count-file (util/get-resource "test-analysis/combined.counts"))
 (def default-proportion-file (util/get-resource "comparisons/baseprop.tsv"))
-(def default-count-matrix
-  (incanter/to-matrix
-   (incanter/sel
-    (read-dataset default-count-file :delim \tab :header true)
-    :except-cols :id)))
 
-(def default-proportions (incanter/to-matrix
-                          (read-dataset default-proportion-file :delim \tab)))
-
+(def default-proportions (->
+                          default-proportion-file
+                          (read-dataset :delim \tab)
+                          incanter/to-matrix))
 
 (defn bcv0 [mu0 bcv]
   (plus bcv (div 1 (sqrt mu0))))
@@ -49,26 +35,9 @@
 (defn sample-inv-chisq [n]
   (take n (repeatedly #(sqrt (/ 40 (dist/draw (dist/chisq-distribution 40)))))))
 
-(defn add-biological-variation [xs bcv]
-  (let [bcv0 (->> xs sqrt (div 1) (plus bcv))]
-    (mult bcv0 (sample-inv-chisq (count bcv0)))))
-
-
 (defn add-biological-noise [mu0 bcv]
   (incanter/matrix (mult (flatten (bcv0 mu0 bcv)) (sample-inv-chisq (size mu0)))
                    (ncol mu0)))
-
-(defn sample-gamma [mu0 bcv]
-  (let [bv (add-biological-noise mu0 bcv)
-        shape (div 1 (incanter/pow bv 2))
-        rate (div shape mu0)]
-    (incanter/matrix (map draw-gamma (flatten shape) (flatten rate))
-                     (ncol mu0))))
-
-
-(defn generate-counts [xs library-size]
-  (mult xs library-size))
-
 
 (defn- fold-changes
   ([] (fold-changes default-fold-changes))
@@ -76,9 +45,6 @@
 
 (defn- row-means [M]
   (map stats/mean M))
-
-(defn- row-sd [M]
-  (map stats/sd M))
 
 (defn- safe-log2 [M]
   "Add a small positive number to avoid logging 0 numbers"
@@ -98,8 +64,8 @@
    (take n (concat
             (->> (fold-changes) (repeat nde) flatten) (repeat 1)))))
 
-(defn generate-clean-counts [fc1 props n library-size]
-  (let [raw (generate-counts props library-size)
+(defn generate-counts [fc1 props n library-size]
+  (let [raw (mult props library-size)
         counts1 (mult fc1 raw)]
     (apply incanter/bind-columns
            (concat (repeat n counts1) (repeat n raw)))))
@@ -135,8 +101,8 @@
 
 (defn simulate-genes [fcs sample-size library-size]
   (let [props default-proportions
-        mu0 (generate-clean-counts fcs props sample-size
-                                   (* 1e6 library-size))
+        mu0 (generate-counts fcs props sample-size
+                             (* 1e6 library-size))
         BCV0 (bcv0 mu0 0.2)
         BCV (add-biological-noise mu0 0.2)
         shape (div 1 (pow BCV 2))
