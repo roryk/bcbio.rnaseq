@@ -1,15 +1,15 @@
 (ns bcbio.rnaseq.compare
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string]
+  (:require [bcbio.rnaseq.config :refer :all]
             [bcbio.rnaseq.cuffdiff :as cuffdiff]
             [bcbio.rnaseq.ercc :as ercc]
-            [me.raynes.fs :as fs])
-  (:use [bcbio.rnaseq.util]
-        [bcbio.rnaseq.config]
-        [clostache.parser :only [render-resource]]
-        [clojure.tools.cli :refer [parse-opts]]
-        [bcbio.rnaseq.templates :only [run-R-analyses caller-comparison-template templates]]
-        [clojure.java.shell :only [sh]]))
+            [bcbio.rnaseq.templates :refer [caller-comparison-template
+                                            run-R-analyses]]
+            [bcbio.rnaseq.util :refer :all]
+            [clojure.java.shell :refer [sh]]
+            [clojure.string :as string]
+            [clojure.tools.cli :refer [parse-opts]]
+            [clostache.parser :refer [render-resource]]
+            [me.raynes.fs :as fs]))
 
 
 (defn write-template [template hashmap]

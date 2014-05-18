@@ -1,10 +1,9 @@
 (ns bcbio.rnaseq.core
-  (:require [bcbio.rnaseq.cuffdiff :as cuffdiff]
-            [bcbio.rnaseq.simulate :as simulate]
+  (:require [bcbio.qcsummary.core :as qcsummary]
             [bcbio.rnaseq.compare :as compare]
-            [bcbio.qcsummary.core :as qcsummary]
-            [clojure.tools.cli :refer [parse-opts]]
-            [clojure.string :as string])
+            [bcbio.rnaseq.simulate :as simulate]
+            [clojure.string :as string]
+            [clojure.tools.cli :refer [parse-opts]])
   (:gen-class :main true))
 
 

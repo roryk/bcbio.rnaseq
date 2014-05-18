@@ -1,11 +1,11 @@
 (ns bcbio.rnaseq.ercc
-  (:use [incanter.io :only [read-dataset]]
-        [incanter.core :only [sel]]
-        [bcbio.rnaseq.util]
-        [bcbio.rnaseq.config]
-        [clostache.parser :only [render-resource]]
-        [clojure.java.shell :only [sh]])
-  (:require [me.raynes.fs :as fs]))
+  (:require [bcbio.rnaseq.config :refer :all]
+            [bcbio.rnaseq.util :refer :all]
+            [clojure.java.shell :refer [sh]]
+            [clostache.parser :refer [render-resource]]
+            [incanter.core :refer [sel]]
+            [incanter.io :refer [read-dataset]]
+            [me.raynes.fs :as fs]))
 
 (defn write-template [template hashmap]
   (let [rfile (change-extension (swap-directory template (analysis-dir)) ".R")]

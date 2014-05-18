@@ -1,13 +1,13 @@
 (ns bcbio.qcsummary.core
-  (:require [bcbio.rnaseq.util :as util]
-            [bcbio.rnaseq.config :as config]
-            [incanter.core :as ic]
+  (:require [bcbio.rnaseq.config :as config]
+            [bcbio.rnaseq.util :as util]
             [clojure.java.io :as io]
-            [me.raynes.fs :as fs]
+            [clojure.java.shell :refer [sh]]
             [clojure.string :as string]
-            [clostache.parser :as stache])
-  (:use [clojure.tools.cli :refer [parse-opts]]
-        [clojure.java.shell :only [sh with-sh-dir]]))
+            [clojure.tools.cli :refer [parse-opts]]
+            [clostache.parser :as stache]
+            [incanter.core :as ic]
+            [me.raynes.fs :as fs]))
 
 (defn knit-file [rmd-file]
   (let [setwd (str "setwd('" (util/dirname rmd-file) "');")

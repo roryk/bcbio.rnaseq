@@ -1,6 +1,6 @@
 (ns bcbio.rnaseq.config
-  (:use [bcbio.rnaseq.util])
-  (:require [clj-yaml.core :as yaml]
+  (:require [bcbio.rnaseq.util :refer :all]
+            [clj-yaml.core :as yaml]
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 

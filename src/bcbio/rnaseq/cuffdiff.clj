@@ -1,15 +1,12 @@
 (ns bcbio.rnaseq.cuffdiff
-  (:use [bcbio.rnaseq.util]
-        [bcbio.rnaseq.config]
-        [bcbio.run.itx :only [check-run]]
-        [clojure.java.shell :only [sh]]
-        [incanter.io :only [read-dataset]]
-        [incanter.core :only [to-dataset sel conj-cols col-names save nrow]]
-        [incanter.stats :only [mean]])
-  (:require [bcbio.run.itx :as itx]
-            [me.raynes.fs :as fs]
+  (:require [bcbio.rnaseq.config :refer :all]
+            [bcbio.rnaseq.util :refer :all]
+            [bcbio.run.itx :refer [check-run]]
             [clojure.string :as string]
-            [incanter.core :as incanter]))
+            [incanter.core :refer [col-names conj-cols nrow save sel]]
+            [incanter.io :refer [read-dataset]]
+            [incanter.stats :refer [mean]]
+            [me.raynes.fs :as fs]))
 
 (defn- align-files []
   (map #(str (fs/file (upload-dir) % (str % "-ready.bam"))) (sample-names)))

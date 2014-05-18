@@ -1,14 +1,13 @@
 (ns bcbio.rnaseq.simulate
-  (:use [bcbio.rnaseq.util]
-        [bcbio.rnaseq.config]
-        [bcbio.rnaseq.compare :only [compare-callers]]
-        [clojure.java.shell :only [sh]]
-        [clojure.tools.cli :refer [parse-opts]])
-  (:require [me.raynes.fs :as fs]
-            [clostache.parser :as stache]
-            [clojure.string :as string]
+  (:require [bcbio.rnaseq.compare :refer [compare-callers]]
             [bcbio.rnaseq.simulator :as sim]
-            [bcbio.rnaseq.templates :as templates]))
+            [bcbio.rnaseq.templates :as templates]
+            [bcbio.rnaseq.util :refer :all]
+            [clojure.java.shell :refer [sh]]
+            [clojure.string :as string]
+            [clojure.tools.cli :refer [parse-opts]]
+            [clostache.parser :as stache]
+            [me.raynes.fs :as fs]))
 
 (def compare-template "comparisons/compare-simulated.template")
 

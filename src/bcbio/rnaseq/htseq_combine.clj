@@ -1,9 +1,10 @@
 (ns bcbio.rnaseq.htseq-combine
-  (:use [incanter.io :only [read-dataset]]
-        [incanter.core :only [to-dataset sel conj-cols col-names save nrow]]
-        [bcbio.rnaseq.util]
-        [clojure.tools.cli :only [cli]])
-  (:require [clojure.java.io :as io]))
+  (:require [bcbio.rnaseq.util :refer :all]
+            [clojure.java.io :as io]
+            [clojure.tools.cli :refer [cli]]
+            [incanter.core :refer [col-names conj-cols nrow save sel
+                                   to-dataset]]
+            [incanter.io :refer [read-dataset]]))
 
 (defn- get-count-files [count-dir]
   (get-files-with-extension count-dir ".counts"))

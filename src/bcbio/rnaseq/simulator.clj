@@ -1,18 +1,13 @@
 (ns bcbio.rnaseq.simulator
-  (:require [clojure.test :as test]
-            [bcbio.rnaseq.htseq-combine :as counts]
-            [bcbio.rnaseq.util :as util]
-            [incanter.stats :as stats]
+  (:require [bcbio.rnaseq.util :as util]
             [clojure.java.io :as io]
-            [clojure.math.numeric-tower :as math]
-            [incanter.core :as incanter]
-            [me.raynes.fs :as fs]
+            [incanter.core :as incanter :refer [col-names conj-cols div
+                                                mult ncol nrow plus pow
+                                                save sqrt to-dataset]]
             [incanter.distributions :as dist]
-            [incanter.charts :as charts]
-            [clojure.core.matrix :as mat])
-  (:use [incanter.core :only [pow div sqrt mult plus bind-columns nrow ncol
-                              conj-cols to-dataset col-names save]]
-        [incanter.io :only [read-dataset]]))
+            [incanter.io :refer [read-dataset]]
+            [incanter.stats :as stats]
+            [me.raynes.fs :as fs]))
 
 (defn matmin [M]
   (apply min (flatten M)))

@@ -1,11 +1,10 @@
 (ns bcbio.rnaseq.templates
-  (:use [clostache.parser :only [render-resource]]
-        [bcbio.rnaseq.htseq-combine :as counts]
-        [bcbio.rnaseq.config]
-        [bcbio.rnaseq.util]
-        [clojure.java.shell :only [sh]])
-  (:require [me.raynes.fs :as fs]
-            [clojure.java.io :as io]))
+  (:require [bcbio.rnaseq.config :refer :all]
+            [bcbio.rnaseq.htseq-combine :as counts]
+            [bcbio.rnaseq.util :refer :all]
+            [clojure.java.io :as io]
+            [clojure.java.shell :refer [sh]]
+            [clostache.parser :refer [render-resource]]))
 
 
 (def templates ["templates/deseq.template", "templates/deseq2.template",
