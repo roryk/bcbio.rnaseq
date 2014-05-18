@@ -35,7 +35,7 @@
 (defn sample-inv-chisq [n]
   (take n (repeatedly #(sqrt (/ 40 (dist/draw (dist/chisq-distribution 40)))))))
 
-(defn add-biological-noise [mu0 bcv]
+(defn generate-invchisq-variation [mu0 bcv]
   (incanter/matrix (mult (flatten (bcv0 mu0 bcv)) (sample-inv-chisq (size mu0)))
                    (ncol mu0)))
 
@@ -45,10 +45,6 @@
 
 (defn- row-means [M]
   (map stats/mean M))
-
-(defn- safe-log2 [M]
-  "Add a small positive number to avoid logging 0 numbers"
-  (incanter/log2 (incanter/plus M 0.01)))
 
 (defn- proportion [xs]
   (let [augmented (plus 2e-8 xs)]
@@ -64,17 +60,11 @@
    (take n (concat
             (->> (fold-changes) (repeat nde) flatten) (repeat 1)))))
 
-(defn generate-counts [fc1 props n library-size]
+(defn generate-mean-counts [fc1 props n library-size]
   (let [raw (mult props library-size)
         counts1 (mult fc1 raw)]
     (apply incanter/bind-columns
            (concat (repeat n counts1) (repeat n raw)))))
-
-(defn make-gene-ids [n]
-  (map #(str "gene_" (range n))))
-
-(defn make-sample-ids [n]
-  (map #(str "sample_" (range n))))
 
 (defn prep-counts-matrix [M rnames cnames]
   (col-names
@@ -85,12 +75,11 @@
         cnames (map #(str "sample_" %) (range (ncol M)))]
     (prep-counts-matrix M rnames cnames)))
 
-(defn prep-score-matrix [scores]
-  (let [rnames (map #(str "gene_" %) (range (count scores)))]
+(defn prep-score-matrix [M]
+  (let [rnames (map #(str "gene_" %) (range (count M)))]
     (col-names
-     (to-dataset (conj-cols rnames (map float (map incanter/log2 scores))))
+     (to-dataset (conj-cols rnames (map float (map incanter/log2 M))))
      ["id" "correct"])))
-
 
 (defn write-matrix [M out-file]
   (if (.exists (io/as-file out-file))
@@ -99,26 +88,30 @@
       (save M out-file :delim "\t")
       out-file)))
 
-(defn simulate-genes [fcs sample-size library-size]
-  (let [props default-proportions
-        mu0 (generate-counts fcs props sample-size
-                             (* 1e6 library-size))
-        BCV0 (bcv0 mu0 0.2)
-        BCV (add-biological-noise mu0 0.2)
+(defn add-biological-noise [mu0 base-bcv]
+  (let [BCV (generate-invchisq-variation mu0 base-bcv)
         shape (div 1 (pow BCV 2))
-        rate (div shape mu0)
-        mu (incanter/matrix (map draw-gamma (flatten shape) (flatten rate))
-                                 (ncol mu0))]
-    (incanter/to-dataset
-     (incanter/matrix
-      (map int (map draw-poisson (flatten mu))) (ncol mu)))))
+        rate (div shape mu0)]
+    (incanter/matrix (map draw-gamma (flatten shape) (flatten rate))
+                     (ncol mu0))))
+
+(defn add-technical-noise [mu]
+  (map int (map draw-poisson (flatten mu))))
+
+(defn simulate-counts [fcs sample-size library-size]
+  (let [props default-proportions
+        mu0 (generate-mean-counts fcs props sample-size
+                                  (* 1e6 library-size))
+        mu (add-biological-noise mu0 0.2)
+        counts (add-technical-noise mu)]
+    (incanter/to-dataset (incanter/matrix counts (ncol mu)))))
 
 (defn simulate-and-write [out-dir sample-size library-size]
   (let [out-file (str (fs/file out-dir "sim.counts"))
         props default-proportions
         score-file (str (fs/file out-dir "sim.scores"))
         fcs (get-fold-changes (count props) (int (* 0.01 (count props))))
-        counts (simulate-genes fcs sample-size library-size)]
+        counts (simulate-counts fcs sample-size library-size)]
     (util/safe-makedir out-dir)
     (write-matrix (prep-score-matrix fcs) score-file)
     (write-matrix (prep-bare-matrix counts) out-file)
