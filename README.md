@@ -5,7 +5,7 @@
 </head>
 
 ## Overview
-[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
+[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq) ![DOI](https://zenodo.org/badge/3658/roryk/bcbio.rnaseq.png)
 
 
 There are a huge number of algorithms designed to call differential
