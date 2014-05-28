@@ -35,7 +35,6 @@
 (def default-fold-changes [1.05 1.1 1.5 2 4])
 
 (def default-proportion-file (util/get-resource "comparisons/baseprop.tsv"))
-(def default-proportion-file (util/get-resource "comparisons/baselineprop2.tsv"))
 
 (def default-proportion-fn (->
                             default-proportion-file
