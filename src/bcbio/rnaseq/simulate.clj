@@ -35,8 +35,8 @@
     (apply sh ["Rscript" "--verbose" rfile])
     out-file))
 
-(defn run-simulation [out-dir sample-size library-size]
-  (let [count-file (sim/simulate-and-write out-dir sample-size library-size)
+(defn run-simulation [out-dir num-genes sample-size library-size]
+  (let [count-file (sim/simulate-and-write out-dir num-genes sample-size library-size)
         analysis-template (get-analysis-template out-dir count-file sample-size)
         out-files (map :out-file (map #(templates/run-template %1 analysis-template)
                                       templates/templates))]
@@ -49,6 +49,9 @@
     :default "simulate"]
    ["-s" "--sample-size SAMPLE_SIZE" "Sample size of each group"
     :default 3
+    :parse-fn #(Integer/parseInt %)]
+   ["-n" "--num-genes NUM_GENES" "Number of genes to simulate."
+    :default 10000
     :parse-fn #(Integer/parseInt %)]
    ["-l" "--library-size SIZE" "Library size in millions of reads"
     :default 20
@@ -71,5 +74,7 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
      (:help options) (exit 0 (usage summary)))
-    (run-simulation (:out-dir options) (:sample-size options)
-                        (:library-size options))))
+    (run-simulation (:out-dir options)
+                    (:num-genes options)
+                    (:sample-size options)
+                    (:library-size options))))

@@ -1,23 +1,47 @@
 (ns bcbio.rnaseq.simulator
   (:require [bcbio.rnaseq.util :as util]
+            [bcbio.rnaseq.stats :refer [rescale]]
             [clojure.java.io :as io]
             [incanter.core :as incanter :refer [col-names conj-cols div
                                                 mult ncol nrow plus pow
-                                                save sqrt to-dataset]]
+                                                save sqrt to-dataset sel]]
+            [incanter.interpolation :refer [interpolate]]
+            [clojure.math.numeric-tower :as math]
             [incanter.distributions :as dist]
             [incanter.io :refer [read-dataset]]
             [incanter.stats :as stats]
             [me.raynes.fs :as fs]))
 
+(defn normalize-vector [xs]
+  "normalize a set of points to have a range and be defined over of 0->1
+   and build a function that returns interpolated points from xs over
+   0->1
+   "
+  (let [x-vals (rescale (range (count xs)) 0 1)
+        y-vals (incanter/div xs (apply + xs))]
+    (interpolate (map vector x-vals (sort (seq y-vals))) :cubic)))
+
+(defn interpolate-n [xs]
+  "Build a function that returns n points from interpolated values of
+   xs"
+  (let [proportion-fn (normalize-vector xs)]
+    (fn [n]
+      (let [points (map proportion-fn (rescale (range n) 0 1))]
+        (incanter/div points (apply + points))))))
+
+(def default-count-file (util/get-resource "test-analysis/combined.counts"))
+
 (def default-library-size 20e6)
 (def default-fold-changes [1.05 1.1 1.5 2 4])
 
 (def default-proportion-file (util/get-resource "comparisons/baseprop.tsv"))
+(def default-proportion-file (util/get-resource "comparisons/baselineprop2.tsv"))
 
-(def default-proportions (->
-                          default-proportion-file
-                          (read-dataset :delim \tab)
-                          incanter/to-matrix))
+(def default-proportion-fn (->
+                            default-proportion-file
+                            (read-dataset :delim \tab)
+                            incanter/to-matrix
+                            interpolate-n))
 
 (defn bcv0 [mu0 bcv]
   (plus bcv (div 1 (sqrt mu0))))
@@ -98,20 +122,19 @@
 (defn add-technical-noise [mu]
   (map int (map draw-poisson (flatten mu))))
 
-(defn simulate-counts [fcs sample-size library-size]
-  (let [props default-proportions
-        mu0 (generate-mean-counts fcs props sample-size
+(defn simulate-counts [fcs props sample-size library-size]
+  (let [mu0 (generate-mean-counts fcs props sample-size
                                   (* 1e6 library-size))
         mu (add-biological-noise mu0 0.2)
         counts (add-technical-noise mu)]
     (incanter/to-dataset (incanter/matrix counts (ncol mu)))))
 
-(defn simulate-and-write [out-dir sample-size library-size]
+(defn simulate-and-write [out-dir num-genes sample-size library-size]
   (let [out-file (str (fs/file out-dir "sim.counts"))
-        props default-proportions
+        props (default-proportion-fn num-genes)
         score-file (str (fs/file out-dir "sim.scores"))
         fcs (get-fold-changes (count props) (int (* 0.01 (count props))))
-        counts (simulate-counts fcs sample-size library-size)]
+        counts (simulate-counts fcs props sample-size library-size)]
     (util/safe-makedir out-dir)
     (write-matrix (prep-score-matrix fcs) score-file)
     (write-matrix (prep-bare-matrix counts) out-file)
