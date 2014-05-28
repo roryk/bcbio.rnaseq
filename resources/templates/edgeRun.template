@@ -1,4 +1,4 @@
-# edgeR analysis
+# edgeRun analysis
 # Soneson, C. & Delorenzi, M. A comparison of methods for differential expression
 # analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
 
@@ -15,7 +15,7 @@ edgeR.dgelist = DGEList(counts = counts, group = class)
 edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
-out_table = UCexactTest(edgeR.dgelist)$table
+out_table = UCexactTest(edgeR.dgelist, upper=100e3)$table
 
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj
