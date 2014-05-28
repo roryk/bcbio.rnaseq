@@ -12,6 +12,13 @@
             [incanter.stats :as stats]
             [me.raynes.fs :as fs]))
 
+(def default-count-file (util/get-resource "test-analysis/combined.counts"))
+(def default-library-size 20e6)
+(def default-fold-changes [1.05 1.1 1.5 2 4])
+
+(def default-proportion-file (util/get-resource "comparisons/baseprop.tsv"))
+
+
 (defn normalize-vector [xs]
   "normalize a set of points to have a range and be defined over of 0->1
    and build a function that returns interpolated points from xs over
@@ -28,13 +35,6 @@
     (fn [n]
       (let [points (map proportion-fn (rescale (range n) 0 1))]
         (incanter/div points (apply + points))))))
-
-(def default-count-file (util/get-resource "test-analysis/combined.counts"))
-
-(def default-library-size 20e6)
-(def default-fold-changes [1.05 1.1 1.5 2 4])
-
-(def default-proportion-file (util/get-resource "comparisons/baseprop.tsv"))
 
 (def default-proportion-fn (->
                             default-proportion-file
