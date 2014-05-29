@@ -42,6 +42,13 @@
                             incanter/to-matrix
                             interpolate-n))
 
+(defn proportions-from-count-file [count-file]
+  (-> count-file
+      (read-dataset :delim \tab :header true)
+      incanter/to-matrix
+      (map incanter/sum)
+      interpolate-n))
+
 (defn bcv0 [mu0 bcv]
   (plus bcv (div 1 (sqrt mu0))))
 
@@ -127,6 +134,10 @@
         mu (add-biological-noise mu0 0.2)
         counts (add-technical-noise mu)]
     (incanter/to-dataset (incanter/matrix counts (ncol mu)))))
+
+(defn get-proportions
+  ([num-genes] (default-proportion-fn num-genes))
+  ([num-genes count-file] ((proportions-from-count-file count-file) num-genes)))
 
 (defn simulate-and-write [out-dir num-genes sample-size library-size]
   (let [out-file (str (fs/file out-dir "sim.counts"))
