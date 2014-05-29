@@ -1,5 +1,6 @@
 library(ggplot2)
 library(reshape)
+library(GGally)
 in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
@@ -17,9 +18,9 @@ pair_plot = function(var, out_file) {
     casted = cast(subset(melted, variable ==var), id  ~ algorithm + variable)
     rownames(casted) = casted$id
     casted$id = NULL
-    p = plotmatrix(casted)
-    ggsave(filename=out_file, plot=p)
-    return(p)
+    pdf(out_file)
+    ggpairs(casted)
+    dev.off()
 }
 
 pair_plot("padj", pval_plot)
