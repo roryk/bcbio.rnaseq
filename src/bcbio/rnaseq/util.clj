@@ -2,6 +2,20 @@
   (:require [clojure.java.io :as io]
             [me.raynes.fs :as fs]))
 
+
+(defn all-keys [xs]
+  "return all non-nil keys from a sequence of hash-maps"
+  (->> xs (map keys) flatten (filter (comp not nil?))))
+
+(defn fix-missing-keys
+  "given a sequence of hash-maps and an optional default value,
+   returns a sequence of hash-maps that have missing keys added with
+   the default value. If no default is given, use nil"
+  ([xs] (fix-missing-keys xs nil))
+  ([xs default]
+     (let [default-map (zipmap (all-keys xs) (repeat default))]
+       (map (partial merge default-map) xs))))
+
 (defn get-resource [filename]
   "return a path to an included resource"
   (try
