@@ -21,6 +21,9 @@ counts = read.table(counts_file, header=TRUE, row.names="id")
 counts = counts[, order(colnames(counts))]
 ```
 
+# Quality control metrics
+
+## Mapped reads
 ```{r mapped-plot}
 ggplot(summarydata, aes(x=Name, y=Mapped)) + 
     geom_bar(stat="identity") +
@@ -28,6 +31,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
     ylab("mapped reads") + xlab("")
 ```
 
+## Genomic mapping rate
 ```{r mapping-rate-plot}
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) + 
     geom_bar(stat="identity") +
@@ -35,6 +39,7 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     ylab("mapping rate") + xlab("")
 ```
 
+## Number of genes detected
 ```{r genes-detected-plot}
 ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
@@ -42,6 +47,7 @@ ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     ylab("genes detected") + xlab("")
 ```
 
+## Within-gene mapping rate
 ```{r intragenic-rate-plot}
 ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) + 
     geom_bar(stat="identity") +
@@ -49,6 +55,7 @@ ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) +
     ylab("intragenic rate") + xlab("")
 ```
 
+## Estimated fragment length of paired-end reads
 ```{r fragment-length-plot}
 ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) + 
     geom_bar(stat="identity") +
@@ -56,6 +63,7 @@ ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     ylab("fragment length") + xlab("")
 ```
 
+## Boxplot of raw counts per gene
 ```{r boxplot-raw}
 melted = melt(counts)
 colnames(melted) = c("sample", "count")
@@ -63,14 +71,20 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")
 ```
 
+## Correlation heatmap of raw counts
 ```{r heatmap-raw}
 p = ggheatmap(cor(counts))
 ggheatmap.show(p)
 ```
 
+## Boxplot of TMM-normalized counts per gene
+Trimmed mean of M-values (TMM) normalization is described
+[here](http://genomebiology.com/2010/11/3/R25)
+
+Robinson, M. D., & Oshlack, A. (2010). A scaling normalization method for differential expression analysis of RNA-seq data. Genome Biology, 11(3). doi:10.1186/gb-2010-11-3-r25
 
 ```{r boxplot-normalized}
 y = DGEList(counts=counts)
@@ -82,19 +96,21 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")
 ```
 
+## Correlation heatmap of TMM-normalized counts
 ```{r heatmap-normalized}
 p = ggheatmap(cor(normalized_counts))
 ggheatmap.show(p)
-#heatmap.2(cor(counts), trace="none")
 ```
 
+## MDS plot of TMM-normalized counts
 ```{r mds-normalized}
 mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 ```
 
+## Table of top 25 highly expressed genes
 ```{r top-count-genes, results='asis'}
 kable(head(counts[order(-rowSums(counts)),], format="markdown"))
 ```
