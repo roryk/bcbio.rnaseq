@@ -16,6 +16,7 @@ counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = read.table(project_summary, header=TRUE, sep=",")
+rownames(summarydata) = summarydata$Name
 summarydata = summarydata[order(rownames(summarydata)),]
 counts = read.table(counts_file, header=TRUE, row.names="id")
 counts = counts[, order(colnames(counts))]
@@ -47,12 +48,20 @@ ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     ylab("genes detected") + xlab("")
 ```
 
-## Within-gene mapping rate
-```{r intragenic-rate-plot}
-ggplot(summarydata, aes(x=Name, y=1-Intergenic.Rate)) + 
+## Exonic mapping rate
+```{r exonic-mapping-plot}
+ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("intragenic rate") + xlab("")
+    ylab("exonic mapping rate") + xlab("")
+```
+
+## rRNA mapping rate
+```{r rRNA-rate-plot}
+ggplot(summarydata, aes(x=Name, y=rRNA.rate)) + 
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(angle = 90)) +
+    ylab("rRNA rate") + xlab("")
 ```
 
 ## Estimated fragment length of paired-end reads
@@ -102,6 +111,12 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
 ## Correlation heatmap of TMM-normalized counts
 ```{r heatmap-normalized}
 p = ggheatmap(cor(normalized_counts))
+ggheatmap.show(p)
+```
+
+## Correlation (Spearman) heatmap of TMM-normalized counts
+```{r spearman-heatmap-normalized}
+p = ggheatmap(cor(normalized_counts, method="spearman"))
 ggheatmap.show(p)
 ```
 
