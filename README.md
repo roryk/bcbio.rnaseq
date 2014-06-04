@@ -101,6 +101,14 @@ first download and prepare the [SEQC][SEQC] data, align and quantitate it with
 [bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
 results.
 
+### bcbio-nextgen quality control
+This mode produces a Rmd file with several quality control plots summarizing a
+bcbio-nextgen RNA-seq run:
+
+```
+lein run summarize path-to-project-summary-file
+```
+
 ## Status
 
 If you have ``cufflinks`` and ``R`` installed and in your path, this
