@@ -43,7 +43,11 @@ cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gp
   "GGally")
 install.cran(cran_packages)
 
-bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq")
+bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vsn")
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
 install.github(c("CHBUtils"), "hbc")
+install_github('rstudio/rmarkdown')
+install_github('jimhester/knitrBootstrap')
+
+

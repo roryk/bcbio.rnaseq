@@ -1,0 +1,88 @@
+```{r de-setup}
+library(DESeq2)
+library(vsn)
+design = {{{formula}}}
+condition = {{{condition}}}
+dataset = "hsapiens_gene_ensembl"
+filter = "ensembl_gene_id"
+symbol = "hgnc_symbol"
+```
+
+# Differential expression
+```{r deseq2-expression-analysis, results='asis'}
+dds = DESeqDataSetFromMatrix(countData=counts,
+    colData=summarydata, design = design)
+dds = DESeq(dds)
+contrasts = combn(levels(summarydata[, condition]), 2, simplify=FALSE)
+```
+
+## Effect of variance stabilization
+```{r deseq-diagnostics, results='asis'}
+par(mfrow=c(1,3))
+notAllZero <- (rowSums(counts(dds))>0)
+rld <- rlog(dds)
+vsd <- varianceStabilizingTransformation(dds)
+rlogMat <- assay(rld)
+vstMat <- assay(vsd)
+
+meanSdPlot(log2(counts(dds,normalized=TRUE)[notAllZero,] + 1),
+           ylim = c(0,2.5))
+meanSdPlot(assay(rld[notAllZero,]), ylim = c(0,2.5))
+meanSdPlot(assay(vsd[notAllZero,]), ylim = c(0,2.5))
+```
+
+## Dispersion estimates
+```{r dispersion-estimate}
+plotDispEsts(dds)
+```
+
+```{r deseq2-handler}
+handle_deseq2 = function(dds, summarydata, column) {
+  all_combs = combn(levels(summarydata[,column]), 2, simplify=FALSE)
+  all_results = list()
+  contrast_strings = list()
+  for(comb in all_combs) {
+    contrast_string = paste(comb, collapse=" vs ")
+    contrast = c(column, comb)
+    res = results(dds, contrast=contrast)
+    res = res[order(res$padj),]
+    all_results = c(all_results, res)
+    contrast_strings = c(contrast_strings, contrast_string)
+  }
+  names(all_results) = contrast_strings
+  return(all_results)
+}
+```
+
+annotate_df = function(df, dataset, filter, symbol) {
+  require(biomaRt)
+  ensembl = useMart('ensembl', dataset = dataset)
+  annot.df = getBM(attributes=c(filter, symbol), filters=c(filter), values=rownames(df),
+                   mart=ensembl)
+  m = merge(df, annot.df, by.x="row.names", by.y=filter)
+  colnames(m)[1] = "id"
+  return(m)
+}
+
+## MA-plots
+  
+```{r DESeq-output, results='asis'}
+all_results = handle_deseq2(dds, summarydata, condition)
+for(i in seq(length(all_results))) {
+  plotMA(all_results[[i]])
+  title(paste("MA plot for contrast", names(all_results)[i]))
+}
+```
+
+## Differentially expressed genes
+```{r DESeq-tables, results='asis'}
+for(i in seq(length(all_results))) {
+  cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
+#  out_df = annotate_df(data.frame(all_results[[i]]), dataset, filter, symbol)
+  out_df = all_results[[i]]
+  knitr::kable(head(out_df))
+  write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
+                         quote=FALSE, sep="\t", row.names=TRUE, col.names=TRUE)
+  cat("\n")
+}
+```

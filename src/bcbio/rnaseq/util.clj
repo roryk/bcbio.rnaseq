@@ -81,7 +81,8 @@
 
 (defn safe-makedir [dir]
   (when-not (directory-exists? dir)
-    (.mkdir (io/file dir))))
+    (.mkdir (io/file dir)))
+  dir)
 
 (defn file-exists? [fname]
   (if fname
@@ -91,3 +92,8 @@
 (defn apply-to-keys [m f & keyseq]
   "apply a function to only values of specific keys in a sequence"
   (reduce #(assoc %1 %2 (f (%1 %2))) m keyseq))
+
+(defn catto [f1 f2 out]
+  (with-open [o (io/output-stream out)]
+    (io/copy (io/file f1) o)
+    (io/copy (io/file f2) o)))

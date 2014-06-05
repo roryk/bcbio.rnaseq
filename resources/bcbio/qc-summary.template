@@ -1,9 +1,23 @@
+---
+output:
+  knitrBootstrap::bootstrap_document:
+    theme: readable
+    highlight: zenburn
+    theme.chooser: TRUE
+    highlight.chooser: TRUE
+  html_document:
+    toc: true
+    highlight: zenburn
+---
+
 ```{r setup, echo=FALSE}
-opts_chunk$set(tidy=TRUE, highlight=TRUE, fig.align='left', fig.show='hold',
+knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="pdf",
                cache=FALSE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
-               message=FALSE, prompt=TRUE, comment='', fig.cap='', fig.width=8,
-               fix.height=11, base.dir={{{out-dir}}})
+               message=FALSE, prompt=TRUE, comment='', fig.cap='', 
+               base.dir="~/cache/johnson_rnaseq/results")
 ```
+
+# Overview
 
 ```{r qc-setup}
 library(ggplot2)
@@ -125,7 +139,9 @@ ggheatmap.show(p)
 mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 ```
 
-## Table of top 25 highly expressed genes
+## Heatmap of top 30 most expressed genes
 ```{r top-count-genes, results='asis'}
-kable(head(counts[order(-rowSums(counts)),], format="markdown"))
+select = order(rowMeans(counts),decreasing=TRUE)[1:30]
+p = ggheatmap(as.matrix(counts[select,]))
+ggheatmap.show(p)
 ```
