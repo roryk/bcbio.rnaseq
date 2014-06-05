@@ -1,175 +1,474 @@
-date: '2013-12-27 18:25:15.890944'
-test_run: true
-upload: /v-data/bcbio.rnaseq/resources/seqc/sample-project/ERCC92
-bcbio_system: /v-data/bcbio.rnaseq/resources/seqc/sample-project/bcbio_system.yaml
+date: '2014-01-27 01:36:27.530829'
+upload: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work/../final_full
+bcbio_system: /n/home05/kirchner/hsph/biodata/galaxy/bcbio_system.yaml
 samples:
 - description: UHRR_rep1
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: UHRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep1, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '109', Intergenic Rate: '0.0',
-      Mapping Rate: '0.009244668', Encoding: Sanger / Illumina 1.9, Mapped: '176',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.2582409', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: UHRR}
+    metrics:
+      '%GC': '47'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.72446483'
+      Fragment Length Mean: '274'
+      Genes Detected: '1'
+      Intergenic Rate: '0.12760355'
+      Intronic Rate: '0.14755838'
+      Mapped: '174319650'
+      Mapping Rate: '0.94427854'
+      Mean Per Base Cov.: '132.33745'
+      Name: UHRR_rep1
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33858'
+      complexity: NA
+      rRNA: '1840523'
+      rRNA rate: '0.009969997'
+      unique_starts_per_read: nan
 - description: HBRR_rep1
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: HBRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep1, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '102', Intergenic Rate: '0.0',
-      Mapping Rate: '0.0131607335', Encoding: Sanger / Illumina 1.9, Mapped: '244',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.9348196', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: HBRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.6630051'
+      Fragment Length Mean: '279'
+      Genes Detected: '1'
+      Intergenic Rate: '0.19053894'
+      Intronic Rate: '0.1455665'
+      Mapped: '185564609'
+      Mapping Rate: '0.9390045'
+      Mean Per Base Cov.: '129.95737'
+      Name: HBRR_rep1
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33567'
+      complexity: NA
+      rRNA: '5411188'
+      rRNA rate: '0.027381998'
+      unique_starts_per_read: nan
 - description: UHRR_rep2
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: UHRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '6',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep2, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '106', Intergenic Rate: '0.0',
-      Mapping Rate: '0.00960625', Encoding: Sanger / Illumina 1.9, Mapped: '182',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.8414882', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: UHRR}
+    metrics:
+      '%GC': '49'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.72685796'
+      Fragment Length Mean: '278'
+      Genes Detected: '1'
+      Intergenic Rate: '0.13024114'
+      Intronic Rate: '0.14250119'
+      Mapped: '157807183'
+      Mapping Rate: '0.9431603'
+      Mean Per Base Cov.: '122.25066'
+      Name: UHRR_rep2
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33759'
+      complexity: NA
+      rRNA: '1536476'
+      rRNA rate: '0.009182999'
+      unique_starts_per_read: nan
 - description: HBRR_rep2
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: HBRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep2, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '115', Intergenic Rate: '0.0',
-      Mapping Rate: '0.0120684225', Encoding: Sanger / Illumina 1.9, Mapped: '230',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.7839526', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: HBRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.66598547'
+      Fragment Length Mean: '289'
+      Genes Detected: '1'
+      Intergenic Rate: '0.18948108'
+      Intronic Rate: '0.14364348'
+      Mapped: '192871528'
+      Mapping Rate: '0.9379044'
+      Mean Per Base Cov.: '134.85025'
+      Name: HBRR_rep2
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33587'
+      complexity: NA
+      rRNA: '5513027'
+      rRNA rate: '0.026809'
+      unique_starts_per_read: nan
 - description: UHRR_rep3
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: UHRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep3, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
-      Mapping Rate: '0.009656896', Encoding: Sanger / Illumina 1.9, Mapped: '170',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.2880712', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: UHRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.72774154'
+      Fragment Length Mean: '231'
+      Genes Detected: '1'
+      Intergenic Rate: '0.1260286'
+      Intronic Rate: '0.1458275'
+      Mapped: '106564086'
+      Mapping Rate: '0.936787'
+      Mean Per Base Cov.: '82.42907'
+      Name: UHRR_rep3
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33264'
+      complexity: NA
+      rRNA: '1101374'
+      rRNA rate: '0.009681994'
+      unique_starts_per_read: nan
 - description: HBRR_rep3
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: HBRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep3, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '114', Intergenic Rate: '0.0',
-      Mapping Rate: '0.01123953', Encoding: Sanger / Illumina 1.9, Mapped: '212',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '2.01483', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: HBRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.66956246'
+      Fragment Length Mean: '291'
+      Genes Detected: '1'
+      Intergenic Rate: '0.18201685'
+      Intronic Rate: '0.14754133'
+      Mapped: '192116660'
+      Mapping Rate: '0.93889'
+      Mean Per Base Cov.: '135.79764'
+      Name: HBRR_rep3
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33606'
+      complexity: NA
+      rRNA: '5438009'
+      rRNA rate: '0.026576'
+      unique_starts_per_read: nan
 - description: UHRR_rep4
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: UHRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '47', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep4, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '103', Intergenic Rate: '0.0',
-      Mapping Rate: '0.01090093', Encoding: Sanger / Illumina 1.9, Mapped: '204',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.6628839', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: UHRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.7307614'
+      Fragment Length Mean: '287'
+      Genes Detected: '1'
+      Intergenic Rate: '0.12925792'
+      Intronic Rate: '0.13953432'
+      Mapped: '211534072'
+      Mapping Rate: '0.94179714'
+      Mean Per Base Cov.: '160.65643'
+      Name: UHRR_rep4
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '34110'
+      complexity: NA
+      rRNA: '2282679'
+      rRNA rate: '0.010162998'
+      unique_starts_per_read: nan
 - description: HBRR_rep4
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: HBRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '7',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep4, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '104', Intergenic Rate: '0.0',
-      Mapping Rate: '0.014245015', Encoding: Sanger / Illumina 1.9, Mapped: '270',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.8671364', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: HBRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.66328084'
+      Fragment Length Mean: '285'
+      Genes Detected: '1'
+      Intergenic Rate: '0.19063331'
+      Intronic Rate: '0.14523527'
+      Mapped: '161220860'
+      Mapping Rate: '0.93737036'
+      Mean Per Base Cov.: '113.05878'
+      Name: HBRR_rep4
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33404'
+      complexity: NA
+      rRNA: '4677685'
+      rRNA rate: '0.027196996'
+      unique_starts_per_read: nan
 - description: UHRR_rep5
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: UHRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '49', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: UHRR_rep5, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
-      Mapping Rate: '0.011639992', Encoding: Sanger / Illumina 1.9, Mapped: '224',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '1.1668276', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: UHRR}
+    metrics:
+      '%GC': '49'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.7599547'
+      Fragment Length Mean: '277'
+      Genes Detected: '1'
+      Intergenic Rate: '0.121440254'
+      Intronic Rate: '0.1181848'
+      Mapped: '125207285'
+      Mapping Rate: '0.94506353'
+      Mean Per Base Cov.: '104.033226'
+      Name: UHRR_rep5
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '33556'
+      complexity: NA
+      rRNA: '1141893'
+      rRNA rate: '0.008618998'
+      unique_starts_per_read: nan
 - description: HBRR_rep5
-  dirs: {config: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy, fastq: null,
-    flowcell: null, galaxy: /v-data/bcbio.rnaseq/resources/seqc/sample-project/galaxy,
-    work: /n/hsphS10/hsphfs1/chb/projects/bcbio-rnaseq/data/geo_data/standardization/ercc_subset}
-  genome_build: ERCC92
+  metadata:
+    panel: HBRR
+  dirs:
+    config: /n/home05/kirchner/hsph/biodata/galaxy
+    fastq: null
+    flowcell: null
+    galaxy: /n/home05/kirchner/hsph/biodata/galaxy
+    work: /net/hsphfs1/srv/export/hsphfs1/share_root/chb/projects/bcbio-rnaseq/data/geo_data/standardization/work
+  genome_build: hg19_ERCC
   genome_resources:
-    rnaseq: {transcripts: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/rnaseq/ref-transcripts.gtf}
-    version: 1
-  sam_ref: /v-data/bcbio.rnaseq/resources/seqc/sample-project/genomes/ERCC/ERCC92/seq/ERCC92.fa
+    aliases:
+      ensembl: human
+      human: true
+      snpeff: hg19
+    rnaseq:
+      transcriptome_index:
+        tophat: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/tophat/hg19_ERCC.ver
+      transcripts: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/ref-transcripts.gtf
+      transcripts_mask: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/rnaseq/rRNA.gtf
+    variation:
+      dbsnp: ../variation/dbsnp_137.vcf
+      train_1000g_omni: ../variation/1000G_omni2.5.vcf
+      train_hapmap: ../variation/hapmap_3.3.vcf
+      train_indels: ../variation/Mills_and_1000G_gold_standard.indels.vcf
+    version: 2
+  sam_ref: /n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19_ERCC/seq/hg19_ERCC.fa
   summary:
-    metrics: {'%GC': '48', Genes Detected: '1', Intronic Rate: '0.0', Transcripts Detected: '8',
-      Sequence length: 20-101, Estimated Library Size: '0', Name: HBRR_rep5, rRNA rate: '0.0',
-      Duplication Rate of Mapped: '0.0', Fragment Length Mean: '112', Intergenic Rate: '0.0',
-      Mapping Rate: '0.018580029', Encoding: Sanger / Illumina 1.9, Mapped: '358',
-      rRNA: '0', Exonic Rate: '1.0', Mean Per Base Cov.: '2.8404477', unique_starts_per_read: nan,
-      complexity: NA}
-  metadata: {panel: HBRR}
+    metrics:
+      '%GC': '48'
+      Duplication Rate of Mapped: '0.0'
+      Exonic Rate: '0.692997'
+      Fragment Length Mean: '253'
+      Genes Detected: '1'
+      Intergenic Rate: '0.18029894'
+      Intronic Rate: '0.12582311'
+      Mapped: '106419043'
+      Mapping Rate: '0.94363296'
+      Mean Per Base Cov.: '77.989235'
+      Name: HBRR_rep5
+      Quality format: standard
+      Sequence length: 20-101
+      Transcripts Detected: '32910'
+      complexity: NA
+      rRNA: '3112614'
+      rRNA rate: '0.027599998'
+      unique_starts_per_read: nan
