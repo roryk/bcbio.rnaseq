@@ -101,13 +101,19 @@ first download and prepare the [SEQC][SEQC] data, align and quantitate it with
 [bcbio-nextgen][bcbio-nextgen] and run ``bcbio.rnaseq`` on the
 results.
 
-### bcbio-nextgen quality control
-This mode produces a Rmd file with several quality control plots summarizing a
-bcbio-nextgen RNA-seq run:
+### bcbio-nextgen report
+This mode produces a Rmd file with a report of a bcbio-nextgen run. If
+you run it without passing a formula, it will just generate a
+quality-control report. If you pass a formula like this:
 
 ```
-lein run summarize path-to-project-summary-file
+lein run summarize path-to-project-summary-file -f "~ batch + panel"
 ```
+
+It will run a DESeq2 analysis with the specified model and prepare reports
+of all pairwise comparisons for the last factor in the model. An example
+report is available [here][example-summary].
+
 
 ## Status
 
@@ -166,3 +172,4 @@ and the output, [sample-output][sample-output].
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
 [ERCC]: http://www.lifetechnologies.com/order/catalog/product/4456740
 [dl]: http://github.com/roryk/bcbio.rnaseq/releases/download/v.0.1.0a/bcbio.rnaseq-0.1.0a.jar
+[example-summary]: https://rawgit.com/roryk/bcbio.rnaseq/master/docs/qc-summary.html
