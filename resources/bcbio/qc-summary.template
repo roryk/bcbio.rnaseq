@@ -86,7 +86,7 @@ ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     ylab("fragment length") + xlab("")
 ```
 
-## Boxplot of raw counts per gene
+## Boxplot of log10 counts per gene
 ```{r boxplot-raw}
 melted = melt(counts)
 colnames(melted) = c("sample", "count")
@@ -103,7 +103,7 @@ p = ggheatmap(cor(counts))
 ggheatmap.show(p)
 ```
 
-## Boxplot of TMM-normalized counts per gene
+## Boxplot of log10 TMM-normalized counts per gene
 Trimmed mean of M-values (TMM) normalization is described
 [here](http://genomebiology.com/2010/11/3/R25)
 
