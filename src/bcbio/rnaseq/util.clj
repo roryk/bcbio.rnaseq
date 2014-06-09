@@ -1,5 +1,6 @@
 (ns bcbio.rnaseq.util
   (:require [clojure.java.io :as io]
+            [clojure.string :as string]
             [me.raynes.fs :as fs]))
 
 
@@ -20,7 +21,7 @@
   "return a path to an included resource"
   (try
     (.getFile (io/resource filename))
-    (catch Exception e (println (format "Resource %s not found." filename)))))
+    (catch Exception e nil)))
 
 (defn copy-resource [resource dir]
   "copy a resource from the .jar file to an external directory so
@@ -77,7 +78,9 @@
   (str "c(" (clojure.string/join "," (map escape-quote xs)) ")"))
 
 (defn directory-exists? [dir]
-  (.isDirectory (io/file dir)))
+  (if dir
+    (.isDirectory (io/file dir))
+    false))
 
 (defn safe-makedir [dir]
   (when-not (directory-exists? dir)
@@ -94,6 +97,17 @@
   (reduce #(assoc %1 %2 (f (%1 %2))) m keyseq))
 
 (defn catto [f1 f2 out]
+  "cat f1 f2 > out"
   (with-open [o (io/output-stream out)]
     (io/copy (io/file f1) o)
     (io/copy (io/file f2) o)))
+
+(defn replace-if [pred s match replacement]
+  "replace match with replacement in string s if predicate is true"
+  (if (pred s)
+    (string/replace s match replacement)
+    s))
+
+(defn rmdir [dir]
+  (when (directory-exists? dir)
+    (fs/delete-dir dir)))

@@ -15,10 +15,11 @@
                  [org.clojure/tools.cli "0.3.0"]
                  [bcbio.run "0.0.1-SNAPSHOT"]
                  [clj-http "0.7.8"]]
-  :profiles {:dev {:dependencies [[midje "1.6.3"]]}}
-  :plugins [[lein-midje "3.1.3"]]
   :resource-paths ["resources"]
   :jvm-opts ["-Xmx2g"]
   :aot [bcbio.rnaseq.core]
   :main bcbio.rnaseq.core
-  :keep-non-project-classes true)
+  :keep-non-project-classes true
+  :test-selectors {:default (complement :slow)
+                   :slow :slow
+                   :all (constantly true)})

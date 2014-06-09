@@ -89,14 +89,15 @@
   (System/exit status))
 
 (defn summarize [project-file formula]
-  (let [out-dir (-> project-file util/dirname (io/file "summary") str util/safe-makedir)
+  (let [out-dir (-> project-file util/dirname (io/file "summary")
+                    str util/safe-makedir)
         tidy-summary (write-tidy-summary project-file)
         qc-file (make-qc-summary out-dir tidy-summary)
         out-file (util/change-extension qc-file ".Rmd")]
     (if formula
       (let [de-file (write-de-template out-dir formula)]
         (util/catto qc-file de-file out-file))
-      (io/copy qc-file out-file))
+      (io/copy (io/file qc-file) (io/file out-file)))
     out-file))
 
 
