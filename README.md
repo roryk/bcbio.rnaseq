@@ -19,20 +19,21 @@ a tool to do that automatically.
 ## Quickstart
 
 1. Install [leiningen](https://github.com/technomancy/leiningen)
-2. Download the bcbio.repository
+2. Install [pandoc](http://johnmacfarlane.net/pandoc/)
+3. Download the bcbio.repository
 
 ```
 git clone https://github.com/roryk/bcbio.rnaseq
 ```
 
-3. Install the necessary libraries
+4. Install the necessary libraries
 
 ```
 cd bcbio.rnaseq
 Rscript resources/scripts/install_libraries.R
 ```
 
-4. Run a simulation of sample size 5
+5. Run a simulation of sample size 5
 
 ```
 lein run simulate -s 5 -d output_dir
