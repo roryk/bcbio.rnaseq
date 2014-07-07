@@ -13,7 +13,6 @@ symbol = "hgnc_symbol"
 dds = DESeqDataSetFromMatrix(countData=counts,
     colData=summarydata, design = design)
 dds = DESeq(dds)
-contrasts = combn(levels(summarydata[, condition]), 2, simplify=FALSE)
 ```
 
 ## Effect of variance stabilization
