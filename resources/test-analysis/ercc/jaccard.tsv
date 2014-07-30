@@ -1,0 +1,2 @@
+deseq_vs_deseq2	deseq_vs_edgeR	deseq_vs_voom_limma	deseq2_vs_edgeR	deseq2_vs_voom_limma	edgeR_vs_voom_limma
+1	1	0.0379746835443038	1	0.0379746835443038	0.0379746835443038
