@@ -2,10 +2,10 @@
   (:require
    [bcbio.rnaseq.util :refer [file-exists?]]
    [bcbio.rnaseq.test-setup :refer [test-setup]]
-   [bcbio.rnaseq.config :refer [combined-count-file count-files]
-   [bcbio.rnaseq.template :refer [run-template templates get-analysis-config
+   [bcbio.rnaseq.config :refer [combined-count-file count-files]]
+   [bcbio.rnaseq.templates :refer [run-template templates get-analysis-config
                                   run-R-analyses]]
-   [bcbio.rnaseq.htseq-combine :only [write-combined-count-file]]
+   [bcbio.rnaseq.htseq-combine :refer [write-combined-count-file]]
    [clojure.test :refer :all]
    [bcbio.rnaseq.t-template :refer :all]))
 

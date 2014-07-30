@@ -3,6 +3,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [incanter "1.5.5"]
+                 [clj-stacktrace "0.2.5"]
                  [incanter/incanter-io "1.5.5"]
                  [me.raynes/fs "1.4.4"]
                  [clj-yaml "0.4.0"]

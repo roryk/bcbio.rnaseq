@@ -16,15 +16,6 @@
 
 (use-fixtures :each summary-fixture)
 
-;; (facts "about summarize" :unit
-;;   (let [summary-dir (-> test-project-summary util/dirname (io/file "summary") str)]
-;;     (with-state-changes [(after :facts (fs/delete-dir summary-dir))]
-;;       (fact
-;;        "running summary without a formula works"
-;;        (util/file-exists? (qc/summarize test-project-summary nil)) => truthy)
-;;       (fact
-;;        "running summary with a formula works"
-;;        (util/file-exists? (qc/summarize test-project-summary "~ panel")) => truthy))))
 
 (def not-nil? (complement nil?))
 
