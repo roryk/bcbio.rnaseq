@@ -13,8 +13,7 @@ output:
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png",
                cache=FALSE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
-               message=FALSE, prompt=TRUE, comment='', fig.cap='', 
-               base.dir="~/cache/johnson_rnaseq/results")
+               message=FALSE, prompt=TRUE, comment='', fig.cap='')
 ```
 
 # Overview
