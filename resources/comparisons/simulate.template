@@ -1,0 +1,86 @@
+# adapted from "Voom: precision weights unlock linear model analysis tools for
+# "RNA-seq read counts"
+library(tools)
+count_file = {{{count-file}}}
+input_file = {{{input-file}}}
+sample_size = {{{sample-size}}}
+library_size = {{{library-size}}} * 1e6
+ngenes = {{{num-genes}}}
+score_file = paste(file_path_sans_ext(count_file), ".scores", sep="")
+invChisq = TRUE
+ndiff = round(ngenes * 0.10)
+
+if(!is.na(input_file)) {
+    counts = read.table(input_file, header=TRUE, row.names="id", sep="\t")
+    proportions = rowMeans(counts) / sum(rowMeans(counts))
+    proportions = sort(proportions)
+    x_range = 1:length(proportions) / length(proportions)
+    qAbundanceDist = approxfun(x_range, proportions)
+} else {
+    load(url("http://bioinf.wehi.edu.au/voom/qAbundanceDist.RData"))
+}
+    
+score_file = paste(file_path_sans_ext(count_file), ".scores", sep="")
+invChisq = TRUE
+
+# the proportion of RNA in the sample represented by each gene
+baselineprop = qAbundanceDist((1:ngenes)/(ngenes+1))
+baselineprop[is.na(baselineprop)] = 0
+baselineprop = baselineprop/sum(baselineprop)
+n1 = sample_size
+n2 = sample_size
+group = factor(c(rep(1, n1), rep(2, n2)))
+design = model.matrix(~ group)
+nlibs = n1 + n2
+expected.lib.size = library_size * rep(1, nlibs)
+fcs = c(1.05, 1.1, 1.5, 2, 4)
+i = sample(1:ngenes, ndiff)
+baselineprop1 <- baselineprop2 <- baselineprop
+offset = 0
+correct = rep(0, ngenes)
+for (fc in fcs) {
+    new_offset = offset + round(ndiff * 0.1)
+    i1 = i[(offset + 1):new_offset]
+    offset = new_offset
+    new_offset = offset + round(ndiff * 0.1)
+    i2 = i[(offset + 1):new_offset]
+    baselineprop1[i1] = baselineprop[i1]*fc
+    baselineprop2[i2] = baselineprop[i2]*fc
+    correct[i1] = log2(1/fc)
+    correct[i2] = log2(fc)
+    offset = new_offset
+}
+
+mu0.1 = matrix(baselineprop1,ngenes,1) %*% matrix(expected.lib.size[1:n1],1,n1)
+mu0.2 = matrix(baselineprop2,ngenes,1) %*% matrix(expected.lib.size[(n1+1):(n1+n2)],1,n2)
+mu0 = cbind(mu0.1,mu0.2)
+status = rep(0,ngenes)
+status[i1] = -1
+status[i2] = 1
+
+# biological variation
+BCV0 = 0.2 + 1 / sqrt(mu0)
+BCV0[!is.finite(BCV0)] = 0.2
+
+if(invChisq){
+    df.BCV = 40
+	BCV = BCV0*sqrt(df.BCV/rchisq(ngenes,df=df.BCV))
+} else {
+	BCV = BCV0*exp( rnorm(ngenes,mean=0,sd=0.25)/2 )
+}
+
+shape = 1/BCV^2
+scale = mu0/shape
+mu = matrix(rgamma(ngenes*nlibs,shape=shape,scale=scale),ngenes,nlibs) 
+
+# technical variation
+counts <- matrix(rpois(ngenes*nlibs,lambda=mu),ngenes,nlibs)
+
+# format for output
+counts = data.frame(counts)
+colnames(counts) = c(paste("sample", 1:nlibs, sep=""))
+counts$id = rownames(counts)
+counts = counts[, c("id", c(paste("sample", 1:nlibs, sep="")))]
+write.table(counts, file=count_file, quote=FALSE, row.names=FALSE, sep="\t", col.names=TRUE)
+correct = data.frame(id=1:ngenes, correct=correct)
+write.table(correct, file=score_file, quote=FALSE, row.names=FALSE, sep="\t", col.names=TRUE)
