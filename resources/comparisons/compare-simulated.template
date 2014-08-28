@@ -28,7 +28,9 @@ plot_ROC = function(df, scores) {
     colnames(df_new) = c("id", "padj", "method", "correct")
     df_new$pred = 1 - df_new$padj
     df_new$qPCR_DE = df_new$correct != 1
-    p = ggROC(df_new, "method", "qPCR_DE", "pred")
+    p = ggROC(df_new, "method", "qPCR_DE", "pred") +
+          theme(panel.grid.major = element_line(size = 0.5, color="grey")) +
+          theme_bw()
     ggsave(filename=ROC_file, plot=p)
 }
 
@@ -49,7 +51,9 @@ plot_logFC_AUC = function(df, scores) {
         plotdata = rbind(plotdata, out)
     }
     p = ggplot(plotdata, aes(cutoff, auc)) + geom_line(aes(colour=method)) +
-        xlab("foldChange cutoff for qPCR data")
+        xlab("foldChange cutoff for qPCR data")  +
+        theme_bw() +
+        theme(panel.grid.major = element_line(size = 0.5, color="grey"))
     ggsave(filename=logFC_AUC_file, plot=p)
     return(p)
 }
@@ -111,8 +115,12 @@ concordance_plot = function(concord) {
     colnames(melted) = c("project", "algorithm", "cutoffs", "method", "value")
     p = ggplot(melted, aes(x=method, y=value, fill=algorithm)) +
         geom_bar(stat="identity", position="dodge") + facet_wrap(~ cutoffs) +
-          theme(axis.text.x = element_text(angle=90)) +
-              scale_fill_manual(values=cbPalette) + ylab("") + xlab("") 
+        theme_bw() +
+        theme(axis.text.x = element_text(angle=90)) +
+        scale_fill_manual(values=cbPalette) + ylab("") + xlab("")  +
+        theme(panel.grid.major = element_line(size = 0.5, color="grey")) +
+        theme(legend.justification=c(1.2,0), legend.position=c(1,0.15)) +
+        theme(legend.title=element_blank())
     ggsave(filename=concord_plot, plot=p)
 }
 
@@ -126,5 +134,7 @@ concord = concordance(df, scores)
 write.table(concord, file.path(out_dir, "simulated_concord.tsv"),
             quote=FALSE, row.names=FALSE, sep="\t")
 concordance_plot(concord)
-p = ggplot(ji, aes(x=algorithm, y=jaccard)) + geom_bar(stat="identity", position="dodge")
+p = ggplot(ji, aes(x=algorithm, y=jaccard)) + geom_bar(stat="identity", position="dodge") +
+        theme_bw() + 
+        theme(panel.grid.major = element_line(size = 0.5, color="grey"))
 ggsave(filename=jaccard_plot, plot=p)
