@@ -8,5 +8,5 @@
 
 (use-fixtures :once test-setup)
 
-(deftest cuffdiff-works
+(deftest ^:slow cuffdiff-works
   (is (file-exists? (:out-file (cuffdiff/run :panel 1)))))
