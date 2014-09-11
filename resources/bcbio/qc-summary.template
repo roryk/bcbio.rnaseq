@@ -42,7 +42,9 @@ counts = counts[, order(colnames(counts))]
 ggplot(summarydata, aes(x=Name, y=Mapped)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("mapped reads") + xlab("")
+    ylab("mapped reads") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Genomic mapping rate
@@ -50,7 +52,9 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("mapping rate") + xlab("")
+    ylab("mapping rate") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Number of genes detected
@@ -58,7 +62,9 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
 ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) + 
-    ylab("genes detected") + xlab("")
+    ylab("genes detected") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Exonic mapping rate
@@ -66,7 +72,9 @@ ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
 ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("exonic mapping rate") + xlab("")
+    ylab("exonic mapping rate") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## rRNA mapping rate
@@ -74,7 +82,9 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 ggplot(summarydata, aes(x=Name, y=rRNA.rate)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("rRNA rate") + xlab("")
+    ylab("rRNA rate") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Estimated fragment length of paired-end reads
@@ -82,7 +92,9 @@ ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
 ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) + 
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
-    ylab("fragment length") + xlab("")
+    ylab("fragment length") + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Boxplot of log10 counts per gene
@@ -93,12 +105,14 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Correlation heatmap of raw counts
 ```{r heatmap-raw}
-p = ggheatmap(cor(counts))
+p = ggheatmap(cor(counts)) 
 ggheatmap.show(p)
 ```
 
@@ -118,7 +132,9 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("")
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") +
+    theme_bw(base_size=12) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
 ## Correlation heatmap of TMM-normalized counts

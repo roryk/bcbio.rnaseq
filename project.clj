@@ -7,7 +7,6 @@
                  [incanter/incanter-io "1.5.5"]
                  [me.raynes/fs "1.4.4"]
                  [clj-yaml "0.4.0"]
-                 [clj-biosequence "0.1.4-SNAPSHOT"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/data.json "0.2.2"]
                  [clj-http "0.7.5"]
