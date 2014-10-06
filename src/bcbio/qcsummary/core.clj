@@ -20,6 +20,9 @@
 (def summary-template "bcbio/qc-summary.template")
 (def deseq2-de-template "bcbio/deseq2-de.template")
 
+(defn tokenize-formula [formula]
+  (string/split formula #"[\s+|\+|~|\*]") )
+
 (defn write-template [template hashmap out-dir extension]
   (let [rfile (util/change-extension (util/swap-directory template out-dir)
                                      extension)]
@@ -28,7 +31,7 @@
 
 (defn write-de-template [out-dir formula]
   (let [de-config {:formula formula
-                   :condition (util/escape-quote (last (string/split formula #"\s+")))}]
+                   :condition (util/escape-quote (last (tokenize-formula formula)))}]
     (write-template deseq2-de-template de-config out-dir ".tmp")))
 
 
