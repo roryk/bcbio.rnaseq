@@ -3,9 +3,6 @@ library(DESeq2)
 library(vsn)
 design = {{{formula}}}
 condition = {{{condition}}}
-dataset = "hsapiens_gene_ensembl"
-filter = "ensembl_gene_id"
-symbol = "hgnc_symbol"
 ```
 
 # Differential expression
@@ -53,16 +50,6 @@ handle_deseq2 = function(dds, summarydata, column) {
 }
 ```
 
-annotate_df = function(df, dataset, filter, symbol) {
-  require(biomaRt)
-  ensembl = useMart('ensembl', dataset = dataset)
-  annot.df = getBM(attributes=c(filter, symbol), filters=c(filter), values=rownames(df),
-                   mart=ensembl)
-  m = merge(df, annot.df, by.x="row.names", by.y=filter)
-  colnames(m)[1] = "id"
-  return(m)
-}
-
 ## MA-plots
   
 ```{r DESeq-output, results='asis'}
@@ -77,7 +64,6 @@ for(i in seq(length(all_results))) {
 ```{r DESeq-tables, results='asis'}
 for(i in seq(length(all_results))) {
   cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
-#  out_df = annotate_df(data.frame(all_results[[i]]), dataset, filter, symbol)
   out_df = all_results[[i]]
   knitr::kable(head(out_df))
   write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
