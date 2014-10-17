@@ -47,6 +47,7 @@ bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vs
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
 install.github(c("CHBUtils"), "hbc")
+install_github("lpantano/DEGreport", ref="Lite", build=FALSE)
 install_github('rstudio/rmarkdown')
 install_github('jimhester/knitrBootstrap')
 
