@@ -14,10 +14,10 @@ counts = read.table(count_file, header=TRUE, row.names="id")
 dds = DESeqDataSetFromMatrix(countData=counts,
     colData=data.frame(condition=class), design = ~ condition)
 dds = DESeq(dds)
-res = results(dds, independentFiltering=TRUE)
+res = results(dds, independentFiltering=TRUE, addMLE=TRUE)
 res$id = rownames(res)
 comparison = paste(levels(class)[1], "_vs_", levels(class)[2], sep="")
-out_table = data.frame(id=res$id, expr=res$baseMean, logFC=res$log2FoldChange,
+out_table = data.frame(id=res$id, expr=res$baseMean, logFC=res$lfcMLE,
           pval=res$pvalue, padj=res$padj, algorithm="deseq2", project=project)
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
             sep="\t")
