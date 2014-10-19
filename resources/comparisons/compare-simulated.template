@@ -96,11 +96,8 @@ concordance = function(df, scores) {
         for(cutoff in cutoffs_to_check) {
             submatrix = subset(df_new, abs(correct) >= cutoff | correct == 0)
             true_set = subset(df_new, abs(correct) >= cutoff)$id
-#            submatrix$DE = (submatrix$padj < 0.05 & (abs(submatrix$logFC) >= abs(log2(cutoff))
             submatrix$DE = abs(submatrix$correct) >= cutoff
-#            sig = subset(submatrix, method == alg & (padj < 0.05) & ((abs(logFC) >= abs(log2(cutoff))) | correct == 0))$id
             sig = subset(submatrix, method == alg & (padj < 0.05) & (abs(logFC) >= abs(cutoff)))$id
-#            sig = subset(submatrix, method == alg & padj < 0.05)$id
             concordant = c(concordant, length(intersect(sig, true_set)))
             false_positive = c(false_positive, length(setdiff(sig, true_set)))
             false_negative = c(false_negative, length(setdiff(true_set, sig)))
