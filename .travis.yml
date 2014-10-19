@@ -13,7 +13,7 @@ before_install:
       -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
   - sudo apt-get install fabric
   - sudo apt-get --purge remove r-base-dev r-base-core r-recommended
-  - sudo apt-get install r-base-core=3.0.3-1precise0 r-base-dev=3.0.3-1precise0
+  - sudo apt-get install r-base-core=3.1.1-1precise0 r-base-dev=3.1.1-1precise0
   - sudo apt-get install pandoc
   - "[ ! -d ${R_LIBS_USER} ] && mkdir ${R_LIBS_USER}"
   - R --version
