@@ -77,11 +77,11 @@ for(i in seq(length(all_results))) {
 
 ## DEGreport
 ```{r get-groups}
-get_groups <- function(d, name)
+get_groups <- function(d, comp, condition)
 {
-  g <- unlist(strsplit(name," "))
-  g1 <- subset(d, type==g[1])$Name
-  g2 <- subset(d, type==g[3])$Name
+  g <- unlist(strsplit(comp," "))
+  g1 <- d$Name[d[, (names(d)==condition)]==g[1]]
+  g2 <- d$Name[d[, (names(d)==condition)]==g[3]]
   list(g1,g2)
 }
 ```
@@ -89,8 +89,8 @@ get_groups <- function(d, name)
 ### Mean of DEG genes versus background
 ```{r DEGreport-MB}
 for(i in seq(length(all_results))) {
-  g <- get_groups(summarydata, names(all_results)[i])
-  detag <- row.names(subset(as.data.frame(all_results[[i]]),padj<0.1))
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
   print(degMB(detag, g[[1]], g[[2]], rlogMat) + 
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
 }
@@ -99,8 +99,8 @@ for(i in seq(length(all_results))) {
 ### Variance of DEG genes versus background
 ```{r DEGreport-VB}
 for(i in seq(length(all_results))) {
-  g <- get_groups(summarydata, names(all_results)[i])
-  detag <- row.names(subset(as.data.frame(all_results[[i]]),padj<0.1))
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
   print(degMB(detag, g[[1]], g[[2]], rlogMat) + 
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
 }
@@ -125,7 +125,7 @@ for(i in seq(length(all_results))) {
 ### Mean-vs-Variation
 ```{r DEGreport-MV}
 for(i in seq(length(all_results))) {
-  g <- get_groups(summarydata, names(all_results)[i])
+  g <- get_groups(summarydata, names(all_results)[i], condition)
   print(degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, rlogMat) + 
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
 }
