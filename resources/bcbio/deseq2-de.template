@@ -1,5 +1,6 @@
 ```{r de-setup}
 library(DESeq2)
+library(DEGreport)
 library(vsn)
 design = {{{formula}}}
 condition = {{{condition}}}
@@ -7,6 +8,7 @@ condition = {{{condition}}}
 
 # Differential expression
 ```{r deseq2-expression-analysis, results='asis'}
+counts <- counts[rowSums(counts>0)>1,]
 dds = DESeqDataSetFromMatrix(countData=counts,
     colData=summarydata, design = design)
 dds = DESeq(dds)
@@ -57,6 +59,62 @@ all_results = handle_deseq2(dds, summarydata, condition)
 for(i in seq(length(all_results))) {
   plotMA(all_results[[i]])
   title(paste("MA plot for contrast", names(all_results)[i]))
+}
+```
+
+## DEGreport
+```{r get-groups}
+get_groups <- function(d, comp, condition)
+{
+  g <- unlist(strsplit(comp," "))
+  g1 <- d$Name[d[, (names(d)==condition)]==g[1]]
+  g2 <- d$Name[d[, (names(d)==condition)]==g[3]]
+  list(g1,g2)
+}
+```
+
+### Mean of DEG genes versus background
+```{r DEGreport-MB}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
+  print(degMB(detag, g[[1]], g[[2]], rlogMat) + 
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Variance of DEG genes versus background
+```{r DEGreport-VB}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
+  print(degMB(detag, g[[1]], g[[2]], rlogMat) + 
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Pvalues-vs-Mean
+```{r DEGreport-M}
+for(i in seq(length(all_results))) {
+  print(degMean(all_results[[i]]$pvalue, rlogMat) + 
+  ggtitle(paste0("Pvalues-vs-Mean for ", names(all_results)[i])))
+}
+```
+
+### Pvalues-vs-Variation
+```{r DEGreport-V}
+for(i in seq(length(all_results))) {
+  print(degVar(all_results[[i]]$pvalue, rlogMat) + 
+  ggtitle(paste0("Pvalues-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Mean-vs-Variation
+```{r DEGreport-MV}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  print(degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, rlogMat) + 
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
 }
 ```
 
