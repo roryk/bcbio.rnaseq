@@ -20,6 +20,7 @@ before_install:
   - R -e '.libPaths(); sessionInfo()'
   - sudo Rscript resources/scripts/install_libraries.R
   - echo -ne '\n' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+  - export PATH=/home/travis/.linuxbrew/bin:$PATH
   - brew tap chapmanb/homebrew-cbl
   - brew install cufflinks-binary
   - cd ..
