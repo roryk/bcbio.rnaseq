@@ -23,7 +23,6 @@ before_install:
   - export PATH=/home/travis/.linuxbrew/bin:$PATH
   - brew tap chapmanb/homebrew-cbl
   - brew install cufflinks-binary
-  - cd ..
 
 language: clojure
 lein: lein2
