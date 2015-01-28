@@ -19,11 +19,10 @@ before_install:
   - R --version
   - R -e '.libPaths(); sessionInfo()'
   - sudo Rscript resources/scripts/install_libraries.R
-  - git clone https://github.com/chapmanb/cloudbiolinux
-  - cd cloudbiolinux
-  - sudo python setup.py install
-  - fab -f fabfile.py -H localhost install_custom:cufflinks
-  - cd ..
+  - echo -ne '\n' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+  - export PATH=/home/travis/.linuxbrew/bin:$PATH
+  - brew tap chapmanb/homebrew-cbl
+  - brew install cufflinks-binary
 
 language: clojure
 lein: lein2
