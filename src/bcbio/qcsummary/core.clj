@@ -63,7 +63,8 @@
 (defn load-tidy-summary [fn]
   "load the summaries from a bcbio project file"
   (let [summary (->> fn load-summary :samples (map summary) tidy-summary)
-        metadata (->> fn load-summary :samples (map metadata) util/fix-missing-keys tidy-summary)]
+        metadata (->> fn load-summary :samples (map metadata) util/fix-missing-keys
+                      tidy-summary)]
     (ic/conj-cols summary metadata)))
 
 (defn write-tidy-summary [fn]
