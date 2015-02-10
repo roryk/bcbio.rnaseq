@@ -69,7 +69,7 @@ for(i in seq(length(all_results))) {
 
 ```{r DESeq-volcano}
 for(i in seq(length(all_results))) {
-  stats = all_results[[i]][,c(2,6)]
+  stats = as.data.frame(all_results[[i]][,c(2,6)])
   p = volcano_density_plot(stats, title=names(all_results)[i], lfc.cutoff=1.5)
   print(p)
 }
@@ -111,6 +111,7 @@ for(i in seq(length(all_results))) {
 ```
 
 ### Pvalues-vs-Mean
+
 We plot some information about how p-values is correlated with the average mean or
 the standard desviation. We should see the same distribution for each p-value bin.
 
