@@ -55,7 +55,7 @@
 (defn tidy-summary [summary]
   "tidy a set of summary statistics"
   (if (every? empty? summary)
-    nil
+    summary
     (do
       (let [df (ic/to-dataset summary)]
         (ic/col-names df (map name (ic/col-names df)))))))
@@ -63,7 +63,7 @@
 (defn load-tidy-summary [fn]
   "load the summaries from a bcbio project file"
   (let [summary (->> fn load-summary :samples (map summary) tidy-summary)
-        metadata (->> fn load-summary :samples (map :metadata) util/fix-missing-keys
+        metadata (->> fn load-summary :samples (map metadata) util/fix-missing-keys
                       tidy-summary)]
     (ic/conj-cols summary metadata)))
 

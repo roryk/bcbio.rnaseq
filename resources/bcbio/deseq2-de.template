@@ -7,6 +7,7 @@ condition = {{{condition}}}
 ```
 
 # Differential expression
+
 ```{r deseq2-expression-analysis, results='asis'}
 counts <- counts[rowSums(counts>0)>1,]
 dds = DESeqDataSetFromMatrix(countData=counts,
@@ -15,6 +16,7 @@ dds = DESeq(dds)
 ```
 
 ## Effect of variance stabilization
+
 ```{r deseq-diagnostics, results='asis'}
 par(mfrow=c(1,3))
 notAllZero <- (rowSums(counts(dds))>0)
@@ -30,6 +32,7 @@ meanSdPlot(assay(vsd[notAllZero,]), ylim = c(0,2.5))
 ```
 
 ## Dispersion estimates
+
 ```{r dispersion-estimate}
 plotDispEsts(dds)
 ```
@@ -62,7 +65,18 @@ for(i in seq(length(all_results))) {
 }
 ```
 
+## Volcano-plots
+
+```{r DESeq-volcano}
+for(i in seq(length(all_results))) {
+  stats = as.data.frame(all_results[[i]][,c(2,6)])
+  p = volcano_density_plot(stats, title=names(all_results)[i], lfc.cutoff=1.5)
+  print(p)
+}
+```
+
 ## DEGreport
+
 ```{r get-groups}
 get_groups <- function(d, comp, condition)
 {
@@ -74,6 +88,8 @@ get_groups <- function(d, comp, condition)
 ```
 
 ### Mean of DEG genes versus background
+We plot whether the expression or the variation of the DE genes are bias respect to the background.
+
 ```{r DEGreport-MB}
 for(i in seq(length(all_results))) {
   g <- get_groups(summarydata, names(all_results)[i], condition)
@@ -84,16 +100,21 @@ for(i in seq(length(all_results))) {
 ```
 
 ### Variance of DEG genes versus background
+
 ```{r DEGreport-VB}
 for(i in seq(length(all_results))) {
   g <- get_groups(summarydata, names(all_results)[i], condition)
   detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
-  print(degMB(detag, g[[1]], g[[2]], rlogMat) + 
+  print(degVB(detag, g[[1]], g[[2]], rlogMat) + 
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
 }
 ```
 
 ### Pvalues-vs-Mean
+
+We plot some information about how p-values is correlated with the average mean or
+the standard desviation. We should see the same distribution for each p-value bin.
+
 ```{r DEGreport-M}
 for(i in seq(length(all_results))) {
   print(degMean(all_results[[i]]$pvalue, rlogMat) + 
@@ -102,6 +123,7 @@ for(i in seq(length(all_results))) {
 ```
 
 ### Pvalues-vs-Variation
+
 ```{r DEGreport-V}
 for(i in seq(length(all_results))) {
   print(degVar(all_results[[i]]$pvalue, rlogMat) + 
@@ -110,6 +132,7 @@ for(i in seq(length(all_results))) {
 ```
 
 ### Mean-vs-Variation
+
 ```{r DEGreport-MV}
 for(i in seq(length(all_results))) {
   g <- get_groups(summarydata, names(all_results)[i], condition)
@@ -119,6 +142,7 @@ for(i in seq(length(all_results))) {
 ```
 
 ## Differentially expressed genes
+
 ```{r DESeq-tables, results='asis'}
 for(i in seq(length(all_results))) {
   cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
