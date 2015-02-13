@@ -34,7 +34,7 @@ counts = counts[, order(colnames(counts))]
 
 ## Mapped reads
 ```{r mapped-plot}
-ggplot(summarydata, aes(x=Name, y=Mapped)) + 
+ggplot(summarydata, aes(x=Name, y=Mapped)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("mapped reads") + xlab("") +
@@ -44,7 +44,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
 
 ## Genomic mapping rate
 ```{r mapping-rate-plot}
-ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) + 
+ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("mapping rate") + xlab("") +
@@ -56,7 +56,7 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
 ```{r genes-detected-plot}
 ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) + 
+    theme(axis.text.x = element_text(angle = 90)) +
     ylab("genes detected") + xlab("") +
     theme_bw(base_size=12) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"))
@@ -64,7 +64,7 @@ ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
 
 ## Exonic mapping rate
 ```{r exonic-mapping-plot}
-ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) + 
+ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("exonic mapping rate") + xlab("") +
@@ -74,7 +74,7 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 
 ## rRNA mapping rate
 ```{r rRNA-rate-plot}
-ggplot(summarydata, aes(x=Name, y=rRNA.rate)) + 
+ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("rRNA rate") + xlab("") +
@@ -84,7 +84,7 @@ ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
 
 ## Estimated fragment length of paired-end reads
 ```{r fragment-length-plot}
-ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) + 
+ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     geom_bar(stat="identity") +
     theme(axis.text.x = element_text(angle = 90)) +
     ylab("fragment length") + xlab("") +
@@ -107,7 +107,7 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
 
 ## Correlation heatmap of raw counts
 ```{r heatmap-raw}
-p = ggheatmap(cor(counts)) 
+p = ggheatmap(cor(counts))
 ggheatmap.show(p)
 ```
 
@@ -130,6 +130,12 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") +
     theme_bw(base_size=12) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"))
+```
+
+## Density of log10 TMM-normalized counts
+```{r density-normalized}
+ggplot(melted, aes(x=count, group=sample)) +
+    geom_density()
 ```
 
 ## Correlation heatmap of TMM-normalized counts
