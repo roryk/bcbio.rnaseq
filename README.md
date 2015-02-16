@@ -19,7 +19,7 @@ a tool to do that automatically.
 ## Quickstart
 
 1. Install [leiningen](https://github.com/technomancy/leiningen)
-2. Install [pandoc](http://johnmacfarlane.net/pandoc/)
+2. Install [pandoc](http://johnmacfarlane.net/pandoc/) (at least v1.12.3)
 3. Download the bcbio.repository
 
 ```
