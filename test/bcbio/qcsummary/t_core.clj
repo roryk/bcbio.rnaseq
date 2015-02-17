@@ -35,7 +35,7 @@
     (is (= 10 (ic/nrow (qc/tidy-summary summaries))))))
 
 (deftest summary-with-formula-works
-  (is (util/file-exists? (qc/summarize test-project-summary "~ panel"))))
+  (is (util/file-exists? (qc/summarize test-project-summary "~ panel" false))))
 
 (deftest summary-without-formula-works
-  (is (util/file-exists? (qc/summarize test-project-summary nil))))
+  (is (util/file-exists? (qc/summarize test-project-summary nil false))))
