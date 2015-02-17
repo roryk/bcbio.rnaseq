@@ -1,0 +1,192 @@
+```{r load-libraries}
+library(DEXSeq)
+```
+
+```{r load-data}
+gff_file = "../ref-transcripts.dexseq.gff3"
+dexseq = read.table("../combined.dexseq", row.names="id", header=TRUE)
+
+summary_fn = "../project-summary.csv"
+summary = read.table(summary_fn, header=TRUE, sep=",")
+design = ~sample + exon + genotype:exon
+```
+
+Drop the two samples that were done by themselves, they are outliers and do not cluster
+well with the rest of the samples. These samples are TSC_rep1 and WT_rep2.
+
+```{r drop-outliers}
+dexseq = dexseq[, c(1, 3, 5, 6)]
+summary = summary[summary$Name %in% colnames(dexseq),]
+st = data.frame(row.names=summary$Name, genotype=summary$genotype)
+design = ~sample + exon + genotype:exon
+```
+
+Now perform differential exon expression using DEXSeq:
+
+```{r run-dexseq}
+DEXSeqDataSetFromMatrix = function(dcounts, sampleData, design = ~sample + exon + condition:exon, 
+    flattenedfile = NULL) 
+{
+    dcounts <- dcounts[substr(rownames(dcounts), 1, 1) != "_",]
+    rownames(dcounts) <- sub(":", ":E", rownames(dcounts))
+    splitted <- strsplit(rownames(dcounts), ":")
+    exons <- sapply(splitted, "[[", 2)
+    genesrle <- sapply(splitted, "[[", 1)
+    if (!is.null(flattenedfile)) {
+        aggregates <- read.delim(flattenedfile, stringsAsFactors = FALSE, 
+            header = FALSE)
+        colnames(aggregates) <- c("chr", "source", "class", "start", 
+            "end", "ex", "strand", "ex2", "attr")
+        aggregates$strand <- gsub("\\.", "*", aggregates$strand)
+        aggregates <- aggregates[which(aggregates$class == "exonic_part"), 
+            ]
+        aggregates$attr <- gsub("\"|=|;", "", aggregates$attr)
+        aggregates$gene_id <- sub(".*gene_id\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        transcripts <- gsub(".*transcripts\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        transcripts <- strsplit(transcripts, "\\+")
+        exonids <- gsub(".*exonic_part_number\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        exoninfo <- GRanges(as.character(aggregates$chr), IRanges(start = aggregates$start, 
+            end = aggregates$end), strand = aggregates$strand)
+        names(exoninfo) <- paste(aggregates$gene_id, exonids, 
+            sep = ":E")
+        names(transcripts) <- rownames(exoninfo)
+        if (!all(rownames(dcounts) %in% names(exoninfo))) {
+            stop("Count files do not correspond to the flattened annotation file")
+        }
+        matching <- match(rownames(dcounts), names(exoninfo))
+        stopifnot(all(names(exoninfo[matching]) == rownames(dcounts)))
+        stopifnot(all(names(transcripts[matching]) == rownames(dcounts)))
+        dxd <- DEXSeqDataSet(dcounts, sampleData, design, exons, 
+            genesrle, exoninfo[matching], transcripts[matching])
+        return(dxd)
+    }
+    else {
+        dxd <- DEXSeqDataSet(dcounts, sampleData, design, exons, 
+            genesrle)
+        return(dxd)
+    }
+}
+
+z = DEXSeqDataSetFromMatrix(dexseq, st, design, gff_file)
+z = estimateSizeFactors(z)
+z = estimateDispersions(z, formula=design)
+```
+
+```{r plot-dispersion}
+plotDispEsts(z)
+```
+
+```{r perform-de}
+z = testForDEU(z)
+z = estimateExonFoldChanges(z, fitExpToVar="genotype")
+res = DEXSeqResults(z)
+```
+
+```{r affected-genes}
+table ( tapply( res$padj < 0.1, res$groupID, any ) )
+```
+
+The fold change is very small between all of the samples, these samples are almost
+identical. 
+
+```{r de-plots}
+library(ggplot2)
+qplot(res$padj) + geom_histogram() +
+  xlab("false discovery rate") +
+  ylab("") +
+  theme_bw(base_size=12, base_family="Gill Sans MT") +
+  theme(panel.grid.major = element_line(size = .5, color = "grey"))
+plotMA(res, ylim=c(-1, 1))
+```
+
+splitted = strsplit(rownames(res), ":")
+res$exons = sapply(splitted, "[[", 2)
+res$DE = res$padj < 0.1
+res$DE[is.na(res$DE)] = FALSE
+
+resdf = data.frame(res)
+library(dplyr)
+d = tbl_df(resdf)
+d$exons = as.factor(d$exons)
+d$transcripts=NULL
+
+g = d %>% group_by(exons, DE) %>% summarise(counts=n())
+n = cast(g, exons ~ DE)
+colnames(n) = c("exon", "not_de", "de")
+m = cast(g, exons ~ DE)
+
+colnames(m) = c("exons", "total", "de")
+m$total = m$total + m$de
+m$total[is.na(m$total)] = 0
+m$de[is.na(m$de)] = 0
+m$b_prop = m$total / sum(m$total)
+m$de_prop = m$de / sum(m$de)
+
+library(extrafont)
+
+
+
+qplot(m$exons, m$de * m$de/ m$total) + 
+  ylab("# exons called DE weighted by percentage of total exons") +
+  xlab("exon #") +
+  theme_bw(base_size=12, base_family="Gill Sans MT") +
+  theme(panel.grid.major = element_line(size = .5, color = "grey"),
+        axis.ticks.x = element_blank(), axis.text.x = element_blank())
+ggsave("percentage_exons_de.pdf")
+
+qplot(m$exons, m$de) + 
+  ylab("exons called DE") +
+  xlab("exon #") +
+  theme_bw(base_size=12, base_family="Gill Sans MT") +
+  theme(panel.grid.major = element_line(size = .5, color = "grey"),
+        axis.ticks.x = element_blank(), axis.text.x = element_blank())
+ggsave("exons_de.pdf")
+
+d = g %>% mutate(proportion = counts/sum(counts))
+
+
+ggplot(d, aes(exons, fill=DE)) + geom_histogram() + facet_wrap(~ DE) + scale_y_log10()
+
+d$DE = ifelse(d$DE, "de", "notde")
+
+
+
+g = d %>% group_by(exons, DE)
+
+q = tbl_df(resdf) %>% group_by(exons, DE) %>% count()
+q$exons = as.factor(q$exons)
+q$DE = ifelse(q$DE, "de", "notde")
+
+
+
+sig = res$padj < 0.1
+sig[is.na(sig)] = FALSE
+ids = unname(sapply(rownames(res), function(x) strsplit(x, ":", x)[[1]][1]))
+
+rs = res[sig,]
+rs = rs[order(-rs$log2fold_open_closed),]
+
+head(res[sig,])
+
+plotDEXSeq(res, "ENSRNOG00000000145", fitExpToVar="eye_state")
+plotDEXSeq(res, "ENSRNOG00000000275", fitExpToVar="eye_state")
+plotDEXSeq(res, "ENSRNOG00000010830", fitExpToVar="eye_state")
+plotDEXSeq(res, "ENSRNOG00000004060", fitExpToVar="eye_state")
+plotDEXSeq(res, "ENSRNOG00000012538", fitExpToVar="eye_state")
+plotDEXSeq(res, "ENSRNOG00000008104", fitExpToVar="eye_state")
+
+annotate_df = function(df) {
+   library(biomaRt)
+   mart = useMart(biomart = "ensembl", dataset = "rnorvegicus_gene_ensembl")
+   attributes=c("ensembl_gene_id", "mgi_symbol", "description")
+   filters = c("ensembl_gene_id")
+   values = df$id
+   annot.df = getBM(attributes=attributes, filters=filters, values=values, mart=mart)
+   m = merge(df, annot.df, by.x="id", by.y="ensembl_gene_id")
+   return(m)
+}
+
+m = annotate_df(res[sig,])

@@ -96,11 +96,11 @@
   "apply a function to only values of specific keys in a sequence"
   (reduce #(assoc %1 %2 (f (%1 %2))) m keyseq))
 
-(defn catto [f1 f2 out]
-  "cat f1 f2 > out"
+(defn catto [out & files]
+  "cat files > out"
   (with-open [o (io/output-stream out)]
-    (io/copy (io/file f1) o)
-    (io/copy (io/file f2) o)))
+    (doseq [f files]
+      (io/copy (io/file f) o))))
 
 (defn replace-if [pred s match replacement]
   "replace match with replacement in string s if predicate is true"

@@ -19,6 +19,11 @@
 
 (def summary-template "bcbio/qc-summary.template")
 (def deseq2-de-template "bcbio/deseq2-de.template")
+(def dexseq-template "bcbio/dexseq.template")
+
+(defn dexseq-file [file-name]
+  (#(get-in (first (:samples (config/load-yaml file-name)))
+            [:genome_resources :rnaseq :dexseq])))
 
 (defn tokenize-formula [formula]
   (string/split formula #"[\s+|\+|~|\*]") )
@@ -29,9 +34,17 @@
     (spit rfile (stache/render-resource template hashmap))
     rfile))
 
+(defn write-dexseq-template [out-dir formula summary-csv dexseq-gff]
+  (let [dexseq-config {:condition (last (tokenize-formula formula))
+                       :gff-file (util/escape-quote dexseq-gff)
+                       :summary-csv (util/escape-quote summary-csv)}]
+    (println "Running DEXSeq, this will take a long time.")
+    (write-template dexseq-template dexseq-config out-dir ".tmp")))
+
 (defn write-de-template [out-dir formula]
   (let [de-config {:formula formula
                    :condition (util/escape-quote (last (tokenize-formula formula)))}]
+    (println "Running DESeq2.")
     (write-template deseq2-de-template de-config out-dir ".tmp")))
 
 
@@ -88,23 +101,29 @@
 (def options
   [["-h" "--help"]
    ["-f" "--formula FORMULA" "Formula to use in model (example: ~ batch + condition)"
-    :default nil]])
+    :default nil]
+   ["-d" "--dexseq" "Run DEXSeq"]])
 
 (defn exit [status msg]
   (println msg)
   (System/exit status))
 
-(defn summarize [project-file formula]
+(defn summarize [project-file formula dexseq]
   (let [out-dir (-> project-file util/dirname (io/file "summary")
                     str util/safe-makedir)
         tidy-summary (write-tidy-summary project-file)
         qc-file (make-qc-summary out-dir tidy-summary)
-        out-file (util/change-extension qc-file ".Rmd")]
+        out-file (util/change-extension qc-file ".Rmd")
+        dexseq-gff (dexseq-file project-file)]
     (if formula
       (let [de-file (write-de-template out-dir formula)]
-        (util/catto qc-file de-file out-file))
+        (if dexseq
+          (let [dexseq-out (write-dexseq-template out-dir formula tidy-summary dexseq-gff)]
+            (util/catto out-file qc-file de-file dexseq-out))
+          (util/catto out-file qc-file de-file)))
       (io/copy (io/file qc-file) (io/file out-file)))
     out-file))
+
 
 
 (defn summarize-cli [& args]
@@ -112,5 +131,6 @@
     (cond
      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
-    (let [html-file (knit-file (summarize (first arguments) (:formula options)))]
+    (let [html-file (knit-file (summarize (first arguments) (:formula options)
+                                          (:dexseq options)))]
       (println "Summary report can be found here" html-file))))

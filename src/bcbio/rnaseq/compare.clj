@@ -89,7 +89,6 @@
     (run-comparisons (keyword key) cores)
     (compare-callers (run-callers (keyword key) counts-only cores))))
 
-
 (defn exit [status msg]
   (println msg)
   (System/exit status))
