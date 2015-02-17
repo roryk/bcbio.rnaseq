@@ -8,7 +8,7 @@
 [![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq) ![DOI](https://zenodo.org/badge/3658/roryk/bcbio.rnaseq.png)
 
 
-There are a huge number of algorithms designed to call differential
+There are a large number of algorithms designed to call differential
 events from RNA-seq data at the gene, isoform and splicing-event
 level. It would be great if when a new caller comes out, there was a
 way to automatically place it in the context of the other
