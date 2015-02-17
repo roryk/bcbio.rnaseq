@@ -98,8 +98,10 @@ the standard desviation. We should see the same distribution for each p-value bi
 
 ```{r DEGreport-M}
 plots = list()
+scale_factor = round(1/nr * 14)
 for(i in seq(length(all_results))) {
   plots[[i]] = degMean(all_results[[i]]$pvalue, rlogMat) +
+  theme_bw(base_size = scale_factor) +
   ggtitle(paste0("Pvalues-vs-Mean for ", names(all_results)[i]))
 }
 do.call(grid.arrange,plots)
@@ -111,6 +113,7 @@ do.call(grid.arrange,plots)
 plots = list()
 for(i in seq(length(all_results))) {
   plots[[i]] = degVar(all_results[[i]]$pvalue, rlogMat) +
+  theme_bw(base_size = scale_factor) +
   ggtitle(paste0("Pvalues-vs-Variation for ", names(all_results)[i]))
 }
 do.call(grid.arrange,plots)
@@ -122,7 +125,8 @@ do.call(grid.arrange,plots)
 plots = list()
 for(i in seq(length(all_results))) {
   g <- get_groups(summarydata, names(all_results)[i], condition)
-  plots[[i]] = degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, rlogMat) +
+  plots[[i]] = degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, counts(dds,normalized=TRUE)) +
+  theme_bw(base_size = scale_factor) +
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i]))
 }
 do.call(grid.arrange,plots)
