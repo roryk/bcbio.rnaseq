@@ -1,0 +1,139 @@
+```{r de-setup}
+library(DEXSeq)
+library(DEGreport)
+library(vsn)
+design = {{{formula}}}
+condition = {{{condition}}}
+```
+
+# Differential expression
+
+```{r deseq2-expression-analysis, results='asis'}
+genes = sapply(row.names(counts), function(x){
+    strsplit(x,":")[[1]][1]
+})
+exons = sapply(row.names(counts), function(x){
+    sub(":","_",x)
+})
+
+dxd = DEXSeqDataSet(counts, summarydata, design = ~ sample + exon + condition:exon, featureID = exons, groupID=genes)
+
+dxd = estimateSizeFactors( dxd )
+
+dxd = estimateDispersions( dxd )
+
+#plotDispEsts( dxd )
+
+dxd = testForDEU( dxd )
+
+dxd = estimateExonFoldChanges( dxd, fitExpToVar="condition")
+
+dxr1 = DEXSeqResults( dxd )
+
+#plotMA(dxr1)
+```
+
+
+## Dispersion estimates
+
+```{r dispersion-estimate}
+plotDispEsts(dxd)
+```
+
+
+## MA-plots
+
+```{r DESeq-output, results='asis'}
+plotMA(dxr1)
+```
+
+## Volcano-plots
+
+```{r DESeq-volcano}
+comp = names(dxr1)[grepl("log2fold", names(dxr1))]
+for(i in comp) {
+  stats = as.data.frame(dxr1[,c(i,"padj")])
+  p = volcano_density_plot(stats, title=i, lfc.cutoff=1.5)
+  print(p)
+}
+```
+
+## DEGreport
+
+```{r get-groups}
+get_groups <- function(d, comp, condition)
+{
+  g <- unlist(strsplit(comp," "))
+  g1 <- d$Name[d[, (names(d)==condition)]==g[1]]
+  g2 <- d$Name[d[, (names(d)==condition)]==g[3]]
+  list(g1,g2)
+}
+```
+
+### Mean of DEG genes versus background
+
+We plot whether the expression or the variation of the DE genes are bias respect to the background.
+
+```{r DEGreport-MB}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
+  print(degMB(detag, g[[1]], g[[2]], rlogMat) +
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Variance of DEG genes versus background
+
+```{r DEGreport-VB}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  detag <- row.names(subset(as.data.frame(all_results[[i]]), padj <= 0.1))
+  print(degVB(detag, g[[1]], g[[2]], rlogMat) +
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Pvalues-vs-Mean
+
+We plot some information about how p-values is correlated with the average mean or
+the standard desviation. We should see the same distribution for each p-value bin.
+
+```{r DEGreport-M}
+for(i in seq(length(all_results))) {
+  print(degMean(all_results[[i]]$pvalue, rlogMat) +
+  ggtitle(paste0("Pvalues-vs-Mean for ", names(all_results)[i])))
+}
+```
+
+### Pvalues-vs-Variation
+
+```{r DEGreport-V}
+for(i in seq(length(all_results))) {
+  print(degVar(all_results[[i]]$pvalue, rlogMat) +
+  ggtitle(paste0("Pvalues-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+### Mean-vs-Variation
+
+```{r DEGreport-MV}
+for(i in seq(length(all_results))) {
+  g <- get_groups(summarydata, names(all_results)[i], condition)
+  print(degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, rlogMat) +
+  ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i])))
+}
+```
+
+## Differentially expressed genes
+
+```{r DESeq-tables, results='asis'}
+for(i in seq(length(all_results))) {
+  cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
+  out_df = all_results[[i]]
+  knitr::kable(head(out_df))
+  write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
+                         quote=FALSE, sep="\t", row.names=TRUE, col.names=TRUE)
+  cat("\n")
+}
+```
