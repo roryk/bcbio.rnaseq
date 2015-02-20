@@ -19,6 +19,7 @@ library(reshape)
 library(gplots)
 library(edgeR)
 library(CHBUtils)
+library(pheatmap)
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
@@ -28,6 +29,29 @@ rownames(summarydata) = summarydata$Name
 summarydata = summarydata[order(summarydata$Name),]
 counts = read.table(counts_file, header=TRUE, row.names="id")
 counts = counts[, order(colnames(counts))]
+# this is a list of all non user-supplied metadata columns that could appear
+known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
+    "rRNA.rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
+    "Mapping.Rate", "Quality.format", "Duplication.Rate.of.Mapped", "Mapped",
+    "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
+    "Genes.Detected", "Unique.Starts.Per.Read")
+```
+
+```{r heatmap-function}
+get_heatmap_fn = function(summarydata) {
+    # return the pheatmap function with or without metadata
+    metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
+    if(ncol(metadata) == 0) {
+       return(pheatmap)
+    }
+    else {
+    rownames(metadata) = summarydata$Name
+    heatmap_fn = function(data, ...) {
+        pheatmap(data, annotation=metadata, ...)
+    }
+    return(heatmap_fn)
+}}
+heatmap_fn = get_heatmap_fn(summarydata)
 ```
 
 # Quality control metrics
@@ -105,12 +129,6 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
     theme(panel.grid.major = element_line(size = .5, color = "grey"))
 ```
 
-## Correlation heatmap of raw counts
-```{r heatmap-raw}
-p = ggheatmap(cor(counts))
-ggheatmap.show(p)
-```
-
 ## Boxplot of log10 TMM-normalized counts per gene
 Trimmed mean of M-values (TMM) normalization is described
 [here](http://genomebiology.com/2010/11/3/R25)
@@ -138,16 +156,9 @@ ggplot(melted, aes(x=count, group=sample)) +
     geom_density()
 ```
 
-## Correlation heatmap of TMM-normalized counts
-```{r heatmap-normalized}
-p = ggheatmap(cor(normalized_counts))
-ggheatmap.show(p)
-```
-
 ## Correlation (Spearman) heatmap of TMM-normalized counts
 ```{r spearman-heatmap-normalized}
-p = ggheatmap(cor(normalized_counts, method="spearman"))
-ggheatmap.show(p)
+heatmap_fn(cor(normalized_counts, method="spearman"))
 ```
 
 ## MDS plot of TMM-normalized counts
@@ -158,6 +169,5 @@ mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
 ## Heatmap of top 30 most expressed genes
 ```{r top-count-genes, results='asis'}
 select = order(rowMeans(counts),decreasing=TRUE)[1:30]
-p = ggheatmap(as.matrix(counts[select,]))
-ggheatmap.show(p)
+heatmap_fn(counts[select,])
 ```
