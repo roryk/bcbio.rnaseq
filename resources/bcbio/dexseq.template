@@ -1,0 +1,89 @@
+```{r dexseq-libraries}
+library(DEXSeq)
+```
+
+```{r dexseq-setup}
+gff_file = {{{gff-file}}}
+dexseq = read.table("../combined.dexseq", row.names="id", header=TRUE)
+dexseq_table = "../dexseq_results.txt"
+dexseq_genes_table = "../dexseq_genes.txt"
+
+st = data.frame(row.names=summarydata$Name, {{{condition}}}=summarydata${{{condition}}})
+design = ~ sample + exon + {{{condition}}}:exon
+```
+
+```{r dexseq-run}
+DEXSeqDataSetFromMatrix = function(dcounts, sampleData, design = ~sample + exon + condition:exon, 
+    flattenedfile = NULL) 
+{
+    dcounts <- dcounts[substr(rownames(dcounts), 1, 1) != "_",]
+    rownames(dcounts) <- sub(":", ":E", rownames(dcounts))
+    splitted <- strsplit(rownames(dcounts), ":")
+    exons <- sapply(splitted, "[[", 2)
+    genesrle <- sapply(splitted, "[[", 1)
+    if (!is.null(flattenedfile)) {
+        aggregates <- read.delim(flattenedfile, stringsAsFactors = FALSE, 
+            header = FALSE)
+        colnames(aggregates) <- c("chr", "source", "class", "start", 
+            "end", "ex", "strand", "ex2", "attr")
+        aggregates$strand <- gsub("\\.", "*", aggregates$strand)
+        aggregates <- aggregates[which(aggregates$class == "exonic_part"), 
+            ]
+        aggregates$attr <- gsub("\"|=|;", "", aggregates$attr)
+        aggregates$gene_id <- sub(".*gene_id\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        transcripts <- gsub(".*transcripts\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        transcripts <- strsplit(transcripts, "\\+")
+        exonids <- gsub(".*exonic_part_number\\s(\\S+).*", "\\1", 
+            aggregates$attr)
+        exoninfo <- GRanges(as.character(aggregates$chr), IRanges(start = aggregates$start, 
+            end = aggregates$end), strand = aggregates$strand)
+        names(exoninfo) <- paste(aggregates$gene_id, exonids, 
+            sep = ":E")
+        names(transcripts) <- rownames(exoninfo)
+        if (!all(rownames(dcounts) %in% names(exoninfo))) {
+            stop("Count files do not correspond to the flattened annotation file")
+        }
+        matching <- match(rownames(dcounts), names(exoninfo))
+        stopifnot(all(names(exoninfo[matching]) == rownames(dcounts)))
+        stopifnot(all(names(transcripts[matching]) == rownames(dcounts)))
+        dxd <- DEXSeqDataSet(dcounts, sampleData, design, exons, 
+            genesrle, exoninfo[matching], transcripts[matching])
+        return(dxd)
+    }
+    else {
+        dxd <- DEXSeqDataSet(dcounts, sampleData, design, exons, 
+            genesrle)
+        return(dxd)
+    }
+}
+
+z = DEXSeqDataSetFromMatrix(dexseq, st, design, gff_file)
+z = estimateSizeFactors(z)
+z = estimateDispersions(z, formula=design)
+```
+
+```{r dexseq-dispersion}
+plotDispEsts(z)
+```
+
+```{r dexseq-de}
+z = testForDEU(z)
+z = estimateExonFoldChanges(z, fitExpToVar="{{{condition}}}")
+res = DEXSeqResults(z)
+res_df = data.frame(res)
+```
+
+```{r dexseq-write-table}
+write.table(subset(res_df, padj < 0.1), file=dexseq_table, sep="\t", row.names=FALSE,
+                           col.names=TRUE, quote=FALSE)
+```
+
+```{r dexseq-affected-genes}
+res_df = data.frame(res)
+de_genes = unique(subset(res_df, padj < 0.1)$groupID)
+de_genes = unique(unlist(lapply(de_genes, function(x) strsplit(x, "\\+"))))
+write.table(de_genes, file=dexseq_genes_table, sep="\t", row.names=FALSE, col.names=FALSE,
+      quote=FALSE)
+```
