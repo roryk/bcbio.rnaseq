@@ -59,61 +59,61 @@ heatmap_fn = get_heatmap_fn(summarydata)
 ## Mapped reads
 ```{r mapped-plot}
 ggplot(summarydata, aes(x=Name, y=Mapped)) +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylab("mapped reads") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    ylab("mapped reads") + xlab("") 
 ```
 
 ## Genomic mapping rate
 ```{r mapping-rate-plot}
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
     ylab("mapping rate") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) 
 ```
 
 ## Number of genes detected
 ```{r genes-detected-plot}
 ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylab("genes detected") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("genes detected") + xlab("") 
 ```
 
 ## Exonic mapping rate
 ```{r exonic-mapping-plot}
 ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylab("exonic mapping rate") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("exonic mapping rate") + xlab("") 
 ```
 
 ## rRNA mapping rate
 ```{r rRNA-rate-plot}
 ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylab("rRNA rate") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("rRNA rate") + xlab("") 
 ```
 
 ## Estimated fragment length of paired-end reads
 ```{r fragment-length-plot}
 ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     geom_bar(stat="identity") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylab("fragment length") + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("fragment length") + xlab("")
 ```
 
 ## Boxplot of log10 counts per gene
@@ -124,9 +124,9 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) + xlab("")
 ```
 
 ## Boxplot of log10 TMM-normalized counts per gene
@@ -145,15 +145,18 @@ melted$sample = factor(melted$sample)
 melted$sample = reorder(melted$sample, colnames(counts))
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("") +
-    theme_bw(base_size=12) +
-    theme(panel.grid.major = element_line(size = .5, color = "grey"))
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) + xlab("")
 ```
 
 ## Density of log10 TMM-normalized counts
 ```{r density-normalized}
 ggplot(melted, aes(x=count, group=sample)) +
-    geom_density()
+    geom_density() +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) + xlab("")
 ```
 
 ## Correlation (Spearman) heatmap of TMM-normalized counts
