@@ -43,7 +43,7 @@ cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gp
   "GGally", "ggdendro", "gridExtra", "pheatmap")
 install.cran(cran_packages)
 
-bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vsn")
+bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vsn", "DEXSeq")
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
 install.github(c("CHBUtils"), "hbc")
