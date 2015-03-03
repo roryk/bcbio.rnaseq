@@ -35,7 +35,7 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
     "Mapping.Rate", "Quality.format", "Duplication.Rate.of.Mapped", "Mapped",
     "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
     "Genes.Detected", "Unique.Starts.Per.Read", "unique_starts_per_read",
-    "complexity")
+    "complexity","X5.3.bias")
 ```
 
 ```{r heatmap-function}
@@ -77,9 +77,21 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
           axis.text.x = element_text(angle=90)) 
 ```
 
+## Non-unique mapping rate
+```{r mapping-rate-plot}
+dd = data.frame(Name=names(counts), NonUnique=summarydata[,"Mapped"] - colSums(counts))
+ggplot(dd, aes(x=Name, y=NonUnique)) +
+    geom_bar(stat="identity") +
+    ylab("non-unique reads") + xlab("") +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) 
+```
+
 ## Number of genes detected
 ```{r genes-detected-plot}
-ggplot(summarydata, aes(x=Name, y=Genes.Detected)) +
+dd = data.frame(Name=names(counts), Genes.Detected = colSums(counts > 0))
+ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
