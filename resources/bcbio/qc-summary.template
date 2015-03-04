@@ -24,10 +24,10 @@ project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
-summarydata = read.table(project_summary, header=TRUE, sep=",")
+summarydata = read.table(project_summary, header=TRUE, sep=",", check.names=FALSE)
 rownames(summarydata) = summarydata$Name
 summarydata = summarydata[order(summarydata$Name),]
-counts = read.table(counts_file, header=TRUE, row.names="id")
+counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
 counts = counts[, order(colnames(counts))]
 # this is a list of all non user-supplied metadata columns that could appear
 known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
@@ -170,6 +170,11 @@ ggplot(melted, aes(x=count, group=sample)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90)) + xlab("")
+```
+
+## Correlation (Pearson) heatmap of TMM-normalized counts
+```{r pearson-heatmap-normalized}
+heatmap_fn(cor(normalized_counts, method="pearson"))
 ```
 
 ## Correlation (Spearman) heatmap of TMM-normalized counts
