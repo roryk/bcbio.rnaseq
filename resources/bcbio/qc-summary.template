@@ -64,7 +64,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90)) +
     geom_bar(stat="identity") +
-    ylab("mapped reads") + xlab("") 
+    ylab("mapped reads") + xlab("")
 ```
 
 ## Genomic mapping rate
@@ -74,18 +74,18 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     ylab("mapping rate") + xlab("") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
-          axis.text.x = element_text(angle=90)) 
+          axis.text.x = element_text(angle=90))
 ```
 
 ## Non-unique mapping rate
-```{r mapping-rate-plot}
+```{r non-unique-rate-plot}
 dd = data.frame(Name=names(counts), NonUnique=summarydata[,"Mapped"] - colSums(counts))
 ggplot(dd, aes(x=Name, y=NonUnique)) +
     geom_bar(stat="identity") +
     ylab("non-unique reads") + xlab("") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
-          axis.text.x = element_text(angle=90)) 
+          axis.text.x = element_text(angle=90))
 ```
 
 ## Number of genes detected
@@ -96,7 +96,7 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90)) +
-    ylab("genes detected") + xlab("") 
+    ylab("genes detected") + xlab("")
 ```
 
 ## Exonic mapping rate
@@ -106,7 +106,7 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90)) +
-    ylab("exonic mapping rate") + xlab("") 
+    ylab("exonic mapping rate") + xlab("")
 ```
 
 ## rRNA mapping rate
@@ -116,7 +116,7 @@ ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90)) +
-    ylab("rRNA rate") + xlab("") 
+    ylab("rRNA rate") + xlab("")
 ```
 
 ## Estimated fragment length of paired-end reads
