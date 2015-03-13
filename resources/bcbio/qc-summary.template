@@ -46,7 +46,7 @@ get_heatmap_fn = function(summarydata) {
        return(pheatmap)
     }
     else {
-    rownames(metadata) = summarydata$Name
+    # rownames(metadata) = summarydata$Name
     heatmap_fn = function(data, ...) {
         pheatmap(data, annotation=metadata, ...)
     }
