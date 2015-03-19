@@ -77,12 +77,12 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
           axis.text.x = element_text(angle=90))
 ```
 
-## Non-unique mapping rate
-```{r non-unique-rate-plot}
-dd = data.frame(Name=names(counts), NonUnique=summarydata[,"Mapped"] - colSums(counts))
-ggplot(dd, aes(x=Name, y=NonUnique)) +
+## Unique mapping rate
+```{r unique-rate-plot}
+dd = data.frame(Name=names(counts), Unique=colSums(counts), Mapped=summarydata[,"Mapped"])
+ggplot(dd, aes(x=Name, y=Unique/Mapped)) +
     geom_bar(stat="identity") +
-    ylab("non-unique reads") + xlab("") +
+    ylab("unique mapping rate") + xlab("") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
           axis.text.x = element_text(angle=90))
