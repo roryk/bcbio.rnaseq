@@ -99,6 +99,17 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     ylab("genes detected") + xlab("")
 ```
 
+## Gene detection saturation
+```{r genes-detected-plot}
+dd = data.frame(Mapped=summarydata$Mapped, Genes.Detected = colSums(counts > 0))
+ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
+    geom_point() +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("genes detected") + xlab("reads mapped")
+```
+
 ## Exonic mapping rate
 ```{r exonic-mapping-plot}
 ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
