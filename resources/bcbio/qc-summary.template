@@ -100,7 +100,7 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 ```
 
 ## Gene detection saturation
-```{r genes-detected-plot}
+```{r saturation-plot}
 dd = data.frame(Mapped=summarydata$Mapped, Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
     geom_point() +
