@@ -134,7 +134,7 @@ ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
 melted = melt(counts)
 colnames(melted) = c("sample", "count")
 melted$sample = factor(melted$sample)
-melted$sample = reorder(melted$sample, colnames(counts))
+melted = melted[order(melted$sample),]
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
     theme_bw(base_size=10) +
@@ -155,7 +155,7 @@ normalized_counts = cpm(y, normalized.lib.sizes=TRUE)
 melted = melt(normalized_counts)
 colnames(melted) = c("gene", "sample", "count")
 melted$sample = factor(melted$sample)
-melted$sample = reorder(melted$sample, colnames(counts))
+melted = melted[order(melted$sample),]
 melted$count = log(melted$count)
 ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
     theme_bw(base_size=10) +
