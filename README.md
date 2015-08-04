@@ -108,7 +108,7 @@ you run it without passing a formula, it will just generate a
 quality-control report. If you pass a formula like this:
 
 ```
-lein run summarize path-to-project-summary-file -f "~ batch + panel"
+lein run summarize path-to-project-summary-file -f "~batch+panel"
 ```
 
 It will run a DESeq2 analysis with the specified model and prepare reports
