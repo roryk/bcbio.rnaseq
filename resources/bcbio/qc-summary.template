@@ -29,6 +29,7 @@ summarydata$Name = rownames(summarydata)
 summarydata = summarydata[order(summarydata$Name),]
 counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
 counts = counts[, order(colnames(counts))]
+colnames(counts) = gsub(".counts", "", colnames(counts))
 # this is a list of all non user-supplied metadata columns that could appear
 known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
     "rRNA.rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
