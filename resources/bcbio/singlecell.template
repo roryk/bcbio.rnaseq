@@ -1,0 +1,30 @@
+```{r singlecell-setup}
+design = {{{formula}}}
+condition = {{{condition}}}
+names(condition) = rownames(summarydata)
+
+## Filter out unexpressed genes and samples with low total counts
+```{r filter-low-counts}
+counts = counts[rowSums(counts) > 0,]
+counts = counts[, colSums(counts) > 1e4]
+summarydata = summaryadata[colnames(counts),]
+```
+
+```{r scde}
+library(scde)
+n.cores = 1
+o.ifm = scde.error.models(counts=counts, groups=condition, n.cores=n.cores,
+                          threshold.segmentation=T, save.crossfit.plots=F,
+                          save.model.plots=F, verbose=1)
+valid.cells = o.ifm$corr.a > 0
+o.ifm = o.ifm[valid.cells,]
+o.prior = scde.expression.prior(models=o.ifm, counts=counts, length.out=400,
+                                show.plot=F)
+ediff <- scde.expression.difference(o.ifm, counts, o.prior, groups=condition,
+                                    n.randomizations=100,
+                                    n.cores=n.cores, verbose=1)
+ediff$pvalue = pnorm(-(abs(ediff$Z))) * 2
+ediff$padj = p.adjust(ediff$pvalue)
+write.table(ediff, file="singlecell_de.tsv", sep="\t", quote=FALSE,
+            row.names=TRUE, col.names=TRUE)
+```
