@@ -5,8 +5,10 @@ names(condition) = rownames(summarydata)
 
 ## Filter out unexpressed genes and samples with low total counts
 ```{r filter-low-counts}
+keep_cells = colSums(counts) > 1e4
 counts = counts[rowSums(counts) > 0,]
-counts = counts[, colSums(counts) > 1e4]
+counts = counts[, keep_cells]
+condition = conditon[keep_cells]
 summarydata = summaryadata[colnames(counts),]
 ```
 
@@ -27,4 +29,89 @@ ediff$pvalue = pnorm(-(abs(ediff$Z))) * 2
 ediff$padj = p.adjust(ediff$pvalue)
 write.table(ediff, file="singlecell_de.tsv", sep="\t", quote=FALSE,
             row.names=TRUE, col.names=TRUE)
+```
+
+Seurat needs the condition in the name of the cells.
+Seurat is a new single cell differential expression package for R. What is nice
+about it is it has some clustering functions that are based off of t-SNE
+clustering, which makes the nice plots in the DropSeq paper.
+```{r seurat}
+library(Seurat)
+nbd.data = data.frame(log(counts + 1))
+cnames = paste(colnames(nbd.data), condition, sep="_")
+colnames(nbd.data) = cnames
+nbt = new("seurat", raw.data=nbd.data)
+nbt= setup(nbt, project="NBT", min.cells = 3, min.genes = 1000, is.expr=1,
+           names.delim="_", names.field=2)
+```
+
+Below we identify highly variable genes and use those to do PCA on the samples.
+
+```{r identify-variable-genes}
+nbt = mean.var.plot(nbt, y.cutoff=2, x.low.cutoff=2, fxn.x=expMean,
+                    fxn.y=logVarDivMean)
+length(nbt@var.genes)
+```
+
+Below we calculate the weights for the first 10 components to pick out
+the ones that explain most of the variance, then look at the separation along
+those components.
+
+```{r pca-jackstraw}
+nbt = pca(nbt, do.print=FALSE)
+nbt = jackStraw(nbt, num.replicate=200, do.print=FALSE)
+jackStrawPlot(nbt, PCs=1:10)
+```
+
+Below we plot the (1, 2), (3, 4) and (5, 6) components along with a heatmap
+of each separating the samples, then output list of the gene ids that have
+the heightest weights for each component along with a heatmap of the expression
+values.
+
+
+Components (1, 2):
+```{r pca-plot}
+pca.plot(nbt, 1, 2, pt.size=2)
+print.pca(nbt, 1:2)
+viz.pca(nbt, 1:2)
+pcHeatmap(nbt,pc.use = 1,do.balanced = FALSE)
+pcHeatmap(nbt,pc.use = 2,do.balanced = FALSE)
+```
+
+Components (3, 4):
+```{r pca-plot-3-4}
+pca.plot(nbt, 3, 4, pt.size=2)
+viz.pca(nbt, 3:4)
+pcHeatmap(nbt,pc.use = 3, do.balanced = FALSE)
+pcHeatmap(nbt,pc.use = 4, do.balanced = FALSE)
+```
+
+Components (5, 6):
+```{r pca-plot-5-6}
+pca.plot(nbt, 5, 6, pt.size=2)
+viz.pca(nbt, 5:6)
+pcHeatmap(nbt,pc.use = 5, do.balanced = FALSE)
+pcHeatmap(nbt,pc.use = 6, do.balanced = FALSE)
+```
+
+We can run the version of clustering in
+Seurat called t-SNE, which tries to place the cells into separate groups.
+Here there is maybe some kind of separation but it isn't great.
+
+```{r tsne-run}
+nbt=run_tsne(nbt, dims.use = 1:6, max_iter=2000)
+```
+
+If we plot the markers for each condition vs the principal component, with
+the red dots having a higher weighting in that component than the yellow dots.
+
+```{r tsne-plot}
+tsne.plot(nbt, pt.size = 4)
+
+markers.all=find_all_markers(nbt, thresh.test = 3, test.use = "roc",
+                             do.print = TRUE)
+markers.all = markers.all[order(-markers.all$power),]
+
+pcs.plot=paste("PC",1:8,sep="")
+feature.heatmap(nbt,pcs.plot,cols.use = heat.colors(4), pt.size = 2)
 ```
