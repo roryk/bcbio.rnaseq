@@ -33,10 +33,19 @@ cd bcbio.rnaseq
 Rscript resources/scripts/install_libraries.R
 ```
 
-5. Run a simulation of sample size 5
+5. Make an executable.
 
+```bash
+make
 ```
-lein run simulate -s 5 -d output_dir
+
+This will make an executable in bin/bcbio-rnaseq that you can move to wherever
+you want and run.
+
+6. Run a simulation of sample size 5
+
+```bash
+bcbio-rnaseq simulate -s 5 -d output_dir
 ```
 
 In the **output_dir** you will find plots comparing the output from
@@ -72,7 +81,7 @@ and the area under the ROC curve for each fold change cutoff:
 a given sample size. Running bcbio.rnaseq with:
 
 ```
-lein run simulate -s 3 -d sample_size_3
+bcbio-rnaseq simulate -s 3 -d sample_size_3
 ```
 Will output the results of simulating an experiment of size 3 to the
 directory sample_size_3. The simulator simulates an experiment with 20 million
@@ -83,7 +92,7 @@ reads with 10,000 total genes, 1000 of which are differentially expressed,
 This mode is invoked with
 
 ```
-lein run compare
+bcbio-rnaseq compare path-to-project-summary.yaml metadata-to-test-on
 ```
 
 and takes the output from a
@@ -108,7 +117,7 @@ you run it without passing a formula, it will just generate a
 quality-control report. If you pass a formula like this:
 
 ```
-lein run summarize path-to-project-summary-file -f "~batch+panel"
+bcbio-rnaseq summarize path-to-project-summary-yaml -f "~batch+panel"
 ```
 
 It will run a DESeq2 analysis with the specified model and prepare reports
@@ -121,16 +130,6 @@ report is available [here][example-summary].
 If you have ``cufflinks`` and ``R`` installed and in your path, this
 should work for you.  If it doesn't please open an issue and we'll fix
 it.
-
-## Creating a standalone executable
-
-```
-git clone https://github.com/roryk/bcbio.rnaseq
-cd bcbio.rnaseq
-make
-```
-
-The executable will be in `bin/bcbio-rnaseq`.
 
 ## Adding new R-based DE callers
 
