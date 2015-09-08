@@ -8,28 +8,33 @@ names(condition) = rownames(summarydata)
 keep_cells = colSums(counts) > 1e4
 counts = counts[rowSums(counts) > 0,]
 counts = counts[, keep_cells]
-condition = conditon[keep_cells]
-summarydata = summaryadata[colnames(counts),]
+summarydata = summarydata[colnames(counts),]
+groups = summarydata[,condition]
 ```
 
 ```{r scde}
 library(scde)
 n.cores = 1
-o.ifm = scde.error.models(counts=counts, groups=condition, n.cores=n.cores,
+o.ifm = scde.error.models(counts=counts, groups=groups, n.cores=n.cores,
                           threshold.segmentation=T, save.crossfit.plots=F,
                           save.model.plots=F, verbose=1)
 valid.cells = o.ifm$corr.a > 0
 o.ifm = o.ifm[valid.cells,]
 o.prior = scde.expression.prior(models=o.ifm, counts=counts, length.out=400,
                                 show.plot=F)
-ediff <- scde.expression.difference(o.ifm, counts, o.prior, groups=condition,
+ediff <- scde.expression.difference(o.ifm, counts, o.prior, groups=groups,
                                     n.randomizations=100,
                                     n.cores=n.cores, verbose=1)
 ediff$pvalue = pnorm(-(abs(ediff$Z))) * 2
+ediff = ediff[order(ediff$pvalue),]
 ediff$padj = p.adjust(ediff$pvalue)
 write.table(ediff, file="singlecell_de.tsv", sep="\t", quote=FALSE,
             row.names=TRUE, col.names=TRUE)
 ```
+
+
+
+
 
 Seurat needs the condition in the name of the cells.
 Seurat is a new single cell differential expression package for R. What is nice
@@ -41,7 +46,7 @@ nbd.data = data.frame(log(counts + 1))
 cnames = paste(colnames(nbd.data), condition, sep="_")
 colnames(nbd.data) = cnames
 nbt = new("seurat", raw.data=nbd.data)
-nbt= setup(nbt, project="NBT", min.cells = 3, min.genes = 1000, is.expr=1,
+nbt= setup(nbt, project="singlecell", min.cells = 3, min.genes = 1000, is.expr=1,
            names.delim="_", names.field=2)
 ```
 
@@ -60,7 +65,7 @@ those components.
 ```{r pca-jackstraw}
 nbt = pca(nbt, do.print=FALSE)
 nbt = jackStraw(nbt, num.replicate=200, do.print=FALSE)
-jackStrawPlot(nbt, PCs=1:10)
+z = jackStrawPlot(nbt, PCs=1:10)
 ```
 
 Below we plot the (1, 2), (3, 4) and (5, 6) components along with a heatmap
