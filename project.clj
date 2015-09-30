@@ -1,4 +1,4 @@
-(defproject bcbio.rnaseq "0.1.1a-SNAPSHOT"
+(defproject bcbio.rnaseq "0.1.1"
   :description "Run mutiple DE callers on RNA-seq data"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [de.ubercode.clostache/clostache "1.4.0"]
@@ -13,7 +13,7 @@
                  [net.mikera/vectorz-clj "0.22.0"]
                  [org.clojure/math.combinatorics "0.0.4"]
                  [org.clojure/tools.cli "0.3.0"]
-                 [bcbio.run "0.0.1-SNAPSHOT"]
+                 [bcbio.run "0.0.1"]
                  [clj-http "0.7.8"]]
   :resource-paths ["resources"]
   :jvm-opts ["-Xmx2g"]
