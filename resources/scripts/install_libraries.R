@@ -42,13 +42,14 @@ install.github = function(packages, username) {
 cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gplots",
   "GGally", "ggdendro", "gridExtra", "pheatmap")
 install.cran(cran_packages)
-
-bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vsn", "DEXSeq")
+library(devtools)
+install_github("RcppCore/RcppArmadillo")
+bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "baySeq", "DESeq", "vsn", "DEXSeq", "pcaMethods")
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
-install.github(c("CHBUtils"), "hbc")
+install_github("hbc/CHBUtils")
 install_github("lpantano/DEGreport", ref="Lite", build=FALSE)
 install_github('rstudio/rmarkdown')
 install_github('jimhester/knitrBootstrap')
-
-
+install_github('hms-dbmi/scde')
+install.github('satijalab/seurat')
