@@ -120,16 +120,20 @@ do.call(grid.arrange,plots)
 ```
 
 ### Mean-vs-Variation
-
 ```{r DEGreport-MV}
 plots = list()
 for(i in seq(length(all_results))) {
   g <- get_groups(summarydata, names(all_results)[i], condition)
+  if(length(g[[1]]) < 2 | length(g[[2]]) < 2) {
+     next
+   }
   plots[[i]] = degMV(g[[1]], g[[2]], all_results[[i]]$pvalue, counts(dds,normalized=TRUE)) +
   theme_bw(base_size = scale_factor) +
   ggtitle(paste0("Mean-vs-Variation for ", names(all_results)[i]))
 }
-do.call(grid.arrange,plots)
+if(length(plots) > 0) {
+    do.call(grid.arrange,plots)
+}
 ```
 
 ## Differentially expressed genes
