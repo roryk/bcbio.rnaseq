@@ -21,7 +21,7 @@ cache:
     - ~/.linuxbrew
 
 install:
-  - echo -ne '\n' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+  - if brew --version; then echo "homebrew found, skipping installation."; else echo -ne '\n' | ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - export PATH=/home/travis/.linuxbrew/bin:$PATH
   - brew tap chapmanb/homebrew-cbl
   - brew tap homebrew/homebrew-science
