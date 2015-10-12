@@ -13,15 +13,6 @@
   (yaml/parse-string (slurp yaml-file)))
 
 
-(defn setup-config [bcbio-project-file]
-  (let [project-config (load-yaml bcbio-project-file)
-        system-config (load-yaml (:bcbio_system project-config))]
-    (alter-config! (merge system-config project-config))
-    (alter-config! (assoc (get-config) :analysis-dir
-                          (str (io/file (dirname bcbio-project-file) "de"))))
-    (alter-config! (assoc (get-config) :project-name
-                          (fs/base-name (dirname (dirname bcbio-project-file)))))))
-
 
 (defn metadata-key [key]
   (map key (map :metadata (:samples (get-config)))))
@@ -33,6 +24,7 @@
   "query configuration for program path by keyword"
   (:cmd (prog (:resources (get-config))) (name prog)))
 
+(def project-dir #(:project-dir (get-config)))
 (def analysis-dir #(:analysis-dir (get-config)))
 (def upload-dir #(:upload (get-config)))
 (def sample-names #(map :description (:samples (get-config))))
@@ -48,8 +40,20 @@
 
 (defn comparison-name [key]
   (clojure.string/join "_vs_" (sort (distinct (metadata-key key)))))
+
 (def combined-count-file
-  #(str (fs/file (analysis-dir) "combined.counts")))
+  #(str (fs/file (project-dir) "combined.counts")))
 
 (def project-name
   #(:project-name (get-config)))
+
+(defn setup-config [bcbio-project-file]
+  (let [project-config (load-yaml bcbio-project-file)
+        system-config (load-yaml (:bcbio_system project-config))]
+    (alter-config! (merge system-config project-config))
+    (alter-config! (assoc (get-config) :project-dir
+                          (str (io/file (dirname bcbio-project-file)))))
+    (alter-config! (assoc (get-config) :analysis-dir
+                          (str (io/file (project-dir) "de"))))
+    (alter-config! (assoc (get-config) :project-name
+                          (fs/base-name (dirname (dirname bcbio-project-file)))))))
