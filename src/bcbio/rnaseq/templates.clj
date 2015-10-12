@@ -7,8 +7,8 @@
             [clostache.parser :refer [render-resource]]))
 
 
-(def templates ["templates/deseq.template", "templates/deseq2.template",
-                "templates/edgeR.template", "templates/voom_limma.template"])
+(def templates ["templates/deseq2.template","templates/edgeR.template",
+                "templates/voom_limma.template"])
 
 (def caller-comparison-template "comparisons/compare.template")
 
@@ -78,5 +78,5 @@
 (defn run-R-analyses [key]
   "run all of the template files using key as the comparison field in the
    metadata entries"
-  (counts/write-combined-count-file (count-files) (combined-count-file))
+  ;(counts/write-combined-count-file (count-files) (combined-count-file))
   (map (get-analysis-fn key) templates))
