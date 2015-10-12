@@ -19,14 +19,13 @@ pair_plot = function(var, out_file) {
     rownames(casted) = casted$id
     casted$id = NULL
     pdf(out_file)
-    ggpairs(casted)
+    print(ggpairs(casted))
     dev.off()
 }
 
 pair_plot("padj", pval_plot)
 pair_plot("logFC", fc_plot)
 pair_plot("log10expr", expr_plot)
-    
 
 jaccard = function(df, column, cutoff=0.05) {
     algorithms = unique(df$algorithm)
