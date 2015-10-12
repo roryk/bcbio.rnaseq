@@ -2,6 +2,7 @@ library(pROC)
 library(plyr)
 library(ggplot2)
 library(CHBUtils)
+library(biomaRt)
 qpcr_file = {{{qpcr-file}}}
 FC_file = {{{out-file}}}
 project = {{{project}}}
@@ -9,6 +10,10 @@ foldchange = read.table(qpcr_file, header=TRUE, sep="\t")
 in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
+human = useMart("ensembl", dataset="hsapiens_gene_ensembl")
+conversions = getBM(attributes=c("ensembl_gene_id", "hgnc_symbol"), mart=human)
+df = merge(df, conversions, by.x="id", by.y="ensembl_gene_id")
+df$id = df$hgnc_symbol
 df = df[df$id %in% foldchange$id,]
 ROC_file = paste(dirname(FC_file), "roc-plot.pdf", sep="/")
 pval_AUC_file = paste(dirname(FC_file), "pvalue-auc-plot.pdf", sep="/")
@@ -130,6 +135,6 @@ plot_logFC_AUC(df)
 
 ji = jaccard(df, "padj")
 write.table(ji, file.path(out_dir, "seqc_jaccard.tsv"), quote=FALSE, row.names=FALSE, sep="\t")
-    
+
 concord = concordance(df)
 write.table(concord, file.path(out_dir, "seqc_concord.tsv"), quote=FALSE, row.names=FALSE, sep="\t")

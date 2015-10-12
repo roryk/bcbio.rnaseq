@@ -85,6 +85,7 @@
 
 (defn compare-bcbio-run [seqc counts-only cores project-file key]
   (setup-config project-file)
+  (safe-makedir (analysis-dir))
   (if seqc
     (run-comparisons (keyword key) cores counts-only)
     (compare-callers (run-callers (keyword key) counts-only cores))))

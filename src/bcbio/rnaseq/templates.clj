@@ -44,7 +44,6 @@
                                     :project (escape-quote project)}))
     config))
 
-
 (defn add-out-files-to-config [template analysis-config]
   (assoc analysis-config
     :out-file (analysis-with-suffix template analysis-config ".tsv")
