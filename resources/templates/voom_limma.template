@@ -24,7 +24,7 @@ fit = lmFit(v, design)
 fit2 = contrasts.fit(fit, cm)
 fit2 = eBayes(fit2)
 top_table = topTable(fit2, p.val=1, sort.by="none", n=Inf)
-out_table = data.frame(id=rownames(top_table), expr=top_table$AveExpr,
+out_table = data.frame(id=rownames(top_table), expr=2^top_table$AveExpr,
     logFC=top_table$logFC, pval=top_table$P.Value,
     padj=top_table$adj.P.Val, algorithm="voom_limma", project=project)
 write.table(out_table, file=out_file, quote=FALSE, row.names=FALSE,
