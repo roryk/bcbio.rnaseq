@@ -142,7 +142,7 @@ if(length(plots) > 0) {
 for(i in seq(length(all_results))) {
   cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
   out_df = all_results[[i]]
-  knitr::kable(head(out_df))
+  print(knitr::kable(head(out_df)))
   write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
                          quote=FALSE, sep="\t", row.names=TRUE, col.names=TRUE)
   cat("\n")
