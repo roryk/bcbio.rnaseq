@@ -16,7 +16,7 @@
     (sh "Rscript" "-e" (str setwd "library(rmarkdown); render('" rmd-file "')"))
     out-file))
 
-
+(def sleuth-template "bcbio/sleuth.template")
 (def summary-template "bcbio/qc-summary.template")
 (def deseq2-de-template "bcbio/deseq2-de.template")
 (def dexseq-template "bcbio/dexseq.template")
@@ -102,29 +102,29 @@
   [["-h" "--help"]
    ["-f" "--formula FORMULA" "Formula to use in model (example: ~ batch + condition)"
     :default nil]
-   ["-d" "--dexseq" "Run DEXSeq"]])
+   ["-d" "--dexseq" "Run DEXSeq"]
+   ["-s" "--sleuth" "Run Sleuth"]])
 
 (defn exit [status msg]
   (println msg)
   (System/exit status))
 
-(defn summarize [project-file formula dexseq]
+(defn summarize [project-file formula dexseq sleuth]
   (let [out-dir (-> project-file util/dirname (io/file "summary")
                     str util/safe-makedir)
         tidy-summary (write-tidy-summary project-file)
         qc-file (make-qc-summary out-dir tidy-summary)
         out-file (util/change-extension qc-file ".Rmd")
         dexseq-gff (dexseq-file project-file)]
+    (util/catto out-file qc-file)
     (if formula
       (let [de-file (write-de-template out-dir formula)]
-        (if dexseq
-          (let [dexseq-out (write-dexseq-template out-dir formula tidy-summary dexseq-gff)]
-            (util/catto out-file qc-file de-file dexseq-out))
-          (util/catto out-file qc-file de-file)))
-      (io/copy (io/file qc-file) (io/file out-file)))
+        (spit out-file (slurp de-file) :append true)
+        (when dexseq
+          (let [dexseq-out (write-dexseq-template out-dir formula
+                                                  tidy-summary dexseq-gff)]
+            (spit out-file (slurp dexseq-out) :append true)))))
     out-file))
-
-
 
 (defn summarize-cli [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
@@ -132,5 +132,5 @@
      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
     (let [html-file (knit-file (summarize (first arguments) (:formula options)
-                                          (:dexseq options)))]
+                                          (:dexseq options) (:sleuth options)))]
       (println "Summary report can be found here" html-file))))
