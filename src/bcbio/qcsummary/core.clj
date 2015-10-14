@@ -109,7 +109,7 @@
   (println msg)
   (System/exit status))
 
-(defn summarize [project-file formula dexseq sleuth]
+(defn summarize [project-file options]
   (let [out-dir (-> project-file util/dirname (io/file "summary")
                     str util/safe-makedir)
         tidy-summary (write-tidy-summary project-file)
@@ -117,10 +117,10 @@
         out-file (util/change-extension qc-file ".Rmd")
         dexseq-gff (dexseq-file project-file)]
     (util/catto out-file qc-file)
-    (if formula
+    (when-let [formula (:formula options)]
       (let [de-file (write-de-template out-dir formula)]
         (spit out-file (slurp de-file) :append true)
-        (when dexseq
+        (when (:dexseq options)
           (let [dexseq-out (write-dexseq-template out-dir formula
                                                   tidy-summary dexseq-gff)]
             (spit out-file (slurp dexseq-out) :append true)))))
@@ -132,5 +132,5 @@
      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
     (let [html-file (knit-file (summarize (first arguments) (:formula options)
-                                          (:dexseq options) (:sleuth options)))]
+                                          options))]
       (println "Summary report can be found here" html-file))))
