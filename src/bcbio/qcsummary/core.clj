@@ -131,6 +131,5 @@
     (cond
      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
-    (let [html-file (knit-file (summarize (first arguments) (:formula options)
-                                          options))]
+    (let [html-file (knit-file (summarize (first arguments) options))]
       (println "Summary report can be found here" html-file))))
