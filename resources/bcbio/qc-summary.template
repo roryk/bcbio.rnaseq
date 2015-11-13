@@ -20,6 +20,7 @@ library(gplots)
 library(edgeR)
 library(CHBUtils)
 library(pheatmap)
+library(DESeq2)
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
@@ -32,7 +33,7 @@ counts = counts[, order(colnames(counts))]
 colnames(counts) = gsub(".counts", "", colnames(counts))
 # this is a list of all non user-supplied metadata columns that could appear
 known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
-    "rRNA.rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
+    "rRNA_rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
     "Mapping.Rate", "Quality.format", "Duplication.Rate.of.Mapped", "Mapped",
     "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
     "Genes.Detected", "Unique.Starts.Per.Read", "unique_starts_per_read",
@@ -114,7 +115,7 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 
 ## rRNA mapping rate
 ```{r rRNA-rate-plot}
-ggplot(summarydata, aes(x=Name, y=rRNA.rate)) +
+ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -185,18 +186,12 @@ heatmap_fn(cor(normalized_counts, method="pearson"))
 heatmap_fn(cor(normalized_counts, method="spearman"))
 ```
 
-## MDS plot of TMM-normalized counts
-```{r mds-normalized}
-mds(normalized_counts, k=length(colnames(normalized_counts)) - 1)
+## PCA plot
+```{r pca}
+dds = DESeqDataSetFromMatrix(countData=counts, colData=summarydata, design=~Name)
+vst = varianceStabilizingTransformation(dds)
+plotPCA(vst, intgroup=c("Name"))
 ```
-
-## Heatmap of top 30 most expressed genes
-```{r top-count-genes, results='asis'}
-select = order(rowMeans(counts),decreasing=TRUE)[1:30]
-heatmap_fn(counts[select,])
-```
-
-
 
 ## Heatmap by concordance correlation coefficient
 http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004075
