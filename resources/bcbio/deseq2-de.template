@@ -93,8 +93,8 @@ get_groups <- function(d, comp, condition)
 
 ### Pvalues-vs-Mean
 
-We plot some information about how p-values is correlated with the average mean or
-the standard desviation. We should see the same distribution for each p-value bin.
+Here we plot some information about how the p-values are correlated with the
+mean or the standard deviation.
 
 ```{r DEGreport-M}
 plots = list()
