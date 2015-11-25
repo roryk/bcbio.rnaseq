@@ -10,7 +10,9 @@ foldchange = read.table(qpcr_file, header=TRUE, sep="\t")
 in_files = {{{in-files}}}
 ldf = lapply(in_files, read.table, header=TRUE, stringsAsFactors=FALSE)
 df = do.call(rbind, ldf)
-human = useMart("ensembl", dataset="hsapiens_gene_ensembl")
+human = useMart(biomart = "ENSEMBL_MART_ENSEMBL",
+                dataset="hsapiens_gene_ensembl",
+                host = "jul2015.archive.ensembl.org")
 conversions = getBM(attributes=c("ensembl_gene_id", "hgnc_symbol"), mart=human)
 df = merge(df, conversions, by.x="id", by.y="ensembl_gene_id")
 df$id = df$hgnc_symbol
