@@ -1,5 +1,4 @@
 # bcbio.rnaseq -- Create executable script
-
 all:
 	rm -f target/*.jar
 	lein uberjar
