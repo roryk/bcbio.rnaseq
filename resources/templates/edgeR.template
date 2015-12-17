@@ -3,7 +3,6 @@
 # analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
 
 library(edgeR)
-library(HTSFilter)
 library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
@@ -16,7 +15,6 @@ edgeR.dgelist = calcNormFactors(edgeR.dgelist, method = "TMM")
 edgeR.dgelist = estimateCommonDisp(edgeR.dgelist)
 edgeR.dgelist = estimateTagwiseDisp(edgeR.dgelist, trend = "movingave")
 edgeR.test = exactTest(edgeR.dgelist)
-#edgeR.test = HTSFilter(edgeR.test, DGEList=edgeR.dgelist, s.len=25, plot=FALSE)$filteredData
 
 # this is to get the data into a common format
 # id, logCPM, logFC, pval, pdj

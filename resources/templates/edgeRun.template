@@ -3,7 +3,6 @@
 # analysis of RNA-seq data. BMC Bioinformatics 14, 91 (2013).
 
 library(edgeRun)
-library(HTSFilter)
 library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}

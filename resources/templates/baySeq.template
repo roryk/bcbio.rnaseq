@@ -4,7 +4,6 @@
 # BMC Bioinformatics 14, 91 (2013).
 
 library(baySeq)
-library(HTSFilter)
 library(tools)
 library(edgeR)
 

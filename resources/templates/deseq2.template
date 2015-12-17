@@ -2,7 +2,6 @@
 
 library(DESeq2)
 library(limma)
-library(HTSFilter)
 library(tools)
 count_file = {{{count-file}}}
 out_file = {{{out-file}}}
