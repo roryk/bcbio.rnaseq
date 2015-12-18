@@ -47,6 +47,9 @@
     (println "Running DESeq2.")
     (write-template deseq2-de-template de-config out-dir ".tmp")))
 
+(defn write-sleuth-template [out-dir]
+  (let [sleuth-config {}]
+    (write-template sleuth-template sleuth-config out-dir ".sleuth")))
 
 (defn make-qc-summary [out-dir summary-csv]
   (let [summary-config {:summary-csv (util/escape-quote summary-csv)
@@ -123,7 +126,10 @@
         (when (:dexseq options)
           (let [dexseq-out (write-dexseq-template out-dir formula
                                                   tidy-summary dexseq-gff)]
-            (spit out-file (slurp dexseq-out) :append true)))))
+            (spit out-file (slurp dexseq-out) :append true)))
+        (when (:sleuth options)
+          (let [sleuth-out (write-sleuth-template out-dir)]
+            (spit out-file (slurp sleuth-out) :append true)))))
     out-file))
 
 (defn summarize-cli [& args]
