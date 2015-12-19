@@ -1,24 +1,7 @@
 ```{r sleuth-setup}
-library(wasabi)
+sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish")
+names(sf_dirs) = rownames(summarydata)
+so = sleuth_prep(sf_dirs, metadata, design) %>% sleuth_fit()
+models(so)
+save(so, file="sleuth_models.RData")
 ```
-
-sfdirs = file.path("..", "..", rownames(summarydata), "sailfish")
-prepare_fish_for_sleuth(sfdirs)
-
-#library(sleuth)
-#biocLite("devtools")    # only if devtools not yet installed
-#biocLite("blahah/sleuth")
-
-#samples = paste(dirname(project_summary), "..", rownames(summarydata), "sailfish",
-#                rownames(summarydata), sep="/")
-#metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
-#metadata$sample = samples
-#metadata
-
-#so = sleuth_prep_sailfish(samples, metadata, as.formula(design)) %>% sleuth_fit()
-#models(so)
-# test
-#so <- sleuth_test(so, which_beta = 'osmotic_stress:yes')
-
-# inspect the results
-#sleuth_live(so)

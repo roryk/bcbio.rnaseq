@@ -40,12 +40,12 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
     "complexity", "X5.3.bias", "Duplicates.pct", "Duplicates", "Mapped.reads",
     "Median.insert.size", "Mapped.reads.pct", "Total.reads",
     "avg_coverage_per_region")
+metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
 ```
 
 ```{r heatmap-function}
 get_heatmap_fn = function(summarydata) {
     # return the pheatmap function with or without metadata
-    metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
     if(ncol(metadata) == 0) {
        return(pheatmap)
     }
