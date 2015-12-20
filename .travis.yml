@@ -28,6 +28,7 @@ install:
   - brew install cufflinks-binary
   - R --version
   - R -e '.libPaths(); sessionInfo()'
+  - R -e 'library(BiocInstaller); biocLite("BiocUpgrade")'
   - R CMD javareconf -e 'R -e install.packages("rJava",repos="http://cran.at.r-project.org")'
   - Rscript resources/scripts/install_libraries.R
 
