@@ -25,10 +25,9 @@ vsd <- varianceStabilizingTransformation(dds)
 rlogMat <- assay(rld)
 vstMat <- assay(vsd)
 
-meanSdPlot(log2(counts(dds,normalized=TRUE)[notAllZero,] + 1),
-           ylim = c(0,2.5))
-meanSdPlot(assay(rld[notAllZero,]), ylim = c(0,2.5))
-meanSdPlot(assay(vsd[notAllZero,]), ylim = c(0,2.5))
+meanSdPlot(log2(counts(dds,normalized=TRUE)[notAllZero,] + 1))
+meanSdPlot(assay(rld[notAllZero,]))
+meanSdPlot(assay(vsd[notAllZero,]))
 ```
 
 ## Dispersion estimates
