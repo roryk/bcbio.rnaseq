@@ -1,7 +1,21 @@
+## sleuth
+
 ```{r sleuth-setup}
-sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish")
+library(dplyr)
+library(sleuth)
+sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish",
+                    rownames(summarydata))
 names(sf_dirs) = rownames(summarydata)
-so = sleuth_prep(sf_dirs, metadata, design) %>% sleuth_fit()
+sfdata = metadata
+sfdata$sample = rownames(sfdata)
+sfdata$path = sf_dirs
+so = sleuth_prep(sfdata, design) %>% sleuth_fit()
 models(so)
 save(so, file="sleuth_models.RData")
 ```
+
+You can load up the Shiny app to explore the sleuth data by loading the Rmd file
+into RStudio and typing `sleuth_live(so)`. I'm not sure at this point how to
+handle more complex models automatically with Sleuth, so right now this kind of
+has to be done by hand. You can see how to do a simple two-contrast modelin
+the vignette with `vignette('intro', package = 'sleuth')`.
