@@ -17,5 +17,7 @@ save(so, file="sleuth_models.RData")
 You can load up the Shiny app to explore the sleuth data by loading the Rmd file
 into RStudio and typing `sleuth_live(so)`. I'm not sure at this point how to
 handle more complex models automatically with Sleuth, so right now this kind of
-has to be done by hand. You can see how to do a simple two-contrast modelin
-the vignette with `vignette('intro', package = 'sleuth')`.
+has to be done by hand. You can see how to do a simple two-contrast modeling
+the vignette with `vignette('intro', package = 'sleuth')`. For more complicated
+contrasts you can do a likelood ratio test against a null model with
+`sleuth_lrt`.
