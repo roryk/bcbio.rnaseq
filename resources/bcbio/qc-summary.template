@@ -39,7 +39,7 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
     "Genes.Detected", "Unique.Starts.Per.Read", "unique_starts_per_read",
     "complexity", "X5.3.bias", "Duplicates.pct", "Duplicates", "Mapped.reads",
     "Median.insert.size", "Mapped.reads.pct", "Total.reads",
-    "avg_coverage_per_region")
+    "avg_coverage_per_region", "Mapped.Reads")
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
 ```
 
@@ -62,7 +62,7 @@ heatmap_fn = get_heatmap_fn(summarydata)
 # Quality control metrics
 
 ## Mapped reads
-```{r mapped-plot}
+```{r mapped-plot, eval="Mapped" %in% colnames(summarydata)}
 ggplot(summarydata, aes(x=Name, y=Mapped)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -71,8 +71,17 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
     ylab("mapped reads") + xlab("")
 ```
 
+```{r mapped-plot-noqualimap, eval="Mapped.reads" %in% colnames(summarydata)}
+ggplot(summarydata, aes(x=Name, y=Mapped.reads)) +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    geom_bar(stat="identity") +
+    ylab("mapped reads") + xlab("")
+```
+
 ## Genomic mapping rate
-```{r mapping-rate-plot}
+```{r mapping-rate-plot, eval="Mapping.Rate" %in% colnames(summarydata)}
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     geom_bar(stat="identity") +
     ylab("mapping rate") + xlab("") +
@@ -81,8 +90,17 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
           axis.text.x = element_text(angle=90))
 ```
 
+```{r mapping-rate-plot-noqualimap, eval="Mapped.reads.pct" %in% colnames(summarydata)}
+ggplot(summarydata, aes(x=Name, y=Mapped.reads.pct)) +
+    geom_bar(stat="identity") +
+    ylab("mapping rate") + xlab("") +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90))
+```
+
 ## Number of genes detected
-```{r genes-detected-plot}
+```{r genes-detected-plot, eval="Genes.Detected" %in% colnames(summarydata)}
 dd = data.frame(Name=names(counts), Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
@@ -93,7 +111,7 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 ```
 
 ## Gene detection saturation
-```{r saturation-plot}
+```{r saturation-plot, eval="Genes.Detected" %in% colnames(summarydata)}
 dd = data.frame(Mapped=summarydata$Mapped, Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
     geom_point() +
@@ -104,7 +122,7 @@ ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
 ```
 
 ## Exonic mapping rate
-```{r exonic-mapping-plot}
+```{r exonic-mapping-plot, eval="Exonic.Rate" %in% colnames(summarydata)}
 ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
@@ -114,7 +132,9 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 ```
 
 ## rRNA mapping rate
-```{r rRNA-rate-plot, eval=!sum(is.na(summarydata$rRNA_rate)) == nrow(summarydata)}
+```{r check-rRNA-eval}
+eval_rRNA = "rRNA_rate" %in% colnames(summarydata) & !sum(is.na(summarydata$rRNA_rate)) == nrow(summarydata)
+```{r rRNA-rate-plot, eval=eval_rRNA}
 ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
@@ -124,7 +144,7 @@ ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
 ```
 
 ## Estimated fragment length of paired-end reads
-```{r fragment-length-plot}
+```{r fragment-length-plot, eval="Fragment.Length.Mean" %in% colnames(summarydata)}
 ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
