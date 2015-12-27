@@ -4,3 +4,5 @@ all:
 	lein uberjar
 	cat bin/bcbio-rnaseq.template target/*-standalone.jar > bin/bcbio-rnaseq
 	chmod +x bin/bcbio-rnaseq
+clean:
+	rm -rf target/*.jar
