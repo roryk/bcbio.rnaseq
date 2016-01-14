@@ -134,6 +134,7 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 ## rRNA mapping rate
 ```{r check-rRNA-eval}
 eval_rRNA = "rRNA_rate" %in% colnames(summarydata) & !sum(is.na(summarydata$rRNA_rate)) == nrow(summarydata)
+```
 ```{r rRNA-rate-plot, eval=eval_rRNA}
 ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
     geom_bar(stat="identity") +
