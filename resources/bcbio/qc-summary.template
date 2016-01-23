@@ -21,16 +21,29 @@ library(edgeR)
 library(CHBUtils)
 library(pheatmap)
 library(DESeq2)
+library(tximport)
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
+tx2genes_file = {{{tx2genes}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = data.frame(read.table(project_summary, header=TRUE, sep=","), row.names="Name", check.rows=FALSE)
 summarydata$Name = rownames(summarydata)
 summarydata = summarydata[order(summarydata$Name),]
-counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
+if (file.exists(tx2genes_file)) {
+  sf_files = file.path("..", "..", rownames(summarydata), "sailfish",
+                      rownames(summarydata), "quant.sf")
+  names(sf_files) = rownames(summarydata)
+  tx2gene = read.table(tx2genes_file, sep=",", row.names=FALSE, header=FALSE)
+  txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
+                        reader=readr::read_tsv)
+  counts = txi.salmon$counts
+} else {
+  counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
+}
 counts = counts[, order(colnames(counts))]
 colnames(counts) = gsub(".counts", "", colnames(counts))
+
 # this is a list of all non user-supplied metadata columns that could appear
 known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
     "rRNA_rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",

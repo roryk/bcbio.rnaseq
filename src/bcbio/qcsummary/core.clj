@@ -57,7 +57,8 @@
                         :counts-file (->> "combined.counts"
                                           (fs/file (util/dirname summary-csv))
                                           str
-                                          util/escape-quote)}]
+                                          util/escape-quote)
+                        :tx2genes (util/escape-quote (config/tx2gene-file))}]
     (write-template summary-template summary-config out-dir ".tmp")))
 
 
