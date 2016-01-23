@@ -12,8 +12,6 @@
 (defn load-yaml [yaml-file]
   (yaml/parse-string (slurp yaml-file)))
 
-
-
 (defn metadata-key [key]
   (map key (map :metadata (:samples (get-config)))))
 
@@ -33,6 +31,7 @@
 
 (def gtf-file #(get-in (first (:samples (get-config)))
                        [:genome_resources :rnaseq :transcripts]))
+(def tx2gene-file #(str (fs/file (dirname (gtf-file)) "tx2gene.csv")))
 (def library-type #(get-in (first (:samples (get-config)))
                            [:algorithm :strandedness] "unstranded"))
 (defn count-files []
