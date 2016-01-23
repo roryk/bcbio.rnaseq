@@ -22,6 +22,8 @@ library(CHBUtils)
 library(pheatmap)
 library(DESeq2)
 library(tximport)
+library(logging)
+basicConfig()
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
 tx2genes_file = {{{tx2genes}}}
@@ -31,6 +33,7 @@ summarydata = data.frame(read.table(project_summary, header=TRUE, sep=","), row.
 summarydata$Name = rownames(summarydata)
 summarydata = summarydata[order(summarydata$Name),]
 if (file.exists(tx2genes_file)) {
+  loginfo("Using gene counts calculated from the Sailfish transcript counts.")
   sf_files = file.path("..", "..", rownames(summarydata), "sailfish",
                       rownames(summarydata), "quant.sf")
   names(sf_files) = rownames(summarydata)
@@ -39,6 +42,7 @@ if (file.exists(tx2genes_file)) {
                         reader=readr::read_tsv)
   counts = txi.salmon$counts
 } else {
+  loginfo("Using gene counts calculated from featureCounts.")
   counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
 }
 counts = counts[, order(colnames(counts))]
