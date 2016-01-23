@@ -12,6 +12,9 @@ condition = {{{condition}}}
 counts <- counts[rowSums(counts>0)>1,]
 dds = DESeqDataSetFromMatrix(countData=counts,
     colData=summarydata, design = design)
+geoMeans = apply(counts, 1, function(row) if (all(row == 0)) 0 else
+                 exp(mean(log(row[row != 0]))))
+dds = estimateSizeFactors(dds, geoMeans=geoMeans)
 dds = DESeq(dds)
 ```
 
