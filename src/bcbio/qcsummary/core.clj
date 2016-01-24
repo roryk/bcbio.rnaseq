@@ -58,7 +58,10 @@
                                           (fs/file (util/dirname summary-csv))
                                           str
                                           util/escape-quote)
-                        :tx2genes (util/escape-quote (config/tx2gene-file))}]
+                        :tx2genes (->> "txgene.csv"
+                                       (fs/file (util/dirname summary-csv))
+                                       str
+                                       util/escape-quote)}]
     (write-template summary-template summary-config out-dir ".tmp")))
 
 
