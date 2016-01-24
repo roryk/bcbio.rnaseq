@@ -45,7 +45,7 @@ if (file.exists(tx2genes_file)) {
   loginfo("Using gene counts calculated from featureCounts.")
   counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
 }
-counts = counts[, order(colnames(counts))]
+counts = counts[, order(colnames(counts)), drop=FALSE]
 colnames(counts) = gsub(".counts", "", colnames(counts))
 
 # this is a list of all non user-supplied metadata columns that could appear
@@ -215,17 +215,17 @@ ggplot(melted, aes(x=count, group=sample)) +
 ```
 
 ## Correlation (Pearson) heatmap of TMM-normalized counts
-```{r pearson-heatmap-normalized}
+```{r pearson-heatmap-normalized, eval=ncol(counts) > 1}
 heatmap_fn(cor(normalized_counts, method="pearson"))
 ```
 
 ## Correlation (Spearman) heatmap of TMM-normalized counts
-```{r spearman-heatmap-normalized}
+```{r spearman-heatmap-normalized, eval=ncol(counts) > 1}
 heatmap_fn(cor(normalized_counts, method="spearman"))
 ```
 
 ## PCA plot
-```{r pca}
+```{r pca, eval=ncol(counts) > 1}
 dds = DESeqDataSetFromMatrix(countData=counts, colData=summarydata, design=~Name)
 vst = varianceStabilizingTransformation(dds)
 plotPCA(vst, intgroup=c("Name"))
@@ -234,7 +234,7 @@ plotPCA(vst, intgroup=c("Name"))
 ## Heatmap by concordance correlation coefficient
 http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004075
 
-```{r propcor-heatmap}
+```{r propcor-heatmap, eval=ncol(counts) > 1}
 propcor = function(x, y) {
     x = log(x + 0.1)
     y = log(y + 0.1)
