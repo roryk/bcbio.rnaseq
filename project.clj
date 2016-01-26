@@ -2,6 +2,7 @@
   :description "Run mutiple DE callers on RNA-seq data"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [de.ubercode.clostache/clostache "1.4.0"]
+                 [version-clj "0.1.2"]
                  [incanter "1.5.5"]
                  [clj-stacktrace "0.2.5"]
                  [incanter/incanter-io "1.5.5"]

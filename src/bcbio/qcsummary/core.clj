@@ -13,8 +13,11 @@
   (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
         cmd (str "library(rmarkdown); render('" rmd-file "')")
         out-file (util/change-extension rmd-file ".html")]
-    (sh "Rscript" "-e" (str setwd "library(rmarkdown); render('" rmd-file "')"))
-    out-file))
+    (if (util/pandoc-supports-rmarkdown?)
+      (do
+        (sh "Rscript" "-e" (str setwd "library(rmarkdown); render('" rmd-file "')"))
+        out-file)
+      rmd-file)))
 
 (def sleuth-template "bcbio/sleuth.template")
 (def summary-template "bcbio/qc-summary.template")

@@ -1,6 +1,8 @@
 (ns bcbio.rnaseq.util
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
+            [clojure.java.shell :refer [sh]]
+            [version-clj.compare :refer [version-compare]]
             [me.raynes.fs :as fs]))
 
 
@@ -111,3 +113,22 @@
 (defn rmdir [dir]
   (when (directory-exists? dir)
     (fs/delete-dir dir)))
+
+(defn- pandoc-version []
+  "Return pandoc version. Returns nil if not installed."
+  (try
+    (-> (sh "pandoc" "-v")
+        :out
+        string/split-lines
+        first
+        (string/split #" ")
+        second)
+    (catch java.io.IOException e
+      nil)))
+
+(defn pandoc-supports-rmarkdown? []
+  (let [version (pandoc-version)]
+    (if (nil? version)
+      false
+      (=
+       (version-compare (pandoc-version) "1.12.3") 1))))
