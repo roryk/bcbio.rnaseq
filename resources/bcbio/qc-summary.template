@@ -37,10 +37,10 @@ if (file.exists(tx2genes_file)) {
   sf_files = file.path("..", "..", rownames(summarydata), "sailfish",
                       rownames(summarydata), "quant.sf")
   names(sf_files) = rownames(summarydata)
-  tx2gene = read.table(tx2genes_file, sep=",", row.names=FALSE, header=FALSE)
+  tx2gene = read.table(tx2genes_file, sep=",", row.names=NULL, header=FALSE)
   txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
                         reader=readr::read_tsv)
-  counts = txi.salmon$counts
+  counts = data.frame(txi.salmon$counts)
 } else {
   loginfo("Using gene counts calculated from featureCounts.")
   counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
@@ -118,7 +118,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped.reads.pct)) +
 
 ## Number of genes detected
 ```{r genes-detected-plot, eval="Genes.Detected" %in% colnames(summarydata)}
-dd = data.frame(Name=names(counts), Genes.Detected = colSums(counts > 0))
+dd = data.frame(Name=colnames(counts), Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
