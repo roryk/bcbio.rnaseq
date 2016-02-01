@@ -40,7 +40,7 @@ if (file.exists(tx2genes_file)) {
   tx2gene = read.table(tx2genes_file, sep=",", row.names=NULL, header=FALSE)
   txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
                         reader=readr::read_tsv, countsFromAbundance="scaledTPM")
-  counts = data.frame(txi.salmon$counts)
+  counts = round(data.frame(txi.salmon$counts, check.names=FALSE))
 } else {
   loginfo("Using gene counts calculated from featureCounts.")
   counts = read.table(counts_file, header=TRUE, row.names="id", check.names=FALSE)
