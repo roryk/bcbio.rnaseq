@@ -61,7 +61,7 @@
                                           (fs/file (util/dirname summary-csv))
                                           str
                                           util/escape-quote)
-                        :tx2genes (->> "txgene.csv"
+                        :tx2genes (->> "tx2gene.csv"
                                        (fs/file (util/dirname summary-csv))
                                        str
                                        util/escape-quote)}]
