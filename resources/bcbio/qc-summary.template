@@ -78,8 +78,12 @@ heatmap_fn = get_heatmap_fn(summarydata)
 
 # Quality control metrics
 
+```{r qualimap-run}
+qualimap_run = "Mapped" %in% colnames(summarydata)
+```
+
 ## Mapped reads
-```{r mapped-plot, eval="Mapped" %in% colnames(summarydata)}
+```{r mapped-plot, eval=qualimap_run}
 ggplot(summarydata, aes(x=Name, y=Mapped)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -88,7 +92,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
     ylab("mapped reads") + xlab("")
 ```
 
-```{r mapped-plot-noqualimap, eval="Mapped.reads" %in% colnames(summarydata)}
+```{r mapped-plot-noqualimap, eval=!qualimap_run}
 ggplot(summarydata, aes(x=Name, y=Mapped.reads)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -98,7 +102,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped.reads)) +
 ```
 
 ## Genomic mapping rate
-```{r mapping-rate-plot, eval="Mapping.Rate" %in% colnames(summarydata)}
+```{r mapping-rate-plot, eval=qualimap_run}
 ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
     geom_bar(stat="identity") +
     ylab("mapping rate") + xlab("") +
@@ -107,7 +111,7 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
           axis.text.x = element_text(angle=90))
 ```
 
-```{r mapping-rate-plot-noqualimap, eval="Mapped.reads.pct" %in% colnames(summarydata)}
+```{r mapping-rate-plot-noqualimap, eval=!qualimap_run}
 ggplot(summarydata, aes(x=Name, y=Mapped.reads.pct)) +
     geom_bar(stat="identity") +
     ylab("mapping rate") + xlab("") +
@@ -117,7 +121,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped.reads.pct)) +
 ```
 
 ## Number of genes detected
-```{r genes-detected-plot, eval="Genes.Detected" %in% colnames(summarydata)}
+```{r genes-detected-plot}
 dd = data.frame(Name=colnames(counts), Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Name, y=Genes.Detected)) +
     geom_bar(stat="identity") +
@@ -128,7 +132,7 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 ```
 
 ## Gene detection saturation
-```{r saturation-plot, eval="Genes.Detected" %in% colnames(summarydata)}
+```{r saturation-plot}
 dd = data.frame(Mapped=summarydata$Mapped, Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
     geom_point() +
