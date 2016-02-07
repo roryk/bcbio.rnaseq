@@ -60,6 +60,11 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
 ```
 
+## Sample metadata
+```{r summary-table, echo=FALSE}
+DT::datatable(summarydata)
+```
+
 ```{r heatmap-function}
 get_heatmap_fn = function(summarydata) {
     # return the pheatmap function with or without metadata
