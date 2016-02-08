@@ -177,9 +177,12 @@ if(length(plots) > 0) {
 for(i in seq(length(all_results))) {
   cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
   out_df = as.data.frame(all_results[[i]])
-  print(knitr::kable(head(out_df)))
+  out_df$id = rownames(out_df)
+  out_df = out_df[, c("id", colnames(out_df)[colnames(out_df) != "id"])]
   write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
-                         quote=FALSE, sep="\t", row.names=TRUE, col.names=TRUE)
+                         quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
+  sig_genes = subset(out_df, padj < 0.05)
+  DT::datatable(sig_genes)
   cat("\n")
 }
 ```
