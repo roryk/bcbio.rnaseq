@@ -60,6 +60,14 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
 ```
 
+```{r sanitize-datatable}
+sanitize_datatable = function(df, ...) {
+ # remove dashes which cause wrapping
+ DT::datatable(df, ..., rownames=gsub("-", "_", rownames(df)),
+                   colnames=gsub("-", "_", colnames(df)))
+}
+```
+
 ```{r set-random-seed}
 # set seed for reproducibility
 set.seed(1454944673)
@@ -67,7 +75,7 @@ set.seed(1454944673)
 
 ## Sample metadata
 ```{r summary-table, echo=FALSE, cache=FALSE}
-DT::datatable(summarydata)
+sanitize_datatable(summarydata, style='bootstrap')
 ```
 
 ```{r heatmap-function}
