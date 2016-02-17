@@ -13,16 +13,25 @@ knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png",
 
 # Overview
 
+```{r check-library-functions}
+check_install = function(packages) {
+   not_installed = setdiff(packages, rownames(installed.packages()))
+   if(length(not_installed) > 0) {
+      write(paste("The libraries", not_installed, "are not installed, aborting.",
+                   sep=" "), stdout())
+      stop()
+   }
+}
+```
+
+```{r load-libraries}
+packages = c("ggplot2", "reshape", "gplots", "edgeR", "CHBUtils", "pheatmap",
+              "DESeq2", "tximport", "logging", "DT")
+check_install(packages)
+lapply(packages, library, character.only = TRUE)
+```
+
 ```{r qc-setup}
-library(ggplot2)
-library(reshape)
-library(gplots)
-library(edgeR)
-library(CHBUtils)
-library(pheatmap)
-library(DESeq2)
-library(tximport)
-library(logging)
 basicConfig()
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}

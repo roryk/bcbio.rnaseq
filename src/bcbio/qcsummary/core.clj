@@ -9,14 +9,27 @@
             [incanter.core :as ic]
             [me.raynes.fs :as fs]))
 
+(def install-libraries-message
+  "There was an issue rendering the Rmarkdown file. You may need to install
+   the R libraries (see https://github.com/roryk/bcbio.rnaseq) for instructions.
+   If you have done that, there may be an issue with the Rmarkdown file.")
+
+(defn run-rscript [rmd-file]
+   (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
+         res (sh "Rscript" "-e"
+                (str setwd "library(rmarkdown); render('" rmd-file "')"))]
+     (println (:out res))
+     res))
+
 (defn knit-file [rmd-file]
-  (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
-        cmd (str "library(rmarkdown); render('" rmd-file "')")
-        out-file (util/change-extension rmd-file ".html")]
+  (let [out-file (util/change-extension rmd-file ".html")]
     (if (util/pandoc-supports-rmarkdown?)
-      (do
-        (sh "Rscript" "-e" (str setwd "library(rmarkdown); render('" rmd-file "')"))
-        out-file)
+      (let [res (run-rscript rmd-file)]
+        (case (:exit res)
+          0 out-file
+          (do
+            (println install-libraries-message)
+            rmd-file)))
       rmd-file)))
 
 (def sleuth-template "bcbio/sleuth.template")
