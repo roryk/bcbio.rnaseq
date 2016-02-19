@@ -217,7 +217,7 @@ ggplot(melted, aes(x=sample, y=count)) + geom_boxplot() +
 
 ## Boxplot of log10 TMM-normalized counts per gene
 Trimmed mean of M-values (TMM) normalization is described
-[here](http://genomebiology.com/2010/11/3/R25)
+[here](http://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-3-r25)
 
 Robinson, M. D., & Oshlack, A. (2010). A scaling normalization method for differential expression analysis of RNA-seq data. Genome Biology, 11(3). doi:10.1186/gb-2010-11-3-r25
 
