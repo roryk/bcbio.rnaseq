@@ -38,13 +38,27 @@ counts_file = {{{counts-file}}}
 tx2genes_file = {{{tx2genes}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
-summarydata = data.frame(read.table(project_summary, header=TRUE, sep=","), row.names="Name", check.rows=FALSE)
-summarydata$Name = rownames(summarydata)
-summarydata = summarydata[order(summarydata$Name),]
+summarydata = read.table(project_summary, header=TRUE, sep=",")
+# handle newer bcbio-nextgen runs that use description as the key
+if("description" %in% colnames(summarydata)) {
+  rownames(summarydata) = summarydata$description
+  summarydata$description = NULL
+} else {
+  rownames(summarydata) = summarydata$Name
+  summarydata$Name = NULL
+}
+summarydata = summarydata[order(rownames(summarydata)),]
 if (file.exists(tx2genes_file)) {
-  loginfo("Using gene counts calculated from the Sailfish transcript counts.")
-  sf_files = file.path("..", "..", rownames(summarydata), "sailfish",
-                      rownames(summarydata), "quant.sf")
+  sample_dirs = file.path("..", "..", rownames(summarydata))
+  salmon_files = file.path(sample_dirs, "salmon", "quant.sf")
+  sailfish_files = file.path(sample_dirs, "sailfish", "quant.sf")
+  if (file.exists(salmon_files[1])) {
+    loginfo("Using gene counts calculated from the Salmon transcript counts.")
+    sf_files = salmon_files
+  } else if (file.exists(sailfish_files[1])) {
+    loginfo("Using gene counts calculated from the Sailfish transcript counts.")
+    sf_files = sailfish_files
+  }
   names(sf_files) = rownames(summarydata)
   tx2gene = read.table(tx2genes_file, sep=",", row.names=NULL, header=FALSE)
   txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
