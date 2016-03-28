@@ -21,11 +21,6 @@ cache:
     - ~/.linuxbrew
 
 install:
-  - bash resources/scripts/install_hombrew.sh
-  - export PATH=/home/travis/.linuxbrew/bin:$PATH
-  - brew tap chapmanb/homebrew-cbl
-  - brew tap homebrew/homebrew-science
-  - brew install cufflinks-binary
   - R --version
   - R -e '.libPaths(); sessionInfo()'
   - R -e 'library(BiocInstaller); biocLite("BiocUpgrade")'
