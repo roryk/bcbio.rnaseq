@@ -39,9 +39,11 @@ tx2genes_file = {{{tx2genes}}}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
 "#0072B2", "#D55E00", "#CC79A7")
 summarydata = read.table(project_summary, header=TRUE, sep=",")
+summarydata = summarydata[,colSums(is.na(summarydata)) < nrow(summarydata)]
 # handle newer bcbio-nextgen runs that use description as the key
 if("description" %in% colnames(summarydata)) {
   rownames(summarydata) = summarydata$description
+  summarydata$Name = rownames(summarydata)
   summarydata$description = NULL
 } else {
   rownames(summarydata) = summarydata$Name
@@ -75,12 +77,13 @@ colnames(counts) = gsub(".counts", "", colnames(counts))
 known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
     "rRNA_rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
     "Mapping.Rate", "Quality.format", "Duplication.Rate.of.Mapped", "Mapped",
-    "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
+                    "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
     "Genes.Detected", "Unique.Starts.Per.Read", "unique_starts_per_read",
     "complexity", "X5.3.bias", "Duplicates.pct", "Duplicates", "Mapped.reads",
     "Average.insert.size", "Mapped.reads.pct", "Total.reads",
     "avg_coverage_per_region", "Mapped.Reads")
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
+metadata = metadata[, colSums(is.na(metadata)) < nrow(metadata)]
 ```
 
 ```{r sanitize-datatable}
@@ -121,6 +124,7 @@ heatmap_fn = get_heatmap_fn(summarydata)
 
 ```{r qualimap-run}
 qualimap_run = "Mapped" %in% colnames(summarydata)
+do_quality = "Mapped.reads" %in% colnames(summarydata)
 ```
 
 ## Mapped reads
@@ -133,7 +137,7 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
     ylab("mapped reads") + xlab("")
 ```
 
-```{r mapped-plot-noqualimap, eval=!qualimap_run}
+```{r mapped-plot-noqualimap, eval=!qualimap_run & do_quality}
 ggplot(summarydata, aes(x=Name, y=Mapped.reads)) +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -152,7 +156,7 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
           axis.text.x = element_text(angle=90))
 ```
 
-```{r mapping-rate-plot-noqualimap, eval=!qualimap_run}
+```{r mapping-rate-plot-noqualimap, eval=!qualimap_run & do_quality}
 ggplot(summarydata, aes(x=Name, y=Mapped.reads.pct)) +
     geom_bar(stat="identity") +
     ylab("mapping rate") + xlab("") +
@@ -173,7 +177,7 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 ```
 
 ## Gene detection saturation
-```{r saturation-plot}
+```{r saturation-plot, eval=do_quality}
 dd = data.frame(Mapped=summarydata$Mapped, Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
     geom_point() +
@@ -197,7 +201,7 @@ ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
 ```{r check-rRNA-eval}
 eval_rRNA = "rRNA_rate" %in% colnames(summarydata) & !sum(is.na(summarydata$rRNA_rate)) == nrow(summarydata)
 ```
-```{r rRNA-rate-plot, eval=eval_rRNA}
+```{r rRNA-rate-plot, eval=eval_rRNA & do_quality}
 ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
@@ -207,8 +211,8 @@ ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
 ```
 
 ## Estimated fragment length of paired-end reads
-```{r fragment-length-plot, eval="Average.insert.size" %in% colnames(summarydata)}
-ggplot(summarydata, aes(x=Name, y=Average.insert.size)) +
+```{r fragment-length-plot, eval="Fragment.Length.Mean" %in% colnames(summarydata) & do_quality}
+ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
