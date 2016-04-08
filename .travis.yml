@@ -22,6 +22,7 @@ cache:
 
 install:
   - R --version
+  - R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")'
   - R -e '.libPaths(); sessionInfo()'
   - R -e 'library(BiocInstaller); biocLite("BiocUpgrade")'
   - R CMD javareconf -e 'R -e install.packages("rJava",repos="http://cran.at.r-project.org")'
