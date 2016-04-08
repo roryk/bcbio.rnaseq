@@ -24,7 +24,6 @@ install:
   - R --version
   - R -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")'
   - R -e '.libPaths(); sessionInfo()'
-  - R -e 'source("http://bioconductor.org/biocLite.R"); library(BiocInstaller); biocLite("BiocUpgrade")'
   - R CMD javareconf -e 'R -e install.packages("rJava",repos="http://cran.at.r-project.org")'
   - Rscript resources/scripts/install_libraries.R
 
