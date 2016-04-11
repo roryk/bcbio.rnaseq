@@ -14,7 +14,6 @@ knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png",
 ```
 
 # Overview
-
 ```{r check-library-functions, echo=FALSE}
 check_install = function(packages) {
    not_installed = setdiff(packages, rownames(installed.packages()))
@@ -281,31 +280,4 @@ heatmap_fn(cor(normalized_counts, method="spearman"))
 dds = DESeqDataSetFromMatrix(countData=counts, colData=summarydata, design=~Name)
 vst = varianceStabilizingTransformation(dds)
 plotPCA(vst, intgroup=c("Name"))
-```
-
-## Heatmap by concordance correlation coefficient
-http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004075
-
-```{r propcor-heatmap, eval=ncol(counts) > 1}
-propcor = function(x, y) {
-    x = log(x + 0.1)
-    y = log(y + 0.1)
-    num = 2 * cov(x, y)
-    denom = var(x) + var(y)
-return(num/denom)}
-
-do_propcor = function(x) {
-     mat = list()
-     for(i in seq_len(ncol(x))) {
-         for(j in seq_len(ncol(x))) {
-        x2 = x[, i]
-        y2 = x[, j]
-        mat = c(mat, propcor(x2, y2)) } }
-    mat = unlist(mat)
-    mat = matrix(mat, ncol(x), ncol(x))
-    colnames(mat) = colnames(x)
-    rownames(mat) = colnames(x)
-    return(mat)}
-
-heatmap_fn(do_propcor(normalized_counts))
 ```
