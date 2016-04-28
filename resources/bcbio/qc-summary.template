@@ -55,6 +55,8 @@ if (file.exists(tx2genes_file)) {
   sample_dirs = file.path("..", "..", rownames(summarydata))
   salmon_files = file.path(sample_dirs, "salmon", "quant.sf")
   sailfish_files = file.path(sample_dirs, "sailfish", "quant.sf")
+  new_sailfish = file.path(sample_dirs, "sailfish", "quant", "quant.sf")
+  new_salmon = file.path(sample_dirs, "salmon", "quant", "quant.sf")
   if (file.exists(salmon_files[1])) {
     loginfo("Using gene counts calculated from the Salmon transcript counts.")
     sf_files = salmon_files
@@ -62,6 +64,14 @@ if (file.exists(tx2genes_file)) {
     loginfo("Using gene counts calculated from the Sailfish transcript counts.")
     sf_files = sailfish_files
   }
+  else if (file.exists(new_sailfish[1])) {
+    loginfo("Using gene counts calculated from the Sailfish transcript counts.")
+    sf_files = new_sailfish
+  }
+  else if (file.exists(new_salmon[1])) {
+    loginfo("Using gene counts calculated from the Salmon transcript counts.")
+    sf_files = new_salmon
+    }
   names(sf_files) = rownames(summarydata)
   tx2gene = read.table(tx2genes_file, sep=",", row.names=NULL, header=FALSE)
   txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
