@@ -27,7 +27,7 @@ ediff <- scde.expression.difference(o.ifm, counts, o.prior, groups=groups,
                                     n.cores=n.cores, verbose=1)
 ediff$pvalue = pnorm(-(abs(ediff$Z))) * 2
 ediff = ediff[order(ediff$pvalue),]
-ediff$padj = p.adjust(ediff$pvalue)
+ediff$padj = p.adjust(ediff$pvalue, method="BH")
 write.table(ediff, file="singlecell_de.tsv", sep="\t", quote=FALSE,
             row.names=TRUE, col.names=TRUE)
 ```
