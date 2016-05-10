@@ -42,7 +42,7 @@ colnames(casted) = c("id", "reference", "mix", "group", "expression")
 foldchange = cast(casted, id ~ group)
 foldchange$logFC = log2(foldchange$B/foldchange$A)
 foldchange$pvalue =  unlist(dlply(x, "id", function(y) t.test.robust(y[,c("A1", "A2", "A3", "A4")], y[,c("B1", "B2", "B3", "B4")])))
-foldchange$padj = p.adjust(foldchange$pvalue)
+foldchange$padj = p.adjust(foldchange$pvalue, method="BH")
 foldchange = foldchange[, c("id", "logFC", "pvalue", "padj")]
 foldchange$method = "qPCR"
 
