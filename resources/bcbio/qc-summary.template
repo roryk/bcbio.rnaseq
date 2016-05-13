@@ -233,6 +233,16 @@ ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
     ylab("fragment length") + xlab("")
 ```
 
+## 5'->3' bias
+```{r 53bias, eval="X5.3.bias" %in% colnames(summarydata) & do_quality}
+ggplot(summarydata, aes(x=Name, y=X5.3.bias)) +
+    geom_bar(stat="identity") +
+    theme_bw(base_size=10) +
+    theme(panel.grid.major = element_line(size = .5, color = "grey"),
+          axis.text.x = element_text(angle=90)) +
+    ylab("5'->3' bias") + xlab("")
+```
+
 ## Boxplot of log10 counts per gene
 ```{r boxplot-raw}
 melted = melt(counts)
