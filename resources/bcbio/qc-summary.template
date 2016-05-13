@@ -10,7 +10,7 @@ output:
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png",
-               cache=FALSE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
+               cache=TRUE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
                message=FALSE, prompt=TRUE, comment='', fig.cap='')
 ```
 
@@ -96,7 +96,7 @@ known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.qual
     "avg_coverage_per_region", "Mapped.Reads")
 summarydata[,"Fragment.Length.Mean"] = summarydata$Average.insert.size
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
-metadata = metadata[, colSums(is.na(metadata)) < nrow(metadata)]
+metadata = metadata[, colSums(is.na(metadata)) < nrow(metadata), drop=FALSE]
 ```
 
 ```{r sanitize-datatable}
