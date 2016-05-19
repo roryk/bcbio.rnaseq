@@ -296,9 +296,57 @@ heatmap_fn(cor(normalized_counts, method="pearson"))
 heatmap_fn(cor(normalized_counts, method="spearman"))
 ```
 
-## PCA plot
+## PCA plots {.tabset}
 ```{r pca, eval=ncol(counts) > 1}
 dds = DESeqDataSetFromMatrix(countData=counts, colData=summarydata, design=~Name)
 vst = varianceStabilizingTransformation(dds)
-plotPCA(vst, intgroup=c("Name"))
+pca_loadings = function(object, ntop=500) {
+  rv <- matrixStats::rowVars(assay(object))
+  select <- order(rv, decreasing = TRUE)[seq_len(min(ntop,
+      length(rv)))]
+  pca <- prcomp(t(assay(object)[select, ]))
+  percentVar <- pca$sdev^2/sum(pca$sdev^2)
+  names(percentVar) = colnames(pca$x)
+  pca$percentVar = percentVar
+  return(pca)}
+pc = pca_loadings(vst)
+comps = data.frame(pc$x)
+comps$Name = rownames(comps)
+library(dplyr)
+comps = comps %>% left_join(summarydata, by=c("Name"="Name"))
+colorby = "Name"
+```
+
+```{r pca-plotter}
+pca_plot = function(comps, nc1, nc2, colorby) {
+   c1str = paste0("PC", nc1)
+   c2str = paste0("PC", nc2)
+  ggplot(comps, aes_string(c1str, c2str, color=colorby)) +
+    geom_point() + theme_bw() +
+    xlab(paste0(c1str, ": ", round(pc$percentVar[nc1] * 100), "% variance")) +
+    ylab(paste0(c2str, ": ", round(pc$percentVar[nc2] * 100), "% variance"))
+  }
+```
+
+### PC1 vs. PC2
+```{r PC1-PC2}
+pca_plot(comps, 1, 2, colorby)
+```
+
+### PC3 vs. PC4
+```{r PC3-PC4}
+pca_plot(comps, 3, 4, colorby)
+```
+
+### PC5 vs. PC6
+```{r PC5-PC6}
+pca_plot(comps, 5, 6, colorby)
+```
+
+### Variance explained by component
+```{r component-loadings}
+ggplot(data.frame(component=reorder(names(pc$percentVar), -pc$percentVar),
+                  percent_var=pc$percentVar),
+       aes(component, percent_var)) + geom_bar(stat='identity') +
+  ylab("percent of total variation") + xlab("") + theme_bw()
 ```
