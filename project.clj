@@ -13,7 +13,7 @@
                  [clj-http "0.7.5"]
                  [net.mikera/vectorz-clj "0.22.0"]
                  [org.clojure/math.combinatorics "0.0.4"]
-                 [org.clojure/tools.cli "0.3.3"]
+                 [org.clojure/tools.cli "0.3.5"]
                  [bcbio.run "0.0.1"]
                  [clj-http "0.7.8"]]
   :resource-paths ["resources"]
