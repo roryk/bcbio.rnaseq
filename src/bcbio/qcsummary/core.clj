@@ -128,6 +128,10 @@
    ["-f" "--formula FORMULA" "Formula to use in model (example: ~ batch + condition)"
     :default nil]
    ["-d" "--dexseq" "Run DEXSeq"]
+   ["-o" "--organism ORGANISM" "organism"
+    :default nil
+    :validate [#(contains? #{"mouse" "human"} %)
+               "Organism must be mouse or human"]]
    ["-s" "--sleuth" "Run Sleuth"]])
 
 (defn exit [status msg]
@@ -157,7 +161,7 @@
 (defn summarize-cli [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
-     (:help options) (exit 0 (usage summary))
+      (:help options) (exit 0 (usage summary))
      (not= (count arguments) 1) (exit 1 (usage summary)))
     (let [html-file (knit-file (summarize (first arguments) options))]
       (println "Summary report can be found here" html-file))))
