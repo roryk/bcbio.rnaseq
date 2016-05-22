@@ -48,23 +48,21 @@ go_cp = function(res, comparison) {
 
 ```{r gsea-function}
 gsea_cp = function(res, comparison) {
-  universe = rownames(res)
-  genes = res[, "log2FoldChange", drop=FALSE]
-  genes$ENSEMBL = rownames(genes)
-  genes.df = bitr(genes, "ENSEMBL", c("ENSEMBL", "ENTREZID"), orgdb)
-  genes.df = genes.df %>% left_join(genes, by="ENSEMBL")
-  gene_fc = genes.df[, "log2FoldChange"]
-  names(gene_fc) = genes.df$ENTREZID
-  gene_pc = gene_pc[order(gene_pc, decreasing=TRUE)]
-  cc = summary(gseGO(gene_pc, ont="CC", OrgDb=orgdb,
+  res = data.frame(res)
+  res$ensembl_gene_id = rownames(res)
+  res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
+  genes = res[, "log2FoldChange"]
+  names(genes) = res$entrezgene
+  genes = genes[order(genes, decreasing=TRUE)]
+  cc = summary(gseGO(genes, ont="CC", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   cc$ont = "CC"
-  mf = summary(gseGO(gene_pc, ont="MF", OrgDb=orgdb,
+  mf = summary(gseGO(genes, ont="MF", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   mf$ont = "MF"
-  bp = summary(gseGO(gene_pc, ont="bp", OrgDb=orgdb,
+  bp = summary(gseGO(genes, ont="bp", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   bp$ont = "BP"
