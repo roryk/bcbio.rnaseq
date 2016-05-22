@@ -6,10 +6,10 @@
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
             [bcbio.qcsummary.pathway :refer [write-pathway-template org-dbs]]
+            [bcbio.qcsummary.sleuth :refer [write-sleuth-template]]
             [incanter.core :as ic]
             [me.raynes.fs :as fs]))
 
-(def sleuth-template "bcbio/sleuth.template")
 (def summary-template "bcbio/qc-summary.template")
 (def deseq2-de-template "bcbio/deseq2-de.template")
 (def dexseq-template "bcbio/dexseq.template")
@@ -18,12 +18,8 @@
   (#(get-in (first (:samples (config/load-yaml file-name)))
             [:genome_resources :rnaseq :dexseq])))
 
-(defn tokenize-formula [formula]
-  (string/split formula #"[\s+|\+|~|\*]") )
-
-
 (defn write-dexseq-template [out-dir formula summary-csv dexseq-gff]
-  (let [dexseq-config {:condition (last (tokenize-formula formula))
+  (let [dexseq-config {:condition (last (util/tokenize-formula formula))
                        :gff-file (util/escape-quote dexseq-gff)
                        :summary-csv (util/escape-quote summary-csv)}]
     (println "Running DEXSeq, this will take a long time.")
@@ -31,13 +27,9 @@
 
 (defn write-de-template [out-dir formula]
   (let [de-config {:formula formula
-                   :condition (util/escape-quote (last (tokenize-formula formula)))}]
+                   :condition (util/escape-quote (last (util/tokenize-formula formula)))}]
     (println "Running DESeq2.")
     (write-template deseq2-de-template de-config out-dir ".tmp")))
-
-(defn write-sleuth-template [out-dir]
-  (let [sleuth-config {}]
-    (write-template sleuth-template sleuth-config out-dir ".sleuth")))
 
 (defn make-qc-summary [out-dir summary-csv]
   (let [summary-config {:summary-csv (util/escape-quote summary-csv)
