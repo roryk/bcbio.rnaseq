@@ -9,6 +9,10 @@
             [incanter.core :as ic]
             [me.raynes.fs :as fs]))
 
+(defrecord OrgInfo [name db symbol])
+(def org-dbs {"mouse" (OrgInfo. "mouse" "org.Mm.eg.db" "mgi_symbol")
+              "human" (OrgInfo. "human" "org.Hs.eg.db" "hgnc_symbol")})
+
 (def install-libraries-message
   "There was an issue rendering the Rmarkdown file. You may need to install
    the R libraries (see https://github.com/roryk/bcbio.rnaseq) for instructions.
@@ -123,16 +127,28 @@
         options-summary]
        (string/join \newline)))
 
+(def valid-organism-message
+  (str "organism ("
+       (->> org-dbs keys (string/join ", "))
+       ")"))
+
+(def invalid-organism-message
+  (str "Organism must be one of " (->> org-dbs keys (string/join ", "))))
+
+(def organism-validator
+  [#(contains? (-> org-dbs keys set) %)
+   invalid-organism-message])
+
 (def options
   [["-h" "--help"]
    ["-f" "--formula FORMULA" "Formula to use in model (example: ~ batch + condition)"
     :default nil]
    ["-d" "--dexseq" "Run DEXSeq"]
-   ["-o" "--organism ORGANISM" "organism"
+   ["-o" "--organism ORGANISM" valid-organism-message
     :default nil
-    :validate [#(contains? #{"mouse" "human"} %)
-               "Organism must be mouse or human"]]
+    :validate organism-validator]
    ["-s" "--sleuth" "Run Sleuth"]])
+
 
 (defn exit [status msg]
   (println msg)
