@@ -105,8 +105,7 @@
        (->> org-dbs keys (map name) (string/join ", "))))
 
 (def organism-validator
-  [#(contains? (->> org-dbs keys (map name) set) %)
-   invalid-organism-message])
+  [#(contains? (->> org-dbs keys set) %) invalid-organism-message])
 
 (def options
   [["-h" "--help"]
@@ -114,14 +113,21 @@
     :default nil]
    ["-d" "--dexseq" "Run DEXSeq"]
    ["-o" "--organism ORGANISM" valid-organism-message
+    :parse-fn #(if (keyword? %)
+                 %
+                 (-> % string/lower-case keyword))
     :default nil
-    :validate organism-validator]
+    :validate [#(contains? (->> org-dbs keys set) %) invalid-organism-message]]
    ["-s" "--sleuth" "Run Sleuth"]])
 
 
 (defn exit [status msg]
   (println msg)
   (System/exit status))
+
+(defn error-msg [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (string/join \newline errors)))
 
 (defn summarize [project-file options]
   (let [out-dir (-> project-file util/dirname (io/file "summary")
@@ -137,13 +143,16 @@
         (when (:dexseq options)
           (let [dexseq-out (write-dexseq-template out-dir formula
                                                   tidy-summary dexseq-gff)]
+            (println "Setting up DEXSeq template.")
             (spit out-file (slurp dexseq-out) :append true)))
         (when (:sleuth options)
           (let [sleuth-out (write-sleuth-template out-dir)]
+            (println "Setting up Sleuth template.")
             (spit out-file (slurp sleuth-out) :append true)))
         (when (:organism options)
           (let [pathway-out (write-pathway-template out-dir
                                                     (:organism options))]
+            (println "Setting up pathway analysis template.")
             (spit out-file (slurp pathway-out) :append true)))))
     out-file))
 
@@ -151,6 +160,7 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args options)]
     (cond
       (:help options) (exit 0 (usage summary))
-     (not= (count arguments) 1) (exit 1 (usage summary)))
+      (not= (count arguments) 1) (exit 1 (usage summary))
+      errors (exit 1 (error-msg errors)))
     (let [html-file (knit-file (summarize (first arguments) options))]
       (println "Summary report can be found here" html-file))))
