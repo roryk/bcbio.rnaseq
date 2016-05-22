@@ -1,32 +1,41 @@
 ```{r pathway-load-libraries}
 orgdb = {{{orgdb}}}
+biomart_dataset = {{{biomart-dataset}}}
+library(dplyr)
 library(clusterProfiler)
 library(orgdb, character.only=TRUE)
-dbobj = eval(parse(text=orgdb))
+library(biomaRt)
+```
+
+```{r biomaRt-entrez}
+mart = biomaRt::useMart(biomart = "ensembl", dataset=biomart_dataset)
+entrez = biomaRt::getBM(attributes = c("ensembl_gene_id", "entrezgene"), mart=mart)
+entrez$entrezgene = as.character(entrez$entrezgene)
 ```
 
 ```{r go-function}
 go_cp = function(res, comparison) {
-  universe = rownames(res)
-  genes = rownames(subset(res, padj < 0.05))
-  genes.df = bitr(genes, "ENSEMBL", c("ENTREZID"), orgdb)
-  universe.df = bitr(universe, "ENSEMBL", c("ENTREZID"), orgdb)
-  mf = summary(enrichGO(genes.df$ENTREZID, universe=universe.df$ENTREZID,
-                OrgDb=eval(orgdb),
+  res = data.frame(res)
+  res$ensembl_gene_id = rownames(res)
+  res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
+  universe = res$entrezgene
+  genes = subset(res, padj < 0.05)$entrezgene
+  mf = summary(enrichGO(genes, universe=universe,
+                OrgDb=orgdb,
                 ont="MF",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
                 pvalueCutoff=1))
   mf$ont = "MF"
-  cc = summary(enrichGO(genes.df$ENTREZID, universe=universe.df$ENTREZID,
-                OrgDb=dbobj,
+  cc = summary(enrichGO(genes, universe=universe,
+                OrgDb=orgdb,
                 ont="CC",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
                 pvalueCutoff=1))
   cc$ont = "CC"
-  bp = summary(enrichGO(genes.df$ENTREZID, universe=universe.df$ENTREZID,
-                OrgDb=dbobj,
+  bp = summary(enrichGO(genes, universe=universe,
+                OrgDb=orgdb,
                 ont="BP",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
@@ -41,30 +50,21 @@ go_cp = function(res, comparison) {
 gsea_cp = function(res, comparison) {
   universe = rownames(res)
   genes = res[, "log2FoldChange", drop=FALSE]
-  genes.df = bitr(genes, "SYMBOL", c("ENSEMBL", "ENTREZID"), orgdb)
-  universe.df = bitr(universe, "SYMBOL", c("ENSEMBL", "ENTREZID"), orgdb)
-  universe = rownames(seurat_obj@data)
-  seurat_obj = project.pca(seurat_obj, do.print=FALSE)
-  genes = seurat_obj@pca.x.full[, component, drop=FALSE]
-  colnames(genes) = c("PC")
-  gene_symbols = rownames(genes)[order(abs(genes[,1]), decreasing=TRUE)]
-  genes$SYMBOL = rownames(genes)
-  genes.df = bitr(gene_symbols, "SYMBOL", c("ENSEMBL", "ENTREZID"), orgdb)
-  genes.df = genes.df %>% left_join(genes, by="SYMBOL")
-  universe.df = bitr(universe, "SYMBOL", c("ENSEMBL", "ENTREZID"), orgdb)
-  genes = genes.df[, c("ENTREZID", "PC")] %>% unique()
-  gene_pc = genes[, "PC"]
-  names(gene_pc) = genes$ENTREZID
+  genes$ENSEMBL = rownames(genes)
+  genes.df = bitr(genes, "ENSEMBL", c("ENSEMBL", "ENTREZID"), orgdb)
+  genes.df = genes.df %>% left_join(genes, by="ENSEMBL")
+  gene_fc = genes.df[, "log2FoldChange"]
+  names(gene_fc) = genes.df$ENTREZID
   gene_pc = gene_pc[order(gene_pc, decreasing=TRUE)]
-  cc = summary(gseGO(gene_pc, ont="CC", OrgDb=dbobj,
+  cc = summary(gseGO(gene_pc, ont="CC", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   cc$ont = "CC"
-  mf = summary(gseGO(gene_pc, ont="MF", OrgDb=dbobj,
+  mf = summary(gseGO(gene_pc, ont="MF", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   mf$ont = "MF"
-  bp = summary(gseGO(gene_pc, ont="bp", OrgDb=dbobj,
+  bp = summary(gseGO(gene_pc, ont="bp", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   bp$ont = "BP"
