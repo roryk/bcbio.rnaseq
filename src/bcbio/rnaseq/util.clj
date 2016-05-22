@@ -132,3 +132,7 @@
       false
       (=
        (version-compare (pandoc-version) "1.12.3") 1))))
+
+(defn tokenize-formula [formula]
+  "split an R formula into tokens"
+  (string/split formula #"[\s+|\+|~|\*]") )
