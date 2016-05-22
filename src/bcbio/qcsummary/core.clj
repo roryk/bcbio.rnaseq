@@ -1,40 +1,13 @@
 (ns bcbio.qcsummary.core
   (:require [bcbio.rnaseq.config :as config]
             [bcbio.rnaseq.util :as util]
+            [bcbio.qcsummary.r :refer [knit-file write-template]]
             [clojure.java.io :as io]
-            [clojure.java.shell :refer [sh]]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
-            [clostache.parser :as stache]
+            [bcbio.qcsummary.pathway :refer [write-pathway-template org-dbs]]
             [incanter.core :as ic]
             [me.raynes.fs :as fs]))
-
-(defrecord OrgInfo [name db symbol])
-(def org-dbs {"mouse" (OrgInfo. "mouse" "org.Mm.eg.db" "mgi_symbol")
-              "human" (OrgInfo. "human" "org.Hs.eg.db" "hgnc_symbol")})
-
-(def install-libraries-message
-  "There was an issue rendering the Rmarkdown file. You may need to install
-   the R libraries (see https://github.com/roryk/bcbio.rnaseq) for instructions.
-   If you have done that, there may be an issue with the Rmarkdown file.")
-
-(defn run-rscript [rmd-file]
-   (let [setwd (str "setwd('" (util/dirname rmd-file) "');")
-         res (sh "Rscript" "-e"
-                (str setwd "library(rmarkdown); render('" rmd-file "')"))]
-     (println (:out res))
-     res))
-
-(defn knit-file [rmd-file]
-  (let [out-file (util/change-extension rmd-file ".html")]
-    (if (util/pandoc-supports-rmarkdown?)
-      (let [res (run-rscript rmd-file)]
-        (case (:exit res)
-          0 out-file
-          (do
-            (println install-libraries-message)
-            rmd-file)))
-      rmd-file)))
 
 (def sleuth-template "bcbio/sleuth.template")
 (def summary-template "bcbio/qc-summary.template")
@@ -48,11 +21,6 @@
 (defn tokenize-formula [formula]
   (string/split formula #"[\s+|\+|~|\*]") )
 
-(defn write-template [template hashmap out-dir extension]
-  (let [rfile (util/change-extension (util/swap-directory template out-dir)
-                                     extension)]
-    (spit rfile (stache/render-resource template hashmap))
-    rfile))
 
 (defn write-dexseq-template [out-dir formula summary-csv dexseq-gff]
   (let [dexseq-config {:condition (last (tokenize-formula formula))
@@ -129,14 +97,15 @@
 
 (def valid-organism-message
   (str "organism ("
-       (->> org-dbs keys (string/join ", "))
+       (->> org-dbs keys (map name) (string/join ", "))
        ")"))
 
 (def invalid-organism-message
-  (str "Organism must be one of " (->> org-dbs keys (string/join ", "))))
+  (str "Organism must be one of "
+       (->> org-dbs keys (map name) (string/join ", "))))
 
 (def organism-validator
-  [#(contains? (-> org-dbs keys set) %)
+  [#(contains? (->> org-dbs keys (map name) set) %)
    invalid-organism-message])
 
 (def options
@@ -171,7 +140,11 @@
             (spit out-file (slurp dexseq-out) :append true)))
         (when (:sleuth options)
           (let [sleuth-out (write-sleuth-template out-dir)]
-            (spit out-file (slurp sleuth-out) :append true)))))
+            (spit out-file (slurp sleuth-out) :append true)))
+        (when (:organism options)
+          (let [pathway-out (write-pathway-template out-dir
+                                                    (:organism options))]
+            (spit out-file (slurp pathway-out) :append true)))))
     out-file))
 
 (defn summarize-cli [& args]
