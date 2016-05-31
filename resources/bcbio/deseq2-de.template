@@ -99,7 +99,10 @@ nr = ceiling( len / 3 )
 nc = ceiling( len / nr )
 par(mfrow=c(nr,nc))
 for(i in seq(length(all_results))) {
-  plotMA(all_results[[i]])
+  res = all_results[[i]]
+  ymax = max(res$log2FoldChange)
+  ymin = min(res$log2FoldChange)
+  plotMA(all_results[[i]], ylim=c(ymin, ymax))
   title(paste("MA plot for contrast", names(all_results)[i]))
 }
 ```
