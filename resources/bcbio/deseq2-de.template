@@ -80,7 +80,7 @@ handle_deseq2 = function(dds, summarydata, column) {
   for(comb in all_combs) {
     contrast_string = paste(comb, collapse=" vs ")
     contrast = c(column, comb)
-    res = results(dds, contrast=contrast)
+    res = results(dds, contrast=contrast, addMLE=TRUE)
     res = res[order(res$padj),]
     all_results = c(all_results, res)
     contrast_strings = c(contrast_strings, contrast_string)
