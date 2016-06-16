@@ -52,9 +52,11 @@ gsea_cp = function(res, comparison) {
   res = data.frame(res)
   res$ensembl_gene_id = rownames(res)
   res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
-  genes = res[, "log2FoldChange"]
+  lfc = data.frame(res)[, "log2FoldChange"]
+  lfcse = data.frame(res)[, "lfcSE"]
+  genes = lfc/lfcse
   names(genes) = res$entrezgene
-  genes = genes[!is.na(genes)]
+  genes = genes[order(genes, decreasing=TRUE)]
   genes = genes[order(genes, decreasing=TRUE)]
   cc = summary(gseGO(genes, ont="CC", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
