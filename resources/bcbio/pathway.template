@@ -1,6 +1,7 @@
 ```{r pathway-load-libraries}
 orgdb = {{{orgdb}}}
 biomart_dataset = {{{biomart-dataset}}}
+keggname = {{{keggname}}}
 library(dplyr)
 library(clusterProfiler)
 library(orgdb, character.only=TRUE)
@@ -53,6 +54,7 @@ gsea_cp = function(res, comparison) {
   res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
   genes = res[, "log2FoldChange"]
   names(genes) = res$entrezgene
+  genes = genes[!is.na(genes)]
   genes = genes[order(genes, decreasing=TRUE)]
   cc = summary(gseGO(genes, ont="CC", OrgDb=orgdb,
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
@@ -66,8 +68,11 @@ gsea_cp = function(res, comparison) {
                nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
                verbose=TRUE))
   bp$ont = "BP"
-  combined = rbind(cc, mf, bp)
-  combined$samplename = samplename
+  kg = summary(gseKEGG(geneList=genes, organism=keggname, nPerm=500,
+                       pvalueCutoff=1, verbose=TRUE))
+  kg$ont = "KG"
+  combined = rbind(cc, mf, bp, kg)
+  combined$comparison = comparison
   return(combined)
 }
 ```
