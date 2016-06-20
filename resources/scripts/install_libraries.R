@@ -40,7 +40,7 @@ install.github = function(packages, username) {
 }
 
 cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gplots",
-  "GGally", "ggdendro", "gridExtra", "pheatmap", "logging", "DT")
+  "GGally", "ggdendro", "gridExtra", "pheatmap", "logging", "DT", "matrixStats")
 install.cran(cran_packages)
 library(devtools)
 install_github("RcppCore/RcppArmadillo")
