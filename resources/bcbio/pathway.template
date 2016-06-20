@@ -42,7 +42,13 @@ go_cp = function(res, comparison) {
                 qvalueCutoff=1,
                 pvalueCutoff=1))
   bp$ont = "BP"
-  combined = rbind(cc, mf, bp)
+  kk = summary(enrichKEGG(gene=genes, universe=universe,
+                 organism=keggname,
+                 pvalueCutoff=1,
+                 qvalueCutoff=1,
+                 pAdjustMethod="BH"))
+  kk$ont = "KG"
+  combined = rbind(cc, mf, bp, kk)
   combined$comparison = comparison
   return(combined)}
 ```
