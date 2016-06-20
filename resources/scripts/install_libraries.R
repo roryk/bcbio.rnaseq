@@ -44,7 +44,7 @@ cran_packages = c("devtools", "ggplot2", "reshape", "pROC", "plyr", "knitr", "gp
 install.cran(cran_packages)
 library(devtools)
 install_github("RcppCore/RcppArmadillo")
-bioconductor_packages = c("edgeR", "DESeq2", "baySeq", "DESeq", "vsn", "DEXSeq", "pcaMethods", "biomaRt", "rjson", "rhdf5")
+bioconductor_packages = c("edgeR", "DESeq2", "baySeq", "DESeq", "vsn", "DEXSeq", "pcaMethods", "biomaRt", "rjson", "rhdf5", "clusterProfiler")
 source("http://bioconductor.org/biocLite.R")
 biocLite(bioconductor_packages)
 install.bioconductor(bioconductor_packages)
