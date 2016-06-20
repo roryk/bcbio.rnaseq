@@ -1,13 +1,13 @@
 ## Overview
 [![Build Status](https://travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
 
-There are a large number of algorithms designed to call differential
-events from RNA-seq data at the gene, isoform and splicing-event
-level. It would be great if when a new caller comes out, there was a
-way to automatically place it in the context of the other
-callers. Every now and then a review article comes out which compares
-a subset of the tools against each other. This project aims to do provide
-a tool to do that automatically.
+This repository generates a Rmarkdown report from a bcbio-nextgen RNA-seq run.
+The report isn't a finalized analysis and definitely needs a trained person with
+exerpience to interpret and tweak it, but it does a lot of the annoying plumbing
+work when setting up an analysis. It generates a large amount of useful quality
+control information, runs a differential expression analysis with DESeq2 and
+sets up using Sleuth or doing a pathway analysis if those options are flagged
+on.
 
 ## Quickstart
 
