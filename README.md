@@ -1,6 +1,5 @@
 ## Overview
-[![Build Status](https://secure.travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq) ![DOI](https://zenodo.org/badge/3658/roryk/bcbio.rnaseq.png)
-
+[![Build Status](https://travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
 
 There are a large number of algorithms designed to call differential
 events from RNA-seq data at the gene, isoform and splicing-event
