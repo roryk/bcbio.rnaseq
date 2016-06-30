@@ -49,7 +49,7 @@ if("description" %in% colnames(summarydata)) {
   summarydata$description = NULL
 } else {
   rownames(summarydata) = summarydata$Name
-  summarydata$Name = NULL
+  # summarydata$Name = NULL
 }
 summarydata = summarydata[order(rownames(summarydata)),]
 if (file.exists(tx2genes_file)) {
@@ -288,12 +288,14 @@ ggplot(melted, aes(x=count, group=sample)) +
           axis.text.x = element_text(angle=90)) + xlab("")
 ```
 
-## Correlation (Pearson) heatmap of TMM-normalized counts
+## Correlation heatmap of TMM-normalized counts {.tabset}
+
+### Correlation (Pearson)
 ```{r pearson-heatmap-normalized, eval=ncol(counts) > 1}
 heatmap_fn(cor(normalized_counts, method="pearson"))
 ```
 
-## Correlation (Spearman) heatmap of TMM-normalized counts
+### Correlation (Spearman)
 ```{r spearman-heatmap-normalized, eval=ncol(counts) > 1}
 heatmap_fn(cor(normalized_counts, method="spearman"))
 ```
