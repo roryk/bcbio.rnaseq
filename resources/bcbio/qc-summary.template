@@ -53,7 +53,7 @@ if("description" %in% colnames(summarydata)) {
 }
 summarydata = summarydata[order(rownames(summarydata)),]
 if (file.exists(tx2genes_file)) {
-  sample_dirs = file.path(dirname(project_summary), "..", "..", rownames(summarydata))
+  sample_dirs = file.path(dirname(project_summary), "..", rownames(summarydata))
   salmon_files = file.path(sample_dirs, "salmon", "quant.sf")
   sailfish_files = file.path(sample_dirs, "sailfish", "quant.sf")
   new_sailfish = file.path(sample_dirs, "sailfish", "quant", "quant.sf")
