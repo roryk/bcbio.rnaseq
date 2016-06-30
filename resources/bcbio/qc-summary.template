@@ -28,7 +28,7 @@ check_install = function(packages) {
 
 ```{r load-libraries, echo=FALSE}
 packages = c("ggplot2", "reshape", "gplots", "edgeR", "CHBUtils", "pheatmap",
-              "DESeq2", "tximport", "logging", "DT")
+              "DESeq2", "tximport", "logging", "DT", "DEGreport", "dplyr")
 check_install(packages)
 installed = lapply(packages, library, character.only = TRUE)
 ```
@@ -53,7 +53,7 @@ if("description" %in% colnames(summarydata)) {
 }
 summarydata = summarydata[order(rownames(summarydata)),]
 if (file.exists(tx2genes_file)) {
-  sample_dirs = file.path("..", "..", rownames(summarydata))
+  sample_dirs = file.path(dirname(project_summary), "..", "..", rownames(summarydata))
   salmon_files = file.path(sample_dirs, "salmon", "quant.sf")
   sailfish_files = file.path(sample_dirs, "sailfish", "quant.sf")
   new_sailfish = file.path(sample_dirs, "sailfish", "quant", "quant.sf")
@@ -72,7 +72,7 @@ if (file.exists(tx2genes_file)) {
   else if (file.exists(new_salmon[1])) {
     loginfo("Using gene counts calculated from the Salmon transcript counts.")
     sf_files = new_salmon
-    }
+  }
   names(sf_files) = rownames(summarydata)
   tx2gene = read.table(tx2genes_file, sep=",", row.names=NULL, header=FALSE)
   txi.salmon = tximport(sf_files, type="salmon", tx2gene=tx2gene,
@@ -126,7 +126,8 @@ get_heatmap_fn = function(summarydata) {
     else {
     # rownames(metadata) = summarydata$Name
     heatmap_fn = function(data, ...) {
-        pheatmap(data, annotation=metadata, ...)
+        pheatmap(data, annotation=metadata, clustering_method = "ward.D2",
+        clustering_distance_cols = "correlation", ...)
     }
     return(heatmap_fn)
 }}
@@ -350,4 +351,9 @@ ggplot(data.frame(component=reorder(names(pc$percentVar), -pc$percentVar),
                   percent_var=pc$percentVar),
        aes(component, percent_var)) + geom_bar(stat='identity') +
   ylab("percent of total variation") + xlab("") + theme_bw()
+```
+
+```{r shiny-app, echo=F}
+# this is to plot data with https://github.com/lpantano/shiny/tree/master/expression
+degObj(assay(vst), metadata, "deg.rda")
 ```
