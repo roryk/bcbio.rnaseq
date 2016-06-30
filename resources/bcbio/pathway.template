@@ -15,72 +15,80 @@ entrez$entrezgene = as.character(entrez$entrezgene)
 ```
 
 ```{r go-function}
-go_cp = function(res, comparison) {
-  res = data.frame(res)
-  res$ensembl_gene_id = rownames(res)
-  res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
+summarize_cp = function(res, comparison) {
+  mf = summary(res$mf)
+  mf$ont = "MF"
+  cc = summary(res$cc)
+  cc$ont = "CC"
+  bp = summary(res$bp)
+  bp$ont = "BP"
+  kg = summary(res$kg)
+  kg$ont = "KG"
+  combined = rbind(cc, mf, bp, kg)
+  combined$comparison = comparison
+  return(combined)}
+
+enrich_cp = function(res, comparison) {
+  res = res %>%
+    left_join(entrez, by=c("rowname"="ensembl_gene_id")) %>%
+    filter(!is.na(entrezgene))
   universe = res$entrezgene
   genes = subset(res, padj < 0.05)$entrezgene
-  mf = summary(enrichGO(genes, universe=universe,
+  mf = enrichGO(genes, universe=universe,
                 OrgDb=orgdb,
                 ont="MF",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
-                pvalueCutoff=1))
-  mf$ont = "MF"
-  cc = summary(enrichGO(genes, universe=universe,
+                pvalueCutoff=1)
+  cc = enrichGO(genes, universe=universe,
                 OrgDb=orgdb,
                 ont="CC",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
-                pvalueCutoff=1))
-  cc$ont = "CC"
-  bp = summary(enrichGO(genes, universe=universe,
+                pvalueCutoff=1)
+  bp = enrichGO(genes, universe=universe,
                 OrgDb=orgdb,
                 ont="BP",
                 pAdjustMethod="BH",
                 qvalueCutoff=1,
-                pvalueCutoff=1))
-  bp$ont = "BP"
-  kk = summary(enrichKEGG(gene=genes, universe=universe,
-                 organism=keggname,
-                 pvalueCutoff=1,
-                 qvalueCutoff=1,
-                 pAdjustMethod="BH"))
-  kk$ont = "KG"
-  combined = rbind(cc, mf, bp, kk)
-  combined$comparison = comparison
-  return(combined)}
+                pvalueCutoff=1)
+  kg = enrichKEGG(gene=genes, universe=universe,
+                  organism='mmu',
+                  pvalueCutoff=1,
+                  qvalueCutoff=1,
+                  pAdjustMethod="BH")
+  all = list(mf=mf, cc=cc, bp=bp, kg=kg)
+  all[["summary"]] = summarize_cp(all, comparison)
+  return(all)}
 ```
 
 ```{r gsea-function}
-gsea_cp = function(res, comparison) {
-  res = data.frame(res)
-  res$ensembl_gene_id = rownames(res)
-  res = res %>% left_join(entrez, by="ensembl_gene_id") %>% filter(!is.na(entrezgene))
+  res = res %>%
+    left_join(entrez, by=c("rowname"="ensembl_gene_id")) %>%
+    filter(!is.na(entrezgene)) %>%
+    filter(!is.na(log2FoldChange)) %>%
+    filter(!is.na(lfcSE))
   lfc = data.frame(res)[, "log2FoldChange"]
   lfcse = data.frame(res)[, "lfcSE"]
   genes = lfc/lfcse
   names(genes) = res$entrezgene
   genes = genes[order(genes, decreasing=TRUE)]
+  cc = gseGO(genes, ont="CC", OrgDb=orgdb,
+             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             verbose=TRUE)
+  mf = gseGO(genes, ont="MF", OrgDb=orgdb,
+             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             verbose=TRUE)
+  bp = gseGO(genes, ont="bp", OrgDb=orgdb,
+             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             verbose=TRUE)
+  genes = data.frame(res)[, "log2FoldChange"]
+  names(genes) = res$entrezgene
   genes = genes[order(genes, decreasing=TRUE)]
-  cc = summary(gseGO(genes, ont="CC", OrgDb=orgdb,
-               nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
-               verbose=TRUE))
-  cc$ont = "CC"
-  mf = summary(gseGO(genes, ont="MF", OrgDb=orgdb,
-               nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
-               verbose=TRUE))
-  mf$ont = "MF"
-  bp = summary(gseGO(genes, ont="bp", OrgDb=orgdb,
-               nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
-               verbose=TRUE))
-  bp$ont = "BP"
-  kg = summary(gseKEGG(geneList=genes, organism=keggname, nPerm=500,
-                       pvalueCutoff=1, verbose=TRUE))
-  kg$ont = "KG"
+  genes = genes[!is.na(genes)]
+  kg = gseKEGG(geneList=genes, organism="mmu", nPerm=500,
+               pvalueCutoff=1, verbose=TRUE)
   combined = rbind(cc, mf, bp, kg)
-  combined$comparison = comparison
-  return(combined)
-}
+  combined[["summary"]] = summarize_cp(combined, comparison)
+  return(combined)}
 ```
