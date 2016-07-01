@@ -192,8 +192,8 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 
 ## Gene detection saturation
 ```{r saturation-plot, eval=do_quality}
-mapped = ifelse(qualimap_run, summarydata$Mapped, summarydata$Mapped.reads)
-dd = data.frame(Mapped=mapped, Genes.Detected = colSums(counts > 0))
+col_mapped = ifelse(qualimap_run, "Mapped", "Mapped.reads")
+dd = data.frame(Mapped=summarydata[,col_mapped], Genes.Detected = colSums(counts > 0))
 ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
     geom_point() +
     theme_bw(base_size=10) +
