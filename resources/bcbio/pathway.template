@@ -88,7 +88,7 @@ enrich_cp = function(res, comparison) {
   genes = genes[!is.na(genes)]
   kg = gseKEGG(geneList=genes, organism="mmu", nPerm=500,
                pvalueCutoff=1, verbose=TRUE)
-  combined = rbind(cc, mf, bp, kg)
-  combined[["summary"]] = summarize_cp(combined, comparison)
-  return(combined)}
+  all = list(mf=mf, cc=cc, bp=bp, kg=kg)
+  all[["summary"]] = summarize_cp(all, comparison)
+  return(all)}
 ```
