@@ -16,16 +16,13 @@ entrez$entrezgene = as.character(entrez$entrezgene)
 
 ```{r go-function}
 summarize_cp = function(res, comparison) {
-  mf = summary(res$mf)
-  mf$ont = "MF"
-  cc = summary(res$cc)
-  cc$ont = "CC"
-  bp = summary(res$bp)
-  bp$ont = "BP"
-  kg = summary(res$kg)
-  kg$ont = "KG"
-  combined = rbind(cc, mf, bp, kg)
-  combined$comparison = comparison
+  summaries = data.frame()
+  for(ont in names(res)) {
+     ontsum = summary(res[ont])
+     ontsum$ont = ont
+     summaries = rbind(summaries, ontsum)
+  }
+  summaries$comparison = comparison
   return(combined)}
 
 enrich_cp = function(res, comparison) {
@@ -74,13 +71,13 @@ enrich_cp = function(res, comparison) {
   names(genes) = res$entrezgene
   genes = genes[order(genes, decreasing=TRUE)]
   cc = gseGO(genes, ont="CC", OrgDb=orgdb,
-             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             nPerm=500, pvalueCutoff=1, pAdjustMethod="BH",
              verbose=TRUE)
   mf = gseGO(genes, ont="MF", OrgDb=orgdb,
-             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             nPerm=500, pvalueCutoff=1, pAdjustMethod="BH",
              verbose=TRUE)
   bp = gseGO(genes, ont="bp", OrgDb=orgdb,
-             nPerm=500, minGSSize=100, pvalueCutoff=1, pAdjustMethod="BH",
+             nPerm=500, pvalueCutoff=1, pAdjustMethod="BH",
              verbose=TRUE)
   genes = data.frame(res)[, "log2FoldChange"]
   names(genes) = res$entrezgene
@@ -88,7 +85,15 @@ enrich_cp = function(res, comparison) {
   genes = genes[!is.na(genes)]
   kg = gseKEGG(geneList=genes, organism="mmu", nPerm=500,
                pvalueCutoff=1, verbose=TRUE)
-  all = list(mf=mf, cc=cc, bp=bp, kg=kg)
+  if(orgdb == "org.Hs.eg.db") {
+    do = summary(gseDO(geneList=genes, nPerm=500, pvalueCutoff=1,
+                       pAdjustMethod="BH", verbose=TRUE))
+    do$ont = "DO"
+    all = list(mf=mf, cc=cc, bp=bp, kg=kg, do=do)
+  }
+  else {
+    all = list(mf=mf, cc=cc, bp=bp, kg=kg)
+  }
   all[["summary"]] = summarize_cp(all, comparison)
   return(all)}
 ```
