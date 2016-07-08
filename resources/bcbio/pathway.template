@@ -18,12 +18,12 @@ entrez$entrezgene = as.character(entrez$entrezgene)
 summarize_cp = function(res, comparison) {
   summaries = data.frame()
   for(ont in names(res)) {
-     ontsum = summary(res[ont])
+     ontsum = summary(res[[ont]])
      ontsum$ont = ont
      summaries = rbind(summaries, ontsum)
   }
   summaries$comparison = comparison
-  return(combined)}
+  return(summaries)}
 
 enrich_cp = function(res, comparison) {
   res = res %>%
