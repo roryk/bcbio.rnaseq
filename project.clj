@@ -1,4 +1,4 @@
-(defproject bcbio.rnaseq "1.1.1"
+(defproject bcbio.rnaseq "1.2.0"
   :description "Quality control and differential expression of bcbio RNA-seq runs"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [de.ubercode.clostache/clostache "1.4.0"]

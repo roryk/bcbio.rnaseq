@@ -37,11 +37,9 @@ condition = {{{condition}}}
 ```{r deseq2-expression-analysis, results='asis'}
 counts <- counts[rowSums(counts>0)>1,]
 if(exists("txi.salmon")) {
-   loginfo("Using Sailfish gene counts for the DESeq2 model.")
    txi.salmon = subset_tximport(txi.salmon, rownames(counts), colnames(counts))
    dds = DESeqDataSetFromTximport(txi.salmon, colData=summarydata, design=design)
 } else {
-  loginfo("Using counts from featureCounts for the DESeq2 model.")
   dds = DESeqDataSetFromMatrix(countData=counts,
       colData=summarydata, design = design  )
 }

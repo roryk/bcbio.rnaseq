@@ -1,6 +1,6 @@
 # adapted from http://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
 library(methods)
-mirror = "http://cran.at.r-project.org"
+mirror = "https://cran.rstudio.com/"
 update.packages(checkBuilt = TRUE, ask = FALSE, repos=mirror)
 is_package_installed = function(package) {
     available = suppressMessages(suppressWarnings(sapply(package, require,
@@ -10,7 +10,7 @@ is_package_installed = function(package) {
     return(TRUE)
 }
 
-install.cran = function(packages, default_mirror="http://cran.at.r-project.org") {
+install.cran = function(packages, default_mirror=mirror) {
   for(i in packages) {
     #  require returns TRUE invisibly if it was able to load package
     if(!is_package_installed(i)) {
