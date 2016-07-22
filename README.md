@@ -10,7 +10,15 @@ control information, runs a differential expression analysis with DESeq2 and
 sets up using Sleuth or doing a pathway analysis if those options are flagged
 on.
 
-## Quickstart
+## Installation
+
+### Conda install (UNIX only)
+
+```
+conda install -c bioconda bcbio-rnaseq
+```
+
+### Manual installation
 
 1. Install [leiningen](https://github.com/technomancy/leiningen)
 2. Install [pandoc](http://johnmacfarlane.net/pandoc/) (at least v1.12.3)
@@ -33,7 +41,7 @@ Rscript resources/scripts/install_libraries.R
 make
 ```
 
-This will make an executable in bin/bcbio-rnaseq that you can move to wherever
+This will make an executable in `bin/bcbio-rnaseq` that you can move to wherever
 you want and run.
 
 
