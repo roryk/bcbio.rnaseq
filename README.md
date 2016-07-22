@@ -1,5 +1,6 @@
 ## Overview
-[![Build Status](https://travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq)
+[![Build Status](https://travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq) [![bioconda-badge](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io)
+
 
 This repository generates a Rmarkdown report from a bcbio-nextgen RNA-seq run.
 The report isn't a finalized analysis and definitely needs a trained person with
