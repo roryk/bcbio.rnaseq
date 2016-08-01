@@ -20,7 +20,7 @@ check_install = function(packages) {
    not_installed = setdiff(packages, rownames(installed.packages()))
    if(length(not_installed) > 0) {
       write(paste("The libraries", not_installed, "are not installed, aborting.",
-                   sep=" "), stdout())
+                   sep=" "), stderr())
       stop()
    }
 }
