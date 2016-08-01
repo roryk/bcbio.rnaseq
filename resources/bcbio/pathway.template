@@ -60,6 +60,7 @@ enrich_cp = function(res, comparison) {
 ```
 
 ```{r gsea-function}
+gsea_cp = function(res, comparison) {
   res = res %>%
     left_join(entrez, by=c("rowname"="ensembl_gene_id")) %>%
     filter(!is.na(entrezgene)) %>%
