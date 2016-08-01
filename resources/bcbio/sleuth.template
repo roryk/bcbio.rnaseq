@@ -3,8 +3,7 @@
 ```{r sleuth-setup}
 library(dplyr)
 library(sleuth)
-sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish", "quant",
-                    rownames(summarydata))
+sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish", "quant")
 names(sf_dirs) = rownames(summarydata)
 sfdata = metadata
 sfdata$sample = rownames(sfdata)
