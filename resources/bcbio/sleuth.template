@@ -1,6 +1,6 @@
 ## sleuth
 
-```{r sleuth-setup}
+```{r sleuth-setup, cache=FALSE, eval=!file.exists("sleuth_models.RData"}
 library(dplyr)
 library(sleuth)
 sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish", "quant")
