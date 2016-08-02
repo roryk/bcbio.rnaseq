@@ -84,7 +84,7 @@ gsea_cp = function(res, comparison) {
   names(genes) = res$entrezgene
   genes = genes[order(genes, decreasing=TRUE)]
   genes = genes[!is.na(genes)]
-  kg = gseKEGG(geneList=genes, organism="mmu", nPerm=500,
+  kg = gseKEGG(geneList=genes, organism=keggname, nPerm=500,
                pvalueCutoff=1, verbose=TRUE)
   if(orgdb == "org.Hs.eg.db") {
     do = summary(gseDO(geneList=genes, nPerm=500, pvalueCutoff=1,
