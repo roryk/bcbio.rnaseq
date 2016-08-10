@@ -25,6 +25,14 @@ subset_tximport = function(txi, rows, columns) {
 }
 ```
 
+```{r deseq2-helper-functions}
+deseq2resids = function(dds) {
+  # calculate residuals for a deseq2 fit
+  fitted = t(t(assays(dds)[["mu"]]) / sizeFactors(dds))
+  return(counts(dds, normalized=TRUE) - fitted)
+}
+```
+
 ```{r de-setup}
 library(DEGreport)
 library(vsn)
