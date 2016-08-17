@@ -319,6 +319,10 @@ colorby = "Name"
 pca_plot = function(comps, nc1, nc2, colorby) {
    c1str = paste0("PC", nc1)
    c2str = paste0("PC", nc2)
+  if(!(c1str %in% colnames(comps) && c2str %in% colnames(comps))) {
+    warning("Higher order components not found, skipping plotting.")
+    return(NA)
+  }
   ggplot(comps, aes_string(c1str, c2str, color=colorby)) +
     geom_point() + theme_bw() +
     xlab(paste0(c1str, ": ", round(pc$percentVar[nc1] * 100), "% variance")) +
