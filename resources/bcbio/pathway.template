@@ -1,3 +1,5 @@
+## Pathway analysis
+
 ```{r pathway-load-libraries}
 orgdb = {{{orgdb}}}
 biomart_dataset = {{{biomart-dataset}}}
@@ -27,6 +29,8 @@ summarize_cp = function(res, comparison) {
 
 enrich_cp = function(res, comparison) {
   res = res %>%
+    data.frame() %>%
+    tibble::rownames_to_column() %>%
     left_join(entrez, by=c("rowname"="ensembl_gene_id")) %>%
     filter(!is.na(entrezgene))
   universe = res$entrezgene
@@ -62,6 +66,8 @@ enrich_cp = function(res, comparison) {
 ```{r gsea-function}
 gsea_cp = function(res, comparison) {
   res = res %>%
+    data.frame() %>%
+    tibble::rownames_to_column() %>%
     left_join(entrez, by=c("rowname"="ensembl_gene_id")) %>%
     filter(!is.na(entrezgene)) %>%
     filter(!is.na(log2FoldChange)) %>%
