@@ -339,3 +339,12 @@ ggplot(data.frame(component=reorder(names(pc$percentVar), -pc$percentVar),
 # this is to plot data with https://github.com/lpantano/shiny/tree/master/expression
 degObj(assay(vst), metadata, "deg.rda")
 ```
+
+# TPM matrix
+```{r write-tpm-matrix}
+library(readr)
+tpm = txi.salmon$abundance %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column()
+write_csv(tpm, "tpm.csv")
+```
