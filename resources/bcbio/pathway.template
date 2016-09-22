@@ -103,4 +103,15 @@ gsea_cp = function(res, comparison) {
   }
   all[["summary"]] = summarize_cp(all, comparison)
   return(all)}
+
+convert_enriched_ids = function(res, entrezsymbol) {
+  res = res %>%
+    mutate(geneID=strsplit(as.character(geneID), "/")) %>%
+    tidyr::unnest(geneID) %>%
+    left_join(entrezsymbol, by=c("geneID"="entrezgene")) %>%
+    group_by(ID, Description, GeneRatio, BgRatio, pvalue, p.adjust, qvalue,
+            Count, ont, comparison) %>%
+    summarise(geneID=paste(geneID, collapse="/"),
+              symbol=paste(mgi_symbol, collapse="/"))
+  return(res)}
 ```
