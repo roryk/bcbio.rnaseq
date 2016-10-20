@@ -15,6 +15,9 @@ addons:
       - r-base-dev
       - ed
 
+before_install:
+  - sudo apt-get install gcc
+
 cache:
   directories:
     - ~/R
