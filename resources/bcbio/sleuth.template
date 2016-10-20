@@ -1,6 +1,6 @@
 ## sleuth
 
-```{r sleuth-setup, cache=FALSE, eval=!file.exists("sleuth_models.RData")}
+```{r sleuth-setup, cache=FALSE, cache.lazy=TRUE}
 library(dplyr)
 library(sleuth)
 sf_dirs = file.path("..", "..", rownames(summarydata), "sailfish", "quant")
@@ -9,8 +9,6 @@ sfdata = metadata
 sfdata$sample = rownames(sfdata)
 sfdata$path = sf_dirs
 so = sleuth_prep(sfdata, design) %>% sleuth_fit()
-models(so)
-save(so, file="sleuth_models.RData")
 ```
 
 You can load up the Shiny app to explore the sleuth data by loading the Rmd file
