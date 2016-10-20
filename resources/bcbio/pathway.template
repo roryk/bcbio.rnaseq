@@ -86,16 +86,11 @@ gsea_cp = function(res, comparison) {
   bp = gseGO(genes, ont="bp", OrgDb=orgdb,
              nPerm=500, pvalueCutoff=1, pAdjustMethod="BH",
              verbose=TRUE)
-  genes = data.frame(res)[, "log2FoldChange"]
-  names(genes) = res$entrezgene
-  genes = genes[order(genes, decreasing=TRUE)]
-  genes = genes[!is.na(genes)]
   kg = gseKEGG(geneList=genes, organism=keggname, nPerm=500,
                pvalueCutoff=1, verbose=TRUE)
   if(orgdb == "org.Hs.eg.db") {
-    do = summary(gseDO(geneList=genes, nPerm=500, pvalueCutoff=1,
-                       pAdjustMethod="BH", verbose=TRUE))
-    do$ont = "DO"
+    do = gseDO(geneList=genes, nPerm=500, pvalueCutoff=1,
+                pAdjustMethod="BH", verbose=TRUE))
     all = list(mf=mf, cc=cc, bp=bp, kg=kg, do=do)
   }
   else {
