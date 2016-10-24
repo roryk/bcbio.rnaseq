@@ -33,7 +33,7 @@ check_install(packages)
 installed = lapply(packages, library, character.only = TRUE)
 ```
 
-```{r qc-setup}
+```{r qc-setup, results='hide'}
 project_summary = {{{summary-csv}}}
 counts_file = {{{counts-file}}}
 tx2genes_file = {{{tx2genes}}}
