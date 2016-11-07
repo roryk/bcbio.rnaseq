@@ -98,6 +98,23 @@ handle_deseq2 = function(dds, summarydata, column) {
 
 ## MA-plots
 
+```{r nicer-ma-plot}
+plotMA = function(res) {
+  res = subset(res, !is.na(padj))
+  res = data.frame(res)
+  ggplot(res, aes(baseMean, log2FoldChange, color=padj < 0.05)) +
+    geom_point(size=0.8) +
+    scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    annotation_logticks(sides='b') +
+    xlab("mean expression across all samples") +
+    ylab(expression(log[2]*" fold change")) +
+    scale_color_manual(values=c("black", "red", "green")) +
+    guides(color=FALSE)
+}
+```
+
 ```{r DESeq-output, results='asis'}
 all_results = handle_deseq2(dds, summarydata, condition)
 len = length(all_results)
