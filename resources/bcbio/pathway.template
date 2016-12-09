@@ -20,7 +20,7 @@ entrez$entrezgene = as.character(entrez$entrezgene)
 summarize_cp = function(res, comparison) {
   summaries = data.frame()
   for(ont in names(res)) {
-     ontsum = summary(res[[ont]])
+     ontsum = as.data.frame(res[[ont]])
      ontsum$ont = ont
      summaries = rbind(summaries, ontsum)
   }
