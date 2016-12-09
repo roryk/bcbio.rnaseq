@@ -112,7 +112,6 @@ convert_enriched_ids = function(res, entrezsymbol) {
 
 convert_gsea_ids = function(res, entrezsymbol) {
  res %>%
-  head() %>%
   mutate(geneID=strsplit(as.character(core_enrichment), "/")) %>%
     tidyr::unnest(geneID) %>%
     left_join(entrezsymbol, by=c("geneID"="entrezgene")) %>%
