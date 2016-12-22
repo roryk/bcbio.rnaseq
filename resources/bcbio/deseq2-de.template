@@ -99,19 +99,24 @@ handle_deseq2 = function(dds, summarydata, column) {
 ## MA-plots
 
 ```{r nicer-ma-plot}
-plotMA = function(res) {
-  res = subset(res, !is.na(padj))
+plotMA = function(res, contrast_name=NULL) {
   res = data.frame(res)
-  ggplot(res, aes(baseMean, log2FoldChange, color=padj < 0.05)) +
+  res = subset(res, !is.na(padj))
+  p = ggplot(res, aes(baseMean, log2FoldChange, color=padj < 0.05)) +
     geom_point(size=0.8) +
     scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+      breaks = scales::trans_breaks("log10", function(x) 10^x),
+      labels = scales::trans_format("log10", scales::math_format(10^.x))) +
     annotation_logticks(sides='b') +
     xlab("mean expression across all samples") +
     ylab(expression(log[2]*" fold change")) +
     scale_color_manual(values=c("black", "red", "green")) +
     guides(color=FALSE)
+  if(!is.null(contrast_name)) {
+    p = p +
+      ggtitle(paste("MA-plot for contrast ", contrast_name))
+  }
+  return(p)
 }
 ```
 
@@ -125,8 +130,7 @@ for(i in seq(length(all_results))) {
   res = all_results[[i]]
   ymax = max(res$log2FoldChange, na.rm=TRUE)
   ymin = min(res$log2FoldChange, na.rm=TRUE)
-  plotMA(all_results[[i]], ylim=c(ymin, ymax))
-  title(paste("MA plot for contrast", names(all_results)[i]))
+  plotMA(all_results[[i]], names(all_results)[i])
 }
 ```
 
@@ -200,7 +204,7 @@ if(length(plots) > 0) {
 
 ## Differentially expressed genes
 
-```{r DESeq-tables, results='asis'}
+```{r DESeq-tables, cache=FALSE, echo=FALSE}
 for(i in seq(length(all_results))) {
   cat(paste("Lowest adjusted p-value hits for", names(all_results)[i]))
   out_df = as.data.frame(all_results[[i]])
@@ -209,7 +213,7 @@ for(i in seq(length(all_results))) {
   write.table(out_df, file=paste(names(all_results)[i], ".tsv", sep=""),
                          quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
   sig_genes = subset(out_df, padj < 0.05)
-  DT::datatable(sig_genes)
+  sanitize_datatable(sig_genes, style='bootstrap')
   cat("\n")
 }
 ```
