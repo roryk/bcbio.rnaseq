@@ -51,6 +51,7 @@ if("description" %in% colnames(summarydata)) {
   # summarydata$Name = NULL
 }
 summarydata = summarydata[order(rownames(summarydata)),]
+colnames(summarydata) = gsub(".", "_", colnames(summarydata), fixed=TRUE)
 if (file.exists(tx2genes_file)) {
   sample_dirs = file.path(dirname(project_summary), "..", rownames(summarydata))
   salmon_files = file.path(sample_dirs, "salmon", "quant.sf")
@@ -80,15 +81,15 @@ counts = counts[, order(colnames(counts)), drop=FALSE]
 colnames(counts) = gsub(".counts", "", colnames(counts))
 
 # this is a list of all non user-supplied metadata columns that could appear
-known_columns = c("Name", "X.GC", "Exonic.Rate", "Sequences.flagged.as.poor.quality",
-    "rRNA_rate", "Fragment.Length.Mean", "Intronic.Rate", "Intergenic.Rate",
-    "Mapping.Rate", "Quality.format", "Duplication.Rate.of.Mapped", "Mapped",
-    "rRNA", "Sequence.length", "Transcripts.Detected", "Mean.Per.Base.Cov.",
-    "Genes.Detected", "Unique.Starts.Per.Read", "unique_starts_per_read",
-    "complexity", "X5.3.bias", "Duplicates.pct", "Duplicates", "Mapped.reads",
-    "Average.insert.size", "Mapped.reads.pct", "Total.reads",
-    "avg_coverage_per_region", "Mapped.Reads")
-summarydata[,"Fragment.Length.Mean"] = summarydata$Average.insert.size
+known_columns = c("Name", "X_GC", "Exonic_Rate", "Sequences_flagged_as_poor_quality",
+    "rRNA_rate", "Fragment_Length_Mean", "Intronic_Rate", "Intergenic_Rate",
+    "Mapping_Rate", "Quality_format", "Duplication_Rate_of_Mapped", "Mapped",
+    "rRNA", "Sequence_length", "Transcripts_Detected", "Mean_Per_Base_Cov_",
+    "Genes_Detected", "Unique_Starts_Per_Read", "unique_starts_per_read",
+    "complexity", "X5_3_bias", "Duplicates_pct", "Duplicates", "Mapped_reads",
+    "Average_insert_size", "Mapped_reads_pct", "Total_reads",
+    "avg_coverage_per_region", "Mapped_Reads")
+summarydata[,"Fragment_Length_Mean"] = summarydata$Average_insert_size
 metadata = summarydata[, !colnames(summarydata) %in% known_columns, drop=FALSE]
 metadata = metadata[, colSums(is.na(metadata)) < nrow(metadata), drop=FALSE]
 ```
@@ -131,8 +132,8 @@ heatmap_fn = get_heatmap_fn(summarydata)
 # Quality control metrics
 
 ```{r qualimap-run}
-qualimap_run = "Exonic.Rate" %in% colnames(summarydata)
-do_quality = "Total.reads" %in% colnames(summarydata)
+qualimap_run = "Exonic_Rate" %in% colnames(summarydata)
+do_quality = "Total_reads" %in% colnames(summarydata)
 ```
 
 ## Mapped reads
@@ -147,7 +148,9 @@ ggplot(summarydata, aes(x=Name, y=Mapped)) +
 
 ## Genomic mapping rate
 ```{r mapping-rate-plot, eval=do_quality}
-ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
+mapping_string = ifelse("Mapped_Reads" %in% colnames(summarydata),
+                        "Mapped_Reads", "Mapped_reads_pct")
+ggplot(summarydata, aes_string(x="Name", y=mapping_string)) +
     geom_bar(stat="identity") +
     ylab("mapping rate") + xlab("") +
     theme_bw(base_size=10) +
@@ -157,8 +160,8 @@ ggplot(summarydata, aes(x=Name, y=Mapping.Rate)) +
 
 ## Number of genes detected
 ```{r genes-detected-plot}
-dd = data.frame(Name=colnames(counts), Genes.Detected = colSums(counts > 0))
-ggplot(dd, aes(x=Name, y=Genes.Detected)) +
+dd = data.frame(Name=colnames(counts), Genes_Detected = colSums(counts > 0))
+ggplot(dd, aes(x=Name, y=Genes_Detected)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -168,9 +171,9 @@ ggplot(dd, aes(x=Name, y=Genes.Detected)) +
 
 ## Gene detection saturation
 ```{r saturation-plot, eval=do_quality}
-col_mapped = ifelse(qualimap_run, "Mapped", "Mapped.reads")
-dd = data.frame(Mapped=summarydata[,col_mapped], Genes.Detected = colSums(counts > 0))
-ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
+col_mapped = ifelse(qualimap_run, "Mapped", "Mapped_reads")
+dd = data.frame(Mapped=summarydata[,col_mapped], Genes_Detected = colSums(counts > 0))
+ggplot(dd, aes(x=Mapped, y=Genes_Detected)) +
     geom_point() +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -179,8 +182,8 @@ ggplot(dd, aes(x=Mapped, y=Genes.Detected)) +
 ```
 
 ## Exonic mapping rate
-```{r exonic-mapping-plot, eval="Exonic.Rate" %in% colnames(summarydata)}
-ggplot(summarydata, aes(x=Name, y=Exonic.Rate)) +
+```{r exonic-mapping-plot, eval="Exonic_Rate" %in% colnames(summarydata)}
+ggplot(summarydata, aes(x=Name, y=Exonic_Rate)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -202,8 +205,8 @@ ggplot(summarydata, aes(x=Name, y=rRNA_rate)) +
 ```
 
 ## Estimated fragment length of paired-end reads
-```{r fragment-length-plot, eval="Fragment.Length.Mean" %in% colnames(summarydata) & do_quality}
-ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
+```{r fragment-length-plot, eval="Fragment_Length_Mean" %in% colnames(summarydata) & do_quality}
+ggplot(summarydata, aes(x=Name, y=Fragment_Length_Mean)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
@@ -212,8 +215,8 @@ ggplot(summarydata, aes(x=Name, y=Fragment.Length.Mean)) +
 ```
 
 ## 5'->3' bias
-```{r 53bias, eval="X5.3.bias" %in% colnames(summarydata) & do_quality}
-ggplot(summarydata, aes(x=Name, y=X5.3.bias)) +
+```{r 53bias, eval="X5_3_bias" %in% colnames(summarydata) & do_quality}
+ggplot(summarydata, aes(x=Name, y=X5_3_bias)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=10) +
     theme(panel.grid.major = element_line(size = .5, color = "grey"),
