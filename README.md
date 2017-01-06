@@ -69,3 +69,4 @@ enrichment analyses using the results of DESeq2 objects.
 [metadata]: https://github.com/chapmanb/bcbio-nextgen/blob/master/docs/contents/configuration.rst#sample-information
 [ERCC]: http://www.lifetechnologies.com/order/catalog/product/4456740
 [example-summary]: https://rawgit.com/roryk/bcbio.rnaseq/master/docs/qc-summary.html
+
