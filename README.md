@@ -1,3 +1,6 @@
+## Deprecation
+This is maintained, and should work, but is deprecated in favor of https://github.com/hbc/bcbioRNASeq for most use cases
+
 ## Overview
 [![Build Status](https://travis-ci.org/roryk/bcbio.rnaseq.png)](http://travis-ci.org/roryk/bcbio.rnaseq) [![bioconda-badge](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io)
 
